@@ -1,0 +1,9 @@
+<template>
+  <CategoryDisplay
+    category-slug="shirts"
+    :grid-columns="4"
+    :products-per-page="12"
+    @product-click="goToProduct"
+    @add-to-cart="addToCart"
+  />
+</template>

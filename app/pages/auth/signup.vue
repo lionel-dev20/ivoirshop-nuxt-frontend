@@ -1,0 +1,100 @@
+<template>
+  <div class="max-w-md mx-auto mt-10 p-6 bg-white shadow-lg rounded-xl">
+    <h1 class="text-2xl font-bold mb-6 text-center">Créer un compte</h1>
+
+    <form @submit.prevent="handleRegister" class="space-y-4">
+      <!-- Nom complet -->
+      <div>
+        <label class="block text-sm font-medium mb-1">Nom complet</label>
+        <input
+          v-model="form.name"
+          type="text"
+          class="w-full border rounded-md px-3 py-2"
+          placeholder="John Doe"
+        />
+        <p v-if="errors.name" class="text-red-500 text-sm">{{ errors.name }}</p>
+      </div>
+
+      <!-- Email -->
+      <div>
+        <label class="block text-sm font-medium mb-1">Email</label>
+        <input
+          v-model="form.email"
+          type="email"
+          class="w-full border rounded-md px-3 py-2"
+          placeholder="exemple@mail.com"
+        />
+        <p v-if="errors.email" class="text-red-500 text-sm">{{ errors.email }}</p>
+      </div>
+
+      <!-- Mot de passe -->
+      <div>
+        <label class="block text-sm font-medium mb-1">Mot de passe</label>
+        <input
+          v-model="form.password"
+          type="password"
+          class="w-full border rounded-md px-3 py-2"
+          placeholder="********"
+        />
+        <p v-if="errors.password" class="text-red-500 text-sm">{{ errors.password }}</p>
+      </div>
+
+      <!-- Bouton -->
+      <button
+        type="submit"
+        class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
+        :disabled="loading"
+      >
+        {{ loading ? "Inscription en cours..." : "S’inscrire" }}
+      </button>
+
+      <p v-if="errorMessage" class="text-red-500 text-center mt-3">{{ errorMessage }}</p>
+    </form>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { reactive, ref } from "vue";
+import { useAuth } from "@/composables/useAuth";
+
+const { register } = useAuth();
+
+const form = reactive({
+  name: "",
+  email: "",
+  password: "",
+});
+
+const errors = reactive<{ name?: string; email?: string; password?: string }>({});
+const loading = ref(false);
+const errorMessage = ref("");
+
+// Validation simple
+const validate = () => {
+  errors.name = !form.name ? "Le nom est requis" : "";
+  errors.email = !form.email ? "L’email est requis" : "";
+  errors.password = form.password.length < 6 ? "6 caractères minimum" : "";
+  return !errors.name && !errors.email && !errors.password;
+};
+
+const handleRegister = async () => {
+  if (!validate()) return;
+
+  loading.value = true;
+  errorMessage.value = "";
+
+  try {
+    await register({
+      username: form.name,
+      email: form.email,
+      password: form.password,
+    });
+    // redirection après succès
+    navigateTo("/auth/profil");
+  } catch (err: any) {
+    errorMessage.value = err.message || "Erreur lors de l’inscription";
+  } finally {
+    loading.value = false;
+  }
+};
+</script>

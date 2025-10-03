@@ -15,6 +15,11 @@
           </NuxtLink>
         </div>
 
+   
+        <!-- <div class="hidden md:block flex-1 mx-8">
+          <MegaMenuColumns />
+        </div> -->
+
 
         <!-- Actions -->
         <div class="flex items-center space-x-4">
@@ -26,7 +31,7 @@
           <!-- Panier -->
           <button
             @click="cartStore.toggleCart()"
-            class="relative p-2 text-gray-400 hover:text-gray-500 transition-colors"
+            class="relative p-0 text-gray-400 cursor-pointer hover:text-gray-500 transition-colors"
           >
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13l-1.5 6m0 0h9M17 21v-2a2 2 0 00-2-2H9a2 2 0 00-2 2v2" />

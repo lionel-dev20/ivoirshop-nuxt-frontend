@@ -1,8 +1,11 @@
 import { defineEventHandler, getRouterParams, createError } from 'h3'
 import axios from 'axios'
+import { useRuntimeConfig } from '#imports'
 
 export default defineEventHandler(async (event) => {
   try {
+    const runtimeConfig = useRuntimeConfig()
+    const WORDPRESS_URL = runtimeConfig.WORDPRESS_URL || runtimeConfig.public?.WORDPRESS_URL
     // Récupération des slugs depuis l'URL
     const params = getRouterParams(event)
     console.log('Params reçus:', params)
@@ -23,8 +26,8 @@ export default defineEventHandler(async (event) => {
     console.log('Slug recherché:', lastSlug)
 
     // Vérification de l'URL
-    if (!process.env.WC_STORE_URL) {
-      console.error('Variable d\'environnement WC_STORE_URL manquante')
+    if (!WORDPRESS_URL) {
+      console.error('Variable d\'environnement WORDPRESS_URL manquante')
       throw createError({ 
         statusCode: 500, 
         statusMessage: 'Configuration manquante' 
@@ -44,7 +47,7 @@ export default defineEventHandler(async (event) => {
     
     // Utilise l'endpoint personnalisé au lieu de l'API WooCommerce standard
     const { data: categories } = await axios.get(
-      `${process.env.WC_STORE_URL}/wp-json/test/v1/wc-status`,
+      `${WORDPRESS_URL}/wp-json/test/v1/wc-status`,
       axiosConfig
     )
 
@@ -52,7 +55,7 @@ export default defineEventHandler(async (event) => {
 
     // Si le test fonctionne, utilise l'endpoint des catégories
     const { data: categoriesList } = await axios.get(
-      `${process.env.WC_STORE_URL}/wp-json/custom/v1/categories`,
+      `${WORDPRESS_URL}/wp-json/custom/v1/categories`,
       axiosConfig
     )
 
@@ -72,7 +75,7 @@ export default defineEventHandler(async (event) => {
     // Récupère les produits de cette catégorie via l'endpoint personnalisé
     console.log('Récupération des produits...')
     const { data: products } = await axios.get(
-      `${process.env.WC_STORE_URL}/wp-json/custom/v1/products/${currentCategory.id}`,
+      `${WORDPRESS_URL}/wp-json/custom/v1/products/${currentCategory.id}`,
       axiosConfig
     )
 

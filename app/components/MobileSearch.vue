@@ -80,3 +80,4 @@ const searchTerm = (term: string) => {
   handleSearch(term)
 }
 </script>
+

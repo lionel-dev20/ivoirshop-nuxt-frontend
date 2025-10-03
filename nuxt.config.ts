@@ -3,7 +3,7 @@ import tailwindcss from '@tailwindcss/vite'
 import { defineNuxtConfig } from 'nuxt/config'
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
-  devtools: { enabled: true },
+  devtools: { enabled: false }, // Désactivé en production
   css: ['~/assets/css/tailwind.css'],
 
   vite: {
@@ -29,20 +29,9 @@ export default defineNuxtConfig({
   '@nuxt/image'
 ],
 
-  fonts: {      
-    google: {
-      families: {
-        "Sora": [400, 500, 700, 800, 900],
-        'Montserrat': [400, 500, 700],
-        'font-optical-sizing': 'auto',
-        'font-style': 'normal'
-      }
-    }
-  },
-
   runtimeConfig: {
      public: {
-      WOOCOMMERCE_API_URL: process.env.WOOCOMMERCE_API_URL || "http://ivoir-shop.local/wp-json/wc/v3",
+      WOOCOMMERCE_API_URL: process.env.WOOCOMMERCE_API_URL || "https://admin.ivoirshop.ci/wp-json/wc/v3",
       WORDPRESS_URL: process.env.WORDPRESS_URL
     },
     WORDPRESS_URL: process.env.WORDPRESS_URL, // accessible côté serveur
@@ -53,8 +42,32 @@ export default defineNuxtConfig({
   },
    ssr: true,
 
-  // Optimisation
+  // Optimisations pour la production
   experimental: {
     payloadExtraction: false
+  },
+  
+  // Optimisations de build
+  build: {
+    transpile: ['@headlessui/vue']
+  },
+  
+  // Optimisations de performance
+  nitro: {
+    compressPublicAssets: true,
+    minify: true
+  },
+  
+  // Configuration pour la production
+  app: {
+    head: {
+      charset: 'utf-8',
+      viewport: 'width=device-width, initial-scale=1',
+      title: 'IvoirShop CI - Votre boutique en ligne',
+      meta: [
+        { name: 'description', content: 'Découvrez notre large gamme de produits électroniques, électroménager et bien plus sur IvoirShop CI' },
+        { name: 'keywords', content: 'boutique en ligne, Côte d\'Ivoire, électronique, électroménager, smartphones, TV' }
+      ]
+    }
   }
 })

@@ -1,16 +1,34 @@
 <template>
-    <div>
-      <a v-for="item in navigation" :key="item.name" :href="item.href" :aria-current="item.href === current ? 'page' : undefined">{{ item.name }}</a>
-    </div>
+  <div v-if="!pending && !error && navigation?.length">
+    <a 
+      v-for="item in navigation" 
+      :key="item.ID" 
+      :href="item.url" 
+      :aria-current="item.url === current ? 'page' : undefined"
+      class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium"
+    >
+      {{ item.title }}
+    </a>
+  </div>
+  
+  <!-- Fallback menu en cas d'erreur -->
+  <div v-else-if="error || !navigation?.length" class="flex space-x-4">
+    <NuxtLink to="/" class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium">Accueil</NuxtLink>
+    <NuxtLink to="/categorie" class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium">Catégories</NuxtLink>
+    <NuxtLink to="/recherche" class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium">Recherche</NuxtLink>
+  </div>
+  
+         <!-- Loading state -->
+         <MenuSkeleton v-else />
 </template>
+
 <script setup>
 const route = useRoute()
-// Replace 'http://localhost:3000' with your frontend location
-const current = 'http://localhost:3000' + route.fullPath
-// IMPORTANT
-// If your frontend is http then use http
-// in your useFetch endpoint
-// If it is https then use https 
-// Replace 'http://wp.websitegoblin.com' with your backend location
-const { data: navigation, pending, error, refresh } = await useFetch('http://wp.websitegoblin.com/wp-json/wp/v2/menu-principal');
+const current = route.fullPath
+
+// Utiliser l'endpoint local avec gestion d'erreur
+const { data: navigation, pending, error, refresh } = await useFetch('/api/wordpress/menu', {
+  default: () => [],
+  server: false // Charger côté client pour éviter les erreurs SSR
+})
 </script>

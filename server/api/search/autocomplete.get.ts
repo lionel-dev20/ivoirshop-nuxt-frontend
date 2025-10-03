@@ -1,9 +1,12 @@
 import { defineEventHandler, createError } from 'h3'
 import axios from 'axios'
+import { useRuntimeConfig } from '#imports'
 
 export default defineEventHandler(async (event) => {
   try {
     const query = getQuery(event)
+    const runtimeConfig = useRuntimeConfig()
+    const WC_STORE_URL = runtimeConfig.WC_STORE_URL || runtimeConfig.public?.WORDPRESS_URL
     const searchTerm = query.q as string
 
     if (!searchTerm || searchTerm.trim().length < 2) {
@@ -11,7 +14,7 @@ export default defineEventHandler(async (event) => {
     }
 
     // Vérification de l'URL
-    if (!process.env.WC_STORE_URL) {
+    if (!WC_STORE_URL) {
       console.error('Variable d\'environnement WC_STORE_URL manquante')
       throw createError({ 
         statusCode: 500, 
@@ -33,7 +36,7 @@ export default defineEventHandler(async (event) => {
     try {
       // Utiliser l'endpoint d'autocomplétion personnalisé WordPress
       const { data: suggestions } = await axios.get(
-        `${process.env.WC_STORE_URL}/wp-json/custom/v1/search/autocomplete`,
+        `${WC_STORE_URL}/wp-json/custom/v1/search/autocomplete`,
         {
           ...axiosConfig,
           params: {
@@ -80,3 +83,4 @@ export default defineEventHandler(async (event) => {
     })
   }
 })
+

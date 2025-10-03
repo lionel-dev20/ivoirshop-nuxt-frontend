@@ -1,15 +1,18 @@
 import { defineEventHandler, getRouterParams, createError } from 'h3'
 import axios from 'axios'
+import { useRuntimeConfig } from '#imports'
 
 export default defineEventHandler(async (event) => {
   try {
+    const runtimeConfig = useRuntimeConfig()
+    const WC_STORE_URL = runtimeConfig.WC_STORE_URL || runtimeConfig.public?.WORDPRESS_URL
     const params = getRouterParams(event)
     const categoryId = params.categoryId
     
     console.log('Récupération des produits pour la catégorie:', categoryId)
 
     // Vérification de l'URL
-    if (!process.env.WC_STORE_URL) {
+    if (!WC_STORE_URL) {
       console.error('Variable d\'environnement WC_STORE_URL manquante')
       throw createError({ 
         statusCode: 500, 
@@ -35,7 +38,7 @@ export default defineEventHandler(async (event) => {
     
     // Utilise l'endpoint personnalisé WordPress pour récupérer les produits par catégorie
     const { data: productsResponse } = await axios.get(
-      `${process.env.WC_STORE_URL}/wp-json/custom/v1/products/${categoryId}`,
+      `${WC_STORE_URL}/wp-json/custom/v1/products/${categoryId}`,
       axiosConfig
     )
 

@@ -152,9 +152,11 @@
       v-if="isLoading"
       class="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-b-lg shadow-lg"
     >
-      <div class="px-3 py-2 flex items-center space-x-3">
-        <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-        <span class="text-sm text-gray-600">Recherche en cours...</span>
+      <div class="px-3 py-2">
+        <div class="animate-pulse">
+          <div class="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+          <div class="h-3 bg-gray-200 rounded w-1/2"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -301,3 +303,4 @@ onUnmounted(() => {
   }
 })
 </script>
+

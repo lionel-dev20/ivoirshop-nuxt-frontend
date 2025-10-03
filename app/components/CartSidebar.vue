@@ -7,7 +7,7 @@
   >
     <div class="absolute inset-0 overflow-hidden">
       <div 
-        class="absolute inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+        class="absolute inset-0 bg-gray-0 bg-opacity-75 transition-opacity"
         @click="cartStore.closeCart()"
       ></div>
 
@@ -111,7 +111,7 @@
                 <NuxtLink
                   to="/checkout"
                   @click="cartStore.closeCart()"
-                  class="flex justify-center items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors w-full"
+                  class="flex justify-center items-center px-6 py-2.5 border border-transparent rounded-[4px] shadow-sm text-base font-medium text-white bg-[#f19102] hover:bg-[#f19102ef] transition-colors w-full"
                 >
                   Passer commande
                 </NuxtLink>

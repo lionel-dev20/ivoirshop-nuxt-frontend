@@ -1,10 +1,64 @@
 <!-- pages/produit/[slug].vue -->
 <template>
   <div class="max-w-[1440px] mx-auto p-6">
-    <!-- Loading State -->
-    <div v-if="loading" class="flex justify-center items-center py-16">
-      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      <span class="ml-3 text-lg text-gray-600">Chargement du produit...</span>
+    <!-- Skeleton de chargement -->
+    <div v-if="loading" class="max-w-[1440px] mx-auto p-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Skeleton images -->
+        <div class="space-y-4">
+          <div class="animate-pulse">
+            <div class="w-full h-96 bg-gray-200 rounded-lg"></div>
+          </div>
+          <div class="flex space-x-2">
+            <div v-for="i in 4" :key="i" class="w-20 h-20 bg-gray-200 rounded-lg animate-pulse"></div>
+          </div>
+        </div>
+
+        <!-- Skeleton contenu -->
+        <div class="space-y-6">
+          <div class="animate-pulse">
+            <!-- Titre -->
+            <div class="h-8 bg-gray-200 rounded w-3/4 mb-4"></div>
+            <div class="h-4 bg-gray-200 rounded w-1/2 mb-6"></div>
+            
+            <!-- Prix -->
+            <div class="flex items-center space-x-4 mb-6">
+              <div class="h-8 bg-gray-200 rounded w-24"></div>
+              <div class="h-6 bg-gray-200 rounded w-20"></div>
+            </div>
+            
+            <!-- Description -->
+            <div class="space-y-2 mb-6">
+              <div class="h-4 bg-gray-200 rounded w-full"></div>
+              <div class="h-4 bg-gray-200 rounded w-4/5"></div>
+              <div class="h-4 bg-gray-200 rounded w-3/5"></div>
+            </div>
+            
+            <!-- Options -->
+            <div class="space-y-4 mb-6">
+              <div class="h-6 bg-gray-200 rounded w-1/3"></div>
+              <div class="flex space-x-2">
+                <div class="h-10 bg-gray-200 rounded w-16"></div>
+                <div class="h-10 bg-gray-200 rounded w-16"></div>
+                <div class="h-10 bg-gray-200 rounded w-16"></div>
+              </div>
+            </div>
+            
+            <!-- Quantité et bouton -->
+            <div class="flex items-center space-x-4 mb-6">
+              <div class="h-10 bg-gray-200 rounded w-20"></div>
+              <div class="h-12 bg-gray-200 rounded w-48"></div>
+            </div>
+            
+            <!-- Informations supplémentaires -->
+            <div class="space-y-3">
+              <div class="h-4 bg-gray-200 rounded w-2/3"></div>
+              <div class="h-4 bg-gray-200 rounded w-1/2"></div>
+              <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Error State -->
@@ -307,8 +361,8 @@ const { data, pending: loading, error: fetchError } = await useLazyFetch(`/api/w
   default: () => ({ product: null, relatedProducts: [], categories: [] })
 })
 
-const product = computed(() => data.value?.product)
-const relatedProducts = computed(() => data.value?.relatedProducts || [])
+const product = computed(() => (data.value as any)?.product)
+const relatedProducts = computed(() => (data.value as any)?.relatedProducts || [])
 const error = computed(() => fetchError.value?.data?.message || fetchError.value?.message)
 
 // État local
@@ -334,7 +388,7 @@ const selectedImage = computed(() => {
 
 // Attributs visibles
 const visibleAttributes = computed(() => {
-  return product.value?.attributes?.filter(attr => attr.visible) || []
+  return product.value?.attributes?.filter((attr: any) => attr.visible) || []
 })
 
 // Formatage du prix

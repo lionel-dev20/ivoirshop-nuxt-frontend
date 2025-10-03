@@ -1,9 +1,14 @@
 import { defineEventHandler, createError } from 'h3'
 import axios from 'axios'
+import { useRuntimeConfig } from '#imports'
 
 export default defineEventHandler(async (event) => {
   try {
     const query = getQuery(event)
+    const runtimeConfig = useRuntimeConfig()
+    const WC_STORE_URL = runtimeConfig.WC_STORE_URL || runtimeConfig.public?.WORDPRESS_URL
+    const WOOCOMMERCE_CONSUMER_KEY = runtimeConfig.WOOCOMMERCE_CONSUMER_KEY
+    const WOOCOMMERCE_CONSUMER_SECRET = runtimeConfig.WOOCOMMERCE_CONSUMER_SECRET
     const searchTerm = query.q as string
 
     if (!searchTerm || searchTerm.trim().length < 2) {
@@ -11,7 +16,7 @@ export default defineEventHandler(async (event) => {
     }
 
     // Vérification de l'URL
-    if (!process.env.WC_STORE_URL) {
+    if (!WC_STORE_URL) {
       console.error('Variable d\'environnement WC_STORE_URL manquante')
       throw createError({ 
         statusCode: 500, 
@@ -33,7 +38,7 @@ export default defineEventHandler(async (event) => {
     try {
       // Utiliser l'endpoint de recherche personnalisé WordPress
       const { data: searchResults } = await axios.get(
-        `${process.env.WC_STORE_URL}/wp-json/custom/v1/search`,
+        `${WC_STORE_URL}/wp-json/custom/v1/search`,
         {
           ...axiosConfig,
           params: {
@@ -57,13 +62,13 @@ export default defineEventHandler(async (event) => {
         const wcConfig = {
           ...axiosConfig,
           auth: {
-            username: process.env.WOOCOMMERCE_CONSUMER_KEY || '',
-            password: process.env.WOOCOMMERCE_CONSUMER_SECRET || ''
+            username: WOOCOMMERCE_CONSUMER_KEY || '',
+            password: WOOCOMMERCE_CONSUMER_SECRET || ''
           }
         }
         
         const { data: wcProducts } = await axios.get(
-          `${process.env.WC_STORE_URL}/wp-json/wc/v3/products`,
+          `${WC_STORE_URL}/wp-json/wc/v3/products`,
           {
             ...wcConfig,
             params: {

@@ -4,11 +4,8 @@
       {{ category?.name || 'Catégorie' }}
     </h1> -->
 
-    <!-- État de chargement -->
-    <div v-if="loading" class="flex justify-center items-center py-8">
-      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-      <span class="ml-2 text-gray-600">Chargement des produits...</span>
-    </div>
+    <!-- Skeleton de chargement -->
+    <CategoryPageSkeleton v-if="loading" />
 
     <!-- Gestion des erreurs -->
     <div v-else-if="error" class="bg-red-50 border border-red-200 rounded-md p-4 mb-6">
@@ -242,8 +239,8 @@ const { data, pending: loading, error: fetchError, refresh } = await useLazyFetc
 })
 
 // Données réactives extraites de la réponse
-const category = computed(() => data.value?.category)
-const allProducts = computed(() => data.value?.products || [])
+const category = computed(() => (data.value as any)?.category || null)
+const allProducts = computed(() => (data.value as any)?.products || [])
 const error = computed(() => fetchError.value?.data?.message || fetchError.value?.message || null)
 
 // État des filtres et tri

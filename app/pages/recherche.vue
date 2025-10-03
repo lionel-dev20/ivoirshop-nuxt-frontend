@@ -6,10 +6,53 @@
       <span v-if="searchQuery" class="text-blue-600">"{{ searchQuery }}"</span>
     </h1>
 
-    <!-- État de chargement -->
-    <div v-if="loading" class="flex justify-center items-center py-8">
-      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-      <span class="ml-2 text-gray-600">Recherche en cours...</span>
+    <!-- Skeleton de chargement -->
+    <div v-if="loading" class="max-w-[1440px] mx-auto p-6">
+      <!-- Skeleton barre de recherche -->
+      <div class="mb-6">
+        <div class="animate-pulse">
+          <div class="h-12 bg-gray-200 rounded-lg w-full mb-4"></div>
+        </div>
+      </div>
+
+      <!-- Skeleton filtres -->
+      <div class="mb-6">
+        <div class="animate-pulse">
+          <div class="h-6 bg-gray-200 rounded w-1/4 mb-4"></div>
+          <div class="flex space-x-4">
+            <div class="h-8 bg-gray-200 rounded w-20"></div>
+            <div class="h-8 bg-gray-200 rounded w-24"></div>
+            <div class="h-8 bg-gray-200 rounded w-16"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Skeleton résultats -->
+      <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-0.5 md:gap-3.5">
+        <div v-for="i in 8" :key="i" class="bg-white border border-gray-100 rounded-md overflow-hidden shadow-md shadow-gray-100">
+          <!-- Skeleton image -->
+          <div class="w-full h-64 bg-gray-200 animate-pulse"></div>
+          
+          <!-- Skeleton contenu -->
+          <div class="p-3.5">
+            <div class="animate-pulse">
+              <div class="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+              <div class="h-3 bg-gray-200 rounded w-1/2 mb-4"></div>
+              <div class="flex items-center justify-between">
+                <div class="h-5 bg-gray-200 rounded w-20"></div>
+                <div class="h-6 bg-gray-200 rounded w-16"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Skeleton bouton -->
+          <div class="px-4 pb-4">
+            <div class="animate-pulse">
+              <div class="w-full h-10 bg-gray-200 rounded"></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Gestion des erreurs -->
@@ -504,4 +547,5 @@ useSeoMeta({
   transform: scale(1.05);
 }
 </style>
+
 

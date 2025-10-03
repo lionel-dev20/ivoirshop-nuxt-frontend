@@ -5,16 +5,21 @@
       <HerosectionMyCarousel />
       <RightDoubleAds />
     </div>
-    <Spaser />
-    <ListPartner />
-    <Spaser />
+           <div class="h-8"></div>
+           <ListPartner />
+           <div class="h-8"></div>
+    
+    <!-- Blocs de catégories -->
+    <!-- <CategoryBlocks />
+    
+    <div class="h-8"></div>
     <Nouveaute 
      category-slug="clothing"
      :grid-columns="4"
      :products-per-page="12"
-   />
-   <Spaser />
-   <div class="container mx-auto px-4">
+   /> -->
+  <div class="h-8"></div>
+   <!-- <div class="container mx-auto px-4">
         <DualBannerSlider
           :limit="6"
           :auto-rotate="true"
@@ -25,7 +30,7 @@
           @banner-click="handleBannerClick"
           @banner-view="trackBannerView"
         />
-      </div>
+      </div> -->
 
   </div>
 </template>
@@ -35,6 +40,7 @@ import Nouveaute from '~/components/collectionHomepage/Nouveaute.vue';
 import DualBannerSlider from '~/components/DualBannerSlider.vue';
 import RightDoubleAds from '~/components/herosection/RightDoubleAds.vue';
 import ListPartner from '~/components/partenaires/ListPartner.vue';
+import CategoryBlocks from '~/components/CategoryBlocks.vue';
 
 
 

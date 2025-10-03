@@ -1,6 +1,6 @@
 <!-- pages/checkout.vue -->
 <template>
-  <div class="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-6xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
     <!-- Redirection si panier vide -->
     <div v-if="cartStore.isEmpty" class="text-center py-16">
       <div class="max-w-md mx-auto">
@@ -65,7 +65,7 @@
                 v-model="orderForm.email"
                 type="email"
                 required
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                class="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
 
@@ -78,20 +78,20 @@
                 v-model="orderForm.phone"
                 type="tel"
                 required
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                class="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
 
             <!-- Les champs d'adresse sont maintenant automatiquement remplis par la sélection de zone de livraison -->
-            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
-              <h3 class="font-medium text-blue-900 mb-2 flex items-center">
+            <div class="bg-[#ff990013] border border-[#ff990013] rounded-lg p-4 mt-4">
+              <h3 class="font-medium text-[#e98d03] mb-2 flex items-center">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
                 Adresse de livraison
               </h3>
-              <div class="text-sm text-blue-800">
+              <div class="text-sm text-[#e98d03]">
                 <p v-if="deliveryStore.hasSelectedDelivery">
                   <span class="font-medium">Ville:</span> {{ deliveryStore.selectedDelivery.city_name }}
                 </p>
@@ -241,10 +241,9 @@
                 :disabled="!couponCode.trim() || deliveryStore.isApplyingCoupon"
                 class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors flex items-center space-x-2"
               >
-                <svg v-if="deliveryStore.isApplyingCoupon" class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
+                <div v-if="deliveryStore.isApplyingCoupon" class="animate-pulse">
+                  <div class="h-4 w-4 bg-white rounded"></div>
+                </div>
                 <span>{{ deliveryStore.isApplyingCoupon ? 'Vérification...' : 'Appliquer' }}</span>
               </button>
             </div>
@@ -382,10 +381,9 @@
               :disabled="isSubmitting || !canSubmit"
               class="w-full mt-6 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center space-x-2"
             >
-              <svg v-if="isSubmitting" class="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
+              <div v-if="isSubmitting" class="animate-pulse">
+                <div class="h-5 w-5 bg-white rounded"></div>
+              </div>
               <span>{{ isSubmitting ? 'Traitement...' : `Confirmer la commande - ${formatPrice(finalTotal)}` }}</span>
             </button>
 
@@ -610,9 +608,9 @@ const submitOrder = async () => {
     if (response.success) {
       // Prépare les données pour la page de remerciements
       const thankYouData = {
-        order_id: response.order_id,
-        order_number: response.order_number,
-        order_status: response.order_status,
+        order_id: (response as any).order_id,
+        order_number: (response as any).order_number,
+        order_status: (response as any).order_status,
         total: finalTotal.value,
         date: new Date().toISOString(),
         customer: { ...orderForm.value },
@@ -657,7 +655,7 @@ const submitOrder = async () => {
         }
       }
     } else {
-      throw new Error(response.message || 'Erreur lors de la création de la commande')
+      throw new Error((response as any).message || 'Erreur lors de la création de la commande')
     }
   } catch (error: any) {
     console.error('Erreur complète commande:', error)

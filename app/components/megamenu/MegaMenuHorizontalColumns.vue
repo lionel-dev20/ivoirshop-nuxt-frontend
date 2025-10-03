@@ -5,7 +5,9 @@
       ref="parentMenu"
       class="flex flex-col w-64 bg-white border-1 border-slate-100 text-gray-800 md:px-3 md:py-4 rounded-sm shadow-md shadow-gray-50"
     >
-      <li v-for="item in navigation" :key="item.ID" class="relative group">
+      <!-- Menu WordPress -->
+      <template v-if="!pending && !error && navigation?.length">
+        <li v-for="item in navigation" :key="item.ID" class="relative group">
         <NuxtLink :href="item.url" class="block px-3.5 py-[5.3px] z-50 transition-colors duration-200">
           {{ item.title }}
         </NuxtLink>
@@ -42,7 +44,36 @@
             </div>
           </div>
         </div>
-      </li>
+        </li>
+      </template>
+      
+      <!-- Menu de fallback en cas d'erreur -->
+      <template v-else-if="error || !navigation?.length">
+        <li class="relative group">
+          <NuxtLink href="/" class="block px-3.5 py-[5.3px] z-50 transition-colors duration-200">
+            Accueil
+          </NuxtLink>
+        </li>
+        <li class="relative group">
+          <NuxtLink href="/categorie" class="block px-3.5 py-[5.3px] z-50 transition-colors duration-200">
+            Catégories
+          </NuxtLink>
+        </li>
+        <li class="relative group">
+          <NuxtLink href="/recherche" class="block px-3.5 py-[5.3px] z-50 transition-colors duration-200">
+            Recherche
+          </NuxtLink>
+        </li>
+      </template>
+      
+             <!-- État de chargement -->
+             <template v-else>
+               <li v-for="i in 5" :key="i" class="relative group">
+                 <div class="block px-3.5 py-[5.3px] z-50">
+                   <div class="animate-pulse bg-gray-200 h-4 rounded" :class="`w-${16 + i * 2}`"></div>
+                 </div>
+               </li>
+             </template>
     </ul>
   </nav>
 </template>
@@ -50,7 +81,10 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 
-const { data: navigation } = await useFetch('http://ivoir-shop.local/wp-json/wp/v2/menu-principal')
+const { data: navigation, pending, error } = await useFetch('/api/wordpress/menu', {
+  default: () => [],
+  server: false
+})
 
 const parentMenu = ref<HTMLElement | null>(null)
 const parentHeight = ref(0)

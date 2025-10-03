@@ -3,10 +3,32 @@
   <div class="min-h-screen bg-gray-50 py-12">
     <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
       
-      <!-- Loading state -->
-      <div v-if="isLoading" class="text-center py-16">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-        <p class="text-gray-600">Chargement des détails de votre commande...</p>
+      <!-- Skeleton de chargement -->
+      <div v-if="isLoading" class="max-w-2xl mx-auto p-6">
+        <div class="animate-pulse">
+          <!-- Skeleton icône de succès -->
+          <div class="w-16 h-16 bg-gray-200 rounded-full mx-auto mb-6"></div>
+          
+          <!-- Skeleton titre -->
+          <div class="h-8 bg-gray-200 rounded w-1/2 mx-auto mb-4"></div>
+          <div class="h-4 bg-gray-200 rounded w-3/4 mx-auto mb-8"></div>
+          
+          <!-- Skeleton détails de commande -->
+          <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <div class="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
+            <div class="space-y-3">
+              <div class="h-4 bg-gray-200 rounded w-full"></div>
+              <div class="h-4 bg-gray-200 rounded w-4/5"></div>
+              <div class="h-4 bg-gray-200 rounded w-3/5"></div>
+            </div>
+          </div>
+          
+          <!-- Skeleton boutons -->
+          <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <div class="h-12 bg-gray-200 rounded w-40"></div>
+            <div class="h-12 bg-gray-200 rounded w-32"></div>
+          </div>
+        </div>
       </div>
 
       <!-- Message si pas de données -->

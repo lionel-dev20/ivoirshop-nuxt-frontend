@@ -26,7 +26,7 @@
       <button
         @click="login"
         :disabled="loading"
-        class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+        class="w-full bg-[#ff9900] text-white py-2 rounded hover:bg-[#ff9900de]"
       >
         <span v-if="!loading">Se connecter</span>
         <span v-else>Connexion...</span>
@@ -39,39 +39,28 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import axios from 'axios'
+import { useAuth } from '@/composables/useAuth'
 
-const router = useRouter()
+const { signin, loading, error } = useAuth()
 
 const email = ref('')
 const password = ref('')
-const loading = ref(false)
-const error = ref('')
 
 const login = async () => {
-  loading.value = true
-  error.value = ''
+  if (!email.value || !password.value) {
+    return
+  }
 
   try {
-    const { data } = await axios.post('/api/woocommerce/login', {
+    await signin({
       username: email.value,
       password: password.value
     })
-
-    if (data.success && data.token) {
-      // Stocker le token JWT dans localStorage
-      localStorage.setItem('wc_token', data.token)
-      // Rediriger vers la page profil
-      router.push('/auth/profil')
-    } else {
-      error.value = data.error || 'Email ou mot de passe incorrect'
-    }
+    
+    // Redirection automatique gérée par useAuth
+    await navigateTo('/auth/profil')
   } catch (err) {
-    console.error(err)
-    error.value = 'Erreur de connexion'
-  } finally {
-    loading.value = false
+    console.error('Erreur de connexion:', err)
   }
 }
 </script>

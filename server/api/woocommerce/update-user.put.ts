@@ -1,5 +1,5 @@
 import { defineEventHandler, getHeader, readBody } from 'h3'
-import WooCommerceRestApi from '@woocommerce/woocommerce-rest-api'
+import { createWooCommerceClient } from '../../utils/woocommerce'
 
 export default defineEventHandler(async (event) => {
   try {
@@ -13,10 +13,10 @@ export default defineEventHandler(async (event) => {
 
     const body = await readBody(event)
 
-    const api = new WooCommerceRestApi({
-      url: process.env.WC_URL!,
-      consumerKey: process.env.WC_KEY!,
-      consumerSecret: process.env.WC_SECRET!,
+    const api = await createWooCommerceClient({
+      url: process.env.WORDPRESS_URL!,
+      consumerKey: process.env.WOOCOMMERCE_CONSUMER_KEY!,
+      consumerSecret: process.env.WOOCOMMERCE_CONSUMER_SECRET!,
       version: 'wc/v3',
     })
 

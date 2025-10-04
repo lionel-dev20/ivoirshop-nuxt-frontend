@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
   if (!token) return null
 
   try {
-    const { data } = await axios.get(`${process.env.WP_URL}/wp-json/wp/v2/users/me`, {
+    const { data } = await axios.get(`${process.env.WORDPRESS_URL}/wp-json/wp/v2/users/me`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

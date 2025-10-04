@@ -128,11 +128,13 @@ export const useCartStore = defineStore('cart', {
       }
     },
 
-    formatPrice(price: number) {
-      return new Intl.NumberFormat('fr-FR', {
-        style: 'currency',
-        currency: 'EUR'
-      }).format(price)
+    formatPrice(price: string | number) {
+      const numPrice = typeof price === "string" ? parseFloat(price) : price
+
+      return new Intl.NumberFormat("en-US", {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(numPrice) + " FCFA"
     }
   }
 })

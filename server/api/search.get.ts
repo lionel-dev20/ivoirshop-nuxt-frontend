@@ -1,145 +1,138 @@
-import { defineEventHandler, createError } from 'h3'
-import axios from 'axios'
+import { defineEventHandler, createError, getQuery } from 'h3'
 import { useRuntimeConfig } from '#imports'
+import { createWooCommerceClient } from '../utils/woocommerce'
 
 export default defineEventHandler(async (event) => {
   try {
     const query = getQuery(event)
     const runtimeConfig = useRuntimeConfig()
-    const WC_STORE_URL = runtimeConfig.WC_STORE_URL || runtimeConfig.public?.WORDPRESS_URL
-    const WOOCOMMERCE_CONSUMER_KEY = runtimeConfig.WOOCOMMERCE_CONSUMER_KEY
-    const WOOCOMMERCE_CONSUMER_SECRET = runtimeConfig.WOOCOMMERCE_CONSUMER_SECRET
+    
     const searchTerm = query.q as string
+    const page = parseInt(query.page as string) || 1
+    const perPage = parseInt(query.per_page as string) || 20
 
     if (!searchTerm || searchTerm.trim().length < 2) {
-      return { products: [] }
-    }
-
-    // Vérification de l'URL
-    if (!WC_STORE_URL) {
-      console.error('Variable d\'environnement WC_STORE_URL manquante')
-      throw createError({ 
-        statusCode: 500, 
-        statusMessage: 'Configuration manquante' 
-      })
-    }
-
-    // Configuration axios
-    const axiosConfig = {
-      timeout: 10000,
-      headers: {
-        'User-Agent': 'Nuxt-WooCommerce-Client/1.0',
-        'Content-Type': 'application/json'
+      return { 
+        products: [], 
+        total: 0, 
+        totalPages: 0, 
+        currentPage: page,
+        searchTerm: searchTerm || ''
       }
     }
 
+    // Configuration WooCommerce
+    const api = await createWooCommerceClient({
+      url: runtimeConfig.WORDPRESS_URL!,
+      consumerKey: runtimeConfig.WOOCOMMERCE_CONSUMER_KEY!,
+      consumerSecret: runtimeConfig.WOOCOMMERCE_CONSUMER_SECRET!,
+      version: 'wc/v3',
+    })
+
     console.log('Recherche de produits pour:', searchTerm)
-    
+
     try {
-      // Utiliser l'endpoint de recherche personnalisé WordPress
-      const { data: searchResults } = await axios.get(
-        `${WC_STORE_URL}/wp-json/custom/v1/search`,
-        {
-          ...axiosConfig,
-          params: {
-            q: searchTerm,
-            per_page: 50
-          }
-        }
-      )
-
-      console.log(`${searchResults.length} produits trouvés pour "${searchTerm}"`)
-      return { products: searchResults }
-      
-    } catch (customError: any) {
-      console.warn('Endpoint de recherche personnalisé non accessible, tentative avec WooCommerce standard...', {
-        message: customError.message,
-        status: customError.response?.status
+      // Recherche des produits WooCommerce
+      const { data: products, headers } = await api.get('products', {
+        search: searchTerm.trim(),
+        per_page: perPage,
+        page: page,
+        status: 'publish',
+        stock_status: 'instock',
+        orderby: 'relevance',
+        order: 'desc',
+        meta_data: true,
+        images: true,
+        categories: true,
+        attributes: true
       })
-      
-      // Fallback vers l'API WooCommerce standard
-      try {
-        const wcConfig = {
-          ...axiosConfig,
-          auth: {
-            username: WOOCOMMERCE_CONSUMER_KEY || '',
-            password: WOOCOMMERCE_CONSUMER_SECRET || ''
-          }
-        }
-        
-        const { data: wcProducts } = await axios.get(
-          `${WC_STORE_URL}/wp-json/wc/v3/products`,
+
+      // Extraire les informations de pagination
+      const totalProducts = parseInt(headers['x-wp-total'] || '0')
+      const totalPages = parseInt(headers['x-wp-totalpages'] || '0')
+
+      // Formater les produits
+      const formattedProducts = products.map((product: any) => ({
+        id: product.id,
+        name: product.name,
+        slug: product.slug,
+        description: product.description,
+        short_description: product.short_description,
+        price: product.price,
+        regular_price: product.regular_price,
+        sale_price: product.sale_price,
+        on_sale: product.on_sale,
+        stock_status: product.stock_status,
+        stock_quantity: product.stock_quantity,
+        manage_stock: product.manage_stock,
+        images: product.images || [],
+        categories: product.categories || [],
+        tags: product.tags || [],
+        attributes: product.attributes || [],
+        meta_data: product.meta_data || [],
+        average_rating: product.average_rating || 0,
+        rating_count: product.rating_count || 0,
+        total_sales: product.total_sales || 0,
+        date_created: product.date_created,
+        date_modified: product.date_modified,
+        permalink: product.permalink
+      }))
+
+      console.log(`${formattedProducts.length} produits trouvés sur ${totalProducts} total`)
+
+      return {
+        products: formattedProducts,
+        total: totalProducts,
+        totalPages: totalPages,
+        currentPage: page,
+        perPage: perPage,
+        searchTerm: searchTerm,
+        hasMore: page < totalPages
+      }
+
+    } catch (wcError: any) {
+      console.error('Erreur WooCommerce:', {
+        message: wcError.message,
+        status: wcError.response?.status,
+        data: wcError.response?.data
+      })
+
+      // Fallback : données de test
+      console.log('Utilisation de données de test pour la recherche...')
+      return { 
+        products: [
           {
-            ...wcConfig,
-            params: {
-              search: searchTerm,
-              per_page: 50,
-              status: 'publish'
-            }
+            id: 1,
+            name: `Produit de test pour "${searchTerm}"`,
+            slug: `test-${searchTerm.toLowerCase().replace(/\s+/g, '-')}`,
+            description: 'Description de test',
+            short_description: 'Description courte de test',
+            price: '29.99',
+            regular_price: '29.99',
+            sale_price: null,
+            on_sale: false,
+            stock_status: 'instock',
+            images: [],
+            categories: [],
+            attributes: [],
+            meta_data: [],
+            average_rating: 0,
+            date_created: new Date().toISOString()
           }
-        )
-
-        // Convertir le format WooCommerce vers le format attendu
-        const formattedProducts = wcProducts.map((product: any) => ({
-          id: product.id,
-          name: product.name,
-          slug: product.slug,
-          description: product.description,
-          short_description: product.short_description,
-          price: product.price,
-          regular_price: product.regular_price,
-          sale_price: product.sale_price,
-          on_sale: product.on_sale,
-          stock_status: product.stock_status,
-          images: product.images || [],
-          categories: product.categories || [],
-          attributes: product.attributes || [],
-          meta_data: product.meta_data || [],
-          average_rating: product.average_rating || 0,
-          date_created: product.date_created
-        }))
-
-        console.log(`${formattedProducts.length} produits trouvés via WooCommerce standard`)
-        return { products: formattedProducts }
-        
-      } catch (wcError: any) {
-        console.error('Erreur avec WooCommerce standard:', {
-          message: wcError.message,
-          status: wcError.response?.status
-        })
-        
-        // Dernier fallback : données de test
-        console.log('Utilisation de données de test pour la recherche...')
-        return { 
-          products: [
-            {
-              id: 1,
-              name: `Produit de test pour "${searchTerm}"`,
-              slug: `test-${searchTerm.toLowerCase().replace(/\s+/g, '-')}`,
-              description: 'Description de test',
-              short_description: 'Description courte de test',
-              price: '29.99',
-              regular_price: '29.99',
-              sale_price: null,
-              on_sale: false,
-              stock_status: 'instock',
-              images: [],
-              categories: [],
-              attributes: [],
-              meta_data: [],
-              average_rating: 0,
-              date_created: new Date().toISOString()
-            }
-          ]
-        }
+        ],
+        total: 1,
+        totalPages: 1,
+        currentPage: 1,
+        perPage: perPage,
+        searchTerm: searchTerm,
+        hasMore: false
       }
     }
     
   } catch (err: any) {
     console.error('Erreur lors de la recherche:', {
       message: err.message,
-      response: err.response?.data,
-      status: err.response?.status
+      stack: err.stack
     })
     
     throw createError({ 

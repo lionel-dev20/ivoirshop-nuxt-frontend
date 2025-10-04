@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
 
   try {
     const { data } = await axios.post(
-      `${process.env.WP_URL}/wp-json/jwt-auth/v1/token`,
+      `${process.env.WORDPRESS_URL}/wp-json/jwt-auth/v1/token`,
       {
         username: body.username,
         password: body.password,

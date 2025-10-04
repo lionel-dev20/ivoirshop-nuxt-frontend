@@ -271,14 +271,14 @@
       <!-- Produits associés -->
       <div v-if="relatedProducts.length > 0" class="mb-16">
         <h2 class="text-2xl font-bold text-gray-900 mb-6">Produits similaires</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
           <div
             v-for="relatedProduct in relatedProducts"
             :key="relatedProduct.id"
-            class="border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+            class="border rounded-md bg-white overflow-hidden shadow-sm shadow-slate-100 hover:shadow-md transition-shadow"
           >
             <NuxtLink :to="`/produit/${relatedProduct.slug}`">
-              <div class="aspect-square bg-gray-100">
+              <div class="aspect-square bg-white">
                 <img
                   v-if="relatedProduct.image"
                   :src="relatedProduct.image.src"

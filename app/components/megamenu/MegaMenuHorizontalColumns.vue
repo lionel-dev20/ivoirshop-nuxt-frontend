@@ -3,7 +3,7 @@
     <!-- Niveau 1 -->
     <ul
       ref="parentMenu"
-      class="flex flex-col w-64 bg-white border-1 border-slate-100 text-gray-800 md:px-3 md:py-4 rounded-sm shadow-md shadow-gray-50"
+      class="lg:flex flex-col w-64 hidden md:block bg-white border-1 border-slate-100 text-gray-800 md:px-3 md:py-4 rounded-sm shadow-md shadow-gray-50"
     >
       <!-- Menu WordPress -->
       <template v-if="!pending && !error && navigation?.length">
@@ -37,7 +37,7 @@
                   </a>
 
                   <ul v-if="sub.children && sub.children.length" class="ml-2 mt-1 flex flex-col space-y-1">
-                    <MegaMenuSubItem v-for="sub2 in sub.children" :key="sub2.ID" :item="sub2" />
+                    <MenuSubItemRecursive v-for="sub2 in sub.children" :key="sub2.ID" :item="sub2" />
                   </ul>
                 </li>
               </ul>

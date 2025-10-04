@@ -1,6 +1,6 @@
-import { defineEventHandler, createError, getQuery } from 'h3'
+import { defineEventHandler, getQuery, createError } from 'h3'
 import { useRuntimeConfig } from '#imports'
-import { createWooCommerceClient } from '../../utils/woocommerce'
+import { createWooCommerceClient } from '../../../utils/woocommerce'
 
 export default defineEventHandler(async (event) => {
   try {
@@ -37,6 +37,7 @@ export default defineEventHandler(async (event) => {
         stock_status: 'instock',
         orderby: 'relevance',
         order: 'desc',
+        // Inclure seulement les informations essentielles
         fields: 'id,name,slug,price,regular_price,sale_price,images,categories'
       })
 
@@ -74,7 +75,7 @@ export default defineEventHandler(async (event) => {
         })
       })
 
-      // Suggestions génériques
+      // Suggestions génériques basées sur le terme de recherche
       const genericSuggestions = [
         {
           id: `generic-${searchTerm.toLowerCase().replace(/\s+/g, '-')}`,
@@ -128,7 +129,7 @@ export default defineEventHandler(async (event) => {
         }
       }
     }
-    
+
   } catch (err: any) {
     console.error('Erreur lors de l\'autocomplétion:', {
       message: err.message,
@@ -141,4 +142,3 @@ export default defineEventHandler(async (event) => {
     })
   }
 })
-

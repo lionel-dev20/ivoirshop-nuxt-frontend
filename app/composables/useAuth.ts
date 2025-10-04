@@ -5,6 +5,8 @@ interface User {
   id: number;
   username: string;
   email: string;
+  first_name?: string;
+  last_name?: string;
 }
 
 interface AuthResponse {
@@ -19,6 +21,7 @@ export const useAuth = () => {
   // état utilisateur
   const user = ref<User | null>(null);
   const isLoggedIn = computed(() => !!user.value);
+  const isAuthenticated = computed(() => !!user.value);
 
   const loading = ref(false);
   const error = ref<string | null>(null);
@@ -101,6 +104,7 @@ export const useAuth = () => {
   return {
     user,
     isLoggedIn,
+    isAuthenticated,
     loading,
     error,
     register,

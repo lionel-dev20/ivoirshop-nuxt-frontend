@@ -8,7 +8,7 @@
     </a>
 
     <ul v-if="item.children && item.children.length" class="ml-2 mt-1 flex flex-col space-y-1">
-      <MegaMenuSubItem v-for="child in item.children" :key="child.ID" :item="child" />
+      <MenuSubItemRecursive v-for="child in item.children" :key="child.ID" :item="child" />
     </ul>
   </li>
 </template>

@@ -1,5 +1,6 @@
 <template>
-  <div class="max-w-md mx-auto mt-10 p-6 bg-white shadow-lg rounded-xl">
+    <div class="min-h-screen flex items-center justify-center bg-gray-50">
+      <div class="w-full max-w-md bg-white p-8 rounded shadow">
     <h1 class="text-2xl font-bold mb-6 text-center">Créer un compte</h1>
 
     <form @submit.prevent="handleRegister" class="space-y-4">
@@ -33,7 +34,7 @@
         <input
           v-model="form.password"
           type="password"
-          class="w-full border rounded-md px-3 py-2"
+          class="w-full border rounded-sm px-3 py-2"
           placeholder="********"
         />
         <p v-if="errors.password" class="text-red-500 text-sm">{{ errors.password }}</p>
@@ -42,7 +43,7 @@
       <!-- Bouton -->
       <button
         type="submit"
-        class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
+        class="w-full bg-[#ff9900] text-white py-3 rounded-sm hover:bg-[#ff9900]/80 transition"
         :disabled="loading"
       >
         {{ loading ? "Inscription en cours..." : "S’inscrire" }}
@@ -51,13 +52,11 @@
       <p v-if="errorMessage" class="text-red-500 text-center mt-3">{{ errorMessage }}</p>
     </form>
   </div>
+</div>
 </template>
 
 <script setup lang="ts">
 import { reactive, ref } from "vue";
-import { useAuth } from "@/composables/useAuth";
-
-const { register } = useAuth();
 
 const form = reactive({
   name: "",
@@ -84,15 +83,26 @@ const handleRegister = async () => {
   errorMessage.value = "";
 
   try {
-    await register({
-      username: form.name,
-      email: form.email,
-      password: form.password,
+     const response = await $fetch('/api/auth/register', {
+      method: 'POST',
+      body: {
+        username: form.name,
+        email: form.email,
+        password: form.password,
+        first_name: form.name,
+        last_name: '',
+      },
+      credentials: 'include'
     });
-    // redirection après succès
-    navigateTo("/auth/profil");
+
+    if (response.success) {
+      // Redirection vers la page de connexion après inscription
+      await navigateTo("/auth/login");
+    } else {
+      errorMessage.value = response.error || "Erreur lors de l'inscription";
+    }
   } catch (err: any) {
-    errorMessage.value = err.message || "Erreur lors de l’inscription";
+    errorMessage.value = err.data?.message || err.message || "Erreur lors de l'inscription";
   } finally {
     loading.value = false;
   }

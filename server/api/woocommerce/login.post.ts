@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    const resp = await fetch(`${process.env.WP_URL}/wp-json/jwt-auth/v1/token`, {
+    const resp = await fetch(`${process.env.WORDPRESS_URL}/wp-json/jwt-auth/v1/token`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password }),

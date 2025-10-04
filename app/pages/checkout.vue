@@ -10,7 +10,7 @@
         <h2 class="mt-4 text-xl font-semibold text-gray-900">Votre panier est vide</h2>
         <p class="mt-2 text-gray-600">Ajoutez des produits pour passer commande.</p>
         <NuxtLink
-          to="/categories"
+          to="/categorie"
           class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
         >
           Voir les produits
@@ -296,13 +296,14 @@
                   <div class="text-sm text-gray-500">Payez en espèces lors de la réception</div>
                 </div>
                 <div class="ml-auto">
-                  <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <!-- <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-                  </svg>
+                  </svg> -->
+                  <p class="text-green-800 font-bold">FCFA</p>
                 </div>
               </label>
 
-              <label class="flex items-center p-3 border border-gray-200 rounded-md cursor-not-allowed opacity-50">
+              <!-- <label class="flex items-center p-3 border border-gray-200 rounded-md cursor-not-allowed opacity-50">
                 <input
                   type="radio"
                   value="card"
@@ -318,7 +319,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                   </svg>
                 </div>
-              </label>
+              </label> -->
             </div>
           </div>
         </div>
@@ -379,7 +380,7 @@
             <button
               type="submit"
               :disabled="isSubmitting || !canSubmit"
-              class="w-full mt-6 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center space-x-2"
+              class="w-full mt-6 bg-[#ff9b02] cursor-pointer hover:bg-[#ff9b02]/80 disabled:bg-gray-400 text-white font-semibold py-3 px-4 rounded-sm transition-colors flex items-center justify-center space-x-2"
             >
               <div v-if="isSubmitting" class="animate-pulse">
                 <div class="h-5 w-5 bg-white rounded"></div>
@@ -438,9 +439,9 @@ useSeoMeta({
   description: 'Finalisez votre commande en toute sécurité'
 })
 
-// Redirection si panier vide
-if (cartStore.isEmpty) {
-  await navigateTo('/categories')
+// Redirection si panier vide (uniquement côté client)
+if (process.client && cartStore.isEmpty) {
+  await navigateTo('/categorie')
 }
 
 // État du formulaire simplifié (adresse automatique via zone de livraison)
@@ -497,11 +498,13 @@ const canSubmit = computed(() => {
 })
 
 // Fonctions utilitaires
-const formatPrice = (price: number) => {
-  return new Intl.NumberFormat('fr-FR', {
-    style: 'currency',
-    currency: 'EUR'
-  }).format(price)
+const formatPrice = (price: string | number) => {
+  const numPrice = typeof price === "string" ? parseFloat(price) : price
+
+  return new Intl.NumberFormat("en-US",  {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(numPrice) + " FCFA"
 }
 
 const getPrice = (productType: string) => {

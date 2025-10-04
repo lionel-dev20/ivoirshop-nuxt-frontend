@@ -1,18 +1,15 @@
-// server/api/auth/register.post.ts
-import { defineEventHandler, readBody, createError } from 'h3'
+import { defineEventHandler, readBody } from 'h3'
 import { createWooCommerceClient } from '../../utils/woocommerce'
 
 export default defineEventHandler(async (event) => {
+  const body = await readBody(event)
+  const { username, email, password, first_name, last_name } = body
+
+  if (!username || !email || !password) {
+    return { success: false, error: 'Veuillez renseigner tous les champs obligatoires.' }
+  }
+
   try {
-    const body = await readBody(event) as { username: string; email: string; password: string; first_name?: string; last_name?: string }
-
-    if (!body.username || !body.email || !body.password) {
-      throw createError({
-        statusCode: 400,
-        statusMessage: 'Veuillez renseigner tous les champs obligatoires.'
-      })
-    }
-
     const api = await createWooCommerceClient({
       url: process.env.WORDPRESS_URL!,
       consumerKey: process.env.WOOCOMMERCE_CONSUMER_KEY!,
@@ -22,11 +19,11 @@ export default defineEventHandler(async (event) => {
 
     // Créer un nouveau client WooCommerce
     const customerData = {
-      email: body.email,
-      first_name: body.first_name || body.username,
-      last_name: body.last_name || '',
-      username: body.username,
-      password: body.password,
+      email,
+      first_name: first_name || username,
+      last_name: last_name || '',
+      username,
+      password,
     }
 
     const { data } = await api.post('customers', customerData)
@@ -55,9 +52,7 @@ export default defineEventHandler(async (event) => {
       errorMessage = 'Ce nom d\'utilisateur est déjà pris'
     }
 
-    return {
-      success: false,
-      error: errorMessage
-    }
+    return { success: false, error: errorMessage }
   }
 })
+

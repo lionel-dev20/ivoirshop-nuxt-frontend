@@ -85,8 +85,12 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import axios from 'axios'
-import { useRouter } from 'vue-router'
+import { useAuth } from '@/composables/useAuth'
+
+// Middleware d'authentification
+definePageMeta({
+  middleware: 'auth'
+})
 
 interface User {
   id: number
@@ -102,6 +106,8 @@ interface Order {
   date_created: string
 }
 
+const { user: authUser, logout: authLogout, fetchUser } = useAuth()
+
 const user = ref<User | null>(null)
 const orders = ref<Order[]>([])
 const loading = ref(true)
@@ -110,73 +116,74 @@ const firstName = ref('')
 const lastName = ref('')
 const email = ref('')
 
-const router = useRouter()
-
-onMounted(() => {
-  const token = localStorage.getItem('wc_token')
-  if (!token) {
-    router.push('/auth/login')
-  } else {
-    fetchProfile(token)
-    fetchOrders(token)
+onMounted(async () => {
+  // Vérifier si l'utilisateur est connecté
+  await fetchUser()
+  
+  if (!authUser.value) {
+    await navigateTo('/auth/login')
+    return
   }
+
+  // Charger les données du profil
+  await loadProfileData()
 })
 
-const fetchProfile = async (token: string) => {
+const loadProfileData = async () => {
   try {
-    const { data } = await axios.get('/api/woocommerce/me', {
-      headers: { Authorization: `Bearer ${token}` }
+    // Récupérer les données WooCommerce du profil
+    const { data: profileData } = await $fetch('/api/woocommerce/me', {
+      credentials: 'include'
     })
-    user.value = data
-    firstName.value = data.first_name
-    lastName.value = data.last_name
-    email.value = data.email
-  } catch (err) {
-    console.error('Erreur récupération profil :', err)
-    localStorage.removeItem('wc_token')
-    router.push('/auth/login')
-  }
-}
+    
+    if (profileData && !profileData.error) {
+      user.value = profileData
+      firstName.value = profileData.first_name || ''
+      lastName.value = profileData.last_name || ''
+      email.value = profileData.email || ''
+    }
 
-const fetchOrders = async (token: string) => {
-  try {
-    const { data } = await axios.get('/api/woocommerce/my-orders', {
-      headers: { Authorization: `Bearer ${token}` }
+    // Récupérer les commandes
+    const { data: ordersData } = await $fetch('/api/woocommerce/my-orders', {
+      credentials: 'include'
     })
-    orders.value = data
+    
+    if (ordersData && !ordersData.error) {
+      orders.value = ordersData
+    }
   } catch (err) {
-    console.error('Erreur récupération commandes :', err)
+    console.error('Erreur chargement profil :', err)
   } finally {
     loading.value = false
   }
 }
 
 const updateProfile = async () => {
-  const token = localStorage.getItem('wc_token')
-  if (!token) return
-
   try {
-    const { data } = await axios.put(
-      '/api/woocommerce/update-user',
-      {
+    const { data } = await $fetch('/api/woocommerce/update-user', {
+      method: 'PUT',
+      body: {
         first_name: firstName.value,
         last_name: lastName.value,
         email: email.value,
       },
-      { headers: { Authorization: `Bearer ${token}` } }
-    )
-    user.value = data
-    alert('Profil mis à jour avec succès !')
+      credentials: 'include'
+    })
+    
+    if (data && !data.error) {
+      user.value = data
+      alert('Profil mis à jour avec succès !')
+    } else {
+      alert("Impossible de mettre à jour le profil.")
+    }
   } catch (err) {
     console.error('Erreur mise à jour :', err)
     alert("Impossible de mettre à jour le profil.")
   }
 }
 
-const logout = () => {
-  localStorage.removeItem('wc_token')
-  user.value = null
-  router.push('/auth/login')
+const logout = async () => {
+  await authLogout()
 }
 
 const formatDate = (date: string) => {

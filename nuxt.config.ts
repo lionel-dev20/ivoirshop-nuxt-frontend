@@ -35,10 +35,10 @@ export default defineNuxtConfig({
       WORDPRESS_URL: process.env.WORDPRESS_URL
     },
     WORDPRESS_URL: process.env.WORDPRESS_URL, // accessible côté serveur
-    WC_STORE_URL: process.env.WC_STORE_URL,
+    WC_STORE_URL: process.env.WC_STORE_URL || process.env.WORDPRESS_URL,
     WOOCOMMERCE_CONSUMER_KEY: process.env.WOOCOMMERCE_CONSUMER_KEY,
     WOOCOMMERCE_CONSUMER_SECRET: process.env.WOOCOMMERCE_CONSUMER_SECRET,
-    NODE_TLS_REJECT_UNAUTHORIZED: process.env.NODE_TLS_REJECT_UNAUTHORIZED,
+    // NODE_TLS_REJECT_UNAUTHORIZED: process.env.NODE_TLS_REJECT_UNAUTHORIZED, // ⚠️ Désactivé pour la sécurité
   },
    ssr: true,
 

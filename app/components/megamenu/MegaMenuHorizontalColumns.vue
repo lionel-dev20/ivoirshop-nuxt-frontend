@@ -3,7 +3,7 @@
     <!-- Niveau 1 -->
     <ul
       ref="parentMenu"
-      class="lg:flex flex-col w-64 hidden md:block bg-white border-1 border-slate-100 text-gray-800 md:px-3 md:py-4 rounded-sm shadow-md shadow-gray-50"
+      class="lg:flex hidden flex-col w-64 bg-white border-1 border-slate-100 text-gray-800 md:px-3 md:py-4 rounded-sm shadow-md shadow-gray-50"
     >
       <!-- Menu WordPress -->
       <template v-if="!pending && !error && navigation?.length">
@@ -15,7 +15,7 @@
         <!-- Niveau 2 → Colonnes -->
         <div
           v-if="item.children && item.children.length"
-          class="absolute md:min-w-[1190px] rounded-tr-lg rounded-br-lg md:ml-2.5 bottom-0 top-0 left-full hidden group-hover:flex bg-white shadow-md shadow-gray-50 z-30 transition-all duration-200"
+          class="absolute md:min-w-[914px] rounded-tr-lg rounded-br-lg md:ml-2.5 bottom-0 top-0 left-full hidden group-hover:flex bg-white shadow-md shadow-gray-50 z-30 transition-all duration-200"
           :style="{ '--menu-height': parentHeight + 'px', minHeight: 'var(--menu-height)' }"
         >
           <div class="flex flex-row gap-4 p-4">

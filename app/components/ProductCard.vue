@@ -1,6 +1,6 @@
 <template>
   <div
-    class="relative flex flex-col bg-white border border-gray-200 rounded-lg shadow hover:shadow-md transition p-3"
+    class="relative flex flex-col bg-white border border-gray-100 rounded-sm shadow shadow-gray-100 hover:shadow-md transition p-3"
   >
     <!-- Badge -->
     <div class="absolute top-2 left-2 flex flex-col gap-1">
@@ -20,12 +20,11 @@
 
     <!-- Image -->
     <NuxtLink :to="`/produit/${product.slug}`">
-      <img
-        :src="getProductImage(product)"
+      <ProductImage 
+        :src="getProductImageSrc(product)"
         :alt="product.name"
-        class="w-full h-48 object-cover rounded-md mb-3"
-        loading="lazy"
-        @error="handleImageError"
+        class="mb-3"
+        @image-loaded="handleImageLoaded"
       />
     </NuxtLink>
 
@@ -33,22 +32,22 @@
     <div class="flex flex-col flex-1">
       <NuxtLink
         :to="`/product/${product.slug}`"
-        class="text-gray-800 font-medium line-clamp-2 hover:text-indigo-600 transition"
+        class="text-gray-800 font-medium line-clamp-2"
       >
         {{ product.name }}
       </NuxtLink>
 
       <!-- Prix -->
       <div class="mt-2 flex items-center gap-2">
-        <span v-if="product.on_sale || product.onSale" class="text-red-600 font-semibold">
-          {{ formatPrice(product.salePrice || product.sale_price) }}
+        <span v-if="product.on_sale || product.onSale" class="text-red-600 text-lg font-semibold">
+          {{ formatPrice(product.salePrice || product.sale_price || 0) }}
         </span>
         <span
           :class="[
-            (product.on_sale || product.onSale) ? 'line-through text-gray-400 text-sm' : 'text-gray-900 font-semibold'
+            (product.on_sale || product.onSale) ? 'line-through text-gray-400 text-sm' : 'text-gray-900 text-[16px] font-semibold'
           ]"
         >
-          {{ formatPrice(product.regularPrice || product.regular_price) }}
+          {{ formatPrice(product.regularPrice || product.regular_price || 0) }}
         </span>
       </div>
     </div>
@@ -58,7 +57,7 @@
       @click="addToCart"
       :disabled="!canAddToCart"
       :class="[
-        'mt-3 w-full text-sm py-2 rounded-lg transition flex items-center justify-center gap-2',
+        'mt-3 w-full text-sm py-2.5 rounded-[4px] transition flex items-center justify-center gap-2',
         canAddToCart 
           ? 'bg-[#ff9900] text-white hover:bg-[#ff9900]/80' 
           : 'bg-gray-300 text-gray-500 cursor-not-allowed'
@@ -67,20 +66,23 @@
       <div v-if="isAdding" class="animate-pulse">
         <div class="h-4 w-4 bg-white rounded"></div>
       </div>
-      <svg v-else class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <!-- <svg v-else class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01"></path>
-      </svg>
+      </svg> -->
       {{ buttonText }}
     </button>
   </div>
 </template>
 
 <script setup lang="ts">
+import ProductImage from '~/components/ProductImage.vue'
+
 interface Product {
   id: number
   name: string
   slug: string
   thumbnail?: string
+  image?: string
   images?: Array<{
     id: number
     src: string
@@ -100,6 +102,14 @@ const props = defineProps<{
   product: Product
 }>()
 
+const emit = defineEmits<{
+  addToCart: [product: Product]
+  productClick: [product: Product]
+  quickView: [product: Product]
+  wishlistToggle: [product: Product]
+  imageLoaded: []
+}>()
+
 // Vérifier si promo
 const discountPercent = computed(() => {
   const salePrice = props.product.salePrice || props.product.sale_price
@@ -117,40 +127,71 @@ const product = computed(() => ({
 }))
 
 // Format prix
-const formatPrice = (price?: number) =>
-  price ? new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(price) : ''
+const formatPrice = (price: string | number) => {
+  const numPrice = typeof price === "string" ? parseFloat(price) : price
 
-// Récupérer l'image du produit
-const getProductImage = (product: Product) => {
-  // Si thumbnail existe, l'utiliser
-  if (product.thumbnail) {
+  return new Intl.NumberFormat("en-US",  {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(numPrice) + " FCFA"
+}
+
+// Récupérer la source d'image du produit pour le composant ProductImage
+const getProductImageSrc = (product: Product): string | string[] | null => {
+  console.log('=== ProductCard Image Debug ===')
+  console.log('Product:', product)
+  console.log('Product image property:', product.image)
+  console.log('Product images array:', product.images)
+  console.log('Product thumbnail:', product.thumbnail)
+  
+  // Priorité 1: Propriété image directe
+  if (product.image && product.image !== '/images/placeholder-product.jpg') {
+    console.log('Using product.image:', product.image)
+    return product.image
+  }
+  
+  // Priorité 2: Si thumbnail existe, l'utiliser
+  if (product.thumbnail && product.thumbnail !== '/images/placeholder-product.jpg') {
+    console.log('Using product.thumbnail:', product.thumbnail)
     return product.thumbnail
   }
   
-  // Sinon, prendre la première image du tableau images
-  if (product.images && product.images.length > 0) {
-    return product.images[0]?.src || '/images/placeholder-product.jpg'
+  // Priorité 3: Retourner le tableau images complet pour que ProductImage le gère
+  if (product.images && Array.isArray(product.images) && product.images.length > 0) {
+    console.log('Using product.images array:', product.images)
+    // Convertir en tableau de strings pour compatibilité
+    return product.images.map(img => img.src)
   }
   
-  // Image par défaut
-  return '/images/placeholder-product.jpg'
-}
-
-// Gestion d'erreur d'image
-const handleImageError = (event: Event) => {
-  const img = event.target as HTMLImageElement
-  img.src = '/images/placeholder-product.jpg'
+  // Aucune image trouvée
+  console.log('No image found, returning null')
+  return null
 }
 
 // Store du panier
 const cartStore = useCartStore()
+
+// Gestion du chargement d'image
+const handleImageLoaded = () => {
+  // Émettre un événement au parent pour notifier que l'image est chargée
+  emit('imageLoaded')
+}
 
 // État du bouton
 const isAdding = ref(false)
 
 // Vérifier si on peut ajouter au panier
 const canAddToCart = computed(() => {
-  return product.value.stock_status === 'instock' || product.value.stock_status === 'onbackorder'
+  const stockStatus = product.value.stock_status?.toLowerCase()
+  console.log('Stock status:', stockStatus, 'Product:', product.value.name)
+  
+  // Considérer comme disponible si pas de statut défini ou si en stock
+  if (!stockStatus || stockStatus === 'instock' || stockStatus === 'onbackorder') {
+    return true
+  }
+  
+  // Indisponible seulement si explicitement outofstock
+  return stockStatus !== 'outofstock'
 })
 
 // Texte du bouton

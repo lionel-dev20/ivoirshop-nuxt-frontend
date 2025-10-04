@@ -5,10 +5,51 @@
       <HerosectionMyCarousel />
       <RightDoubleAds />
     </div>
-           <div class="h-8"></div>
-           <ListPartner />
-           <div class="h-8"></div>
-    
+    <div class="h-8"></div>
+    <ListPartner />
+    <div class="h-8"></div>
+    <div class="h-8"></div>
+   
+    <!-- Carousel de produits -->
+    <ProductCarousel 
+      title="Nouveautés"
+       category-slug="televisions"
+      :max-products="20"
+      :autoplay="true"
+      :autoplay-delay="4000"
+      :show-pagination="true"
+      :show-navigation="true"
+      @add-to-cart="handleAddToCart"
+      @product-click="handleProductClick"
+      @quick-view="handleQuickView"
+      @wishlist-toggle="handleWishlistToggle"
+    />
+
+    <div class="h-8"></div>
+   <CollectionHomepageDoubleBanner />
+   <div class="h-8"></div>
+    <!-- Carousel de promotions -->
+    <ProductCarousel 
+      title="Promotions du moment"
+      category-slug="electromenager"
+      :max-products="15"
+      :autoplay="false"
+      :show-pagination="true"
+      :show-navigation="true"
+      @add-to-cart="handleAddToCart"
+      @product-click="handleProductClick"
+      @quick-view="handleQuickView"
+      @wishlist-toggle="handleWishlistToggle"
+    />
+    <div class="h-8"></div>
+    <CollectionHomepageDoubleBanner1 />
+    <div class="h-8"></div>
+    <Nouveaute 
+     category-slug="air-fryers"
+     :grid-columns="5"
+     :products-per-page="12"
+   />
+
     <!-- Blocs de catégories -->
     <!-- <CategoryBlocks />
     
@@ -18,8 +59,8 @@
      :grid-columns="4"
      :products-per-page="12"
    /> -->
-  <div class="h-8"></div>
-   <!-- <div class="container mx-auto px-4">
+    <div class="h-8"></div>
+    <!-- <div class="container mx-auto px-4">
         <DualBannerSlider
           :limit="6"
           :auto-rotate="true"
@@ -41,8 +82,7 @@ import DualBannerSlider from '~/components/DualBannerSlider.vue';
 import RightDoubleAds from '~/components/herosection/RightDoubleAds.vue';
 import ListPartner from '~/components/partenaires/ListPartner.vue';
 import CategoryBlocks from '~/components/CategoryBlocks.vue';
-
-
+import ProductCarousel from '~/components/ProductCarousel.vue';
 
 const newProducts = [
   {
@@ -73,6 +113,28 @@ const saleProducts = [
     salePrice: 14.99
   }
 ]
+
+// Gestionnaires d'événements pour le carousel
+const handleAddToCart = (product) => {
+  console.log('Ajouter au panier:', product);
+  // Logique d'ajout au panier
+}
+
+const handleProductClick = (product) => {
+  console.log('Clic sur produit:', product);
+  // Navigation vers la page produit
+  navigateTo(`/produit/${product.slug}`);
+}
+
+const handleQuickView = (product) => {
+  console.log('Vue rapide:', product);
+  // Ouvrir modal de vue rapide
+}
+
+const handleWishlistToggle = (product) => {
+  console.log('Toggle wishlist:', product);
+  // Ajouter/retirer des favoris
+}
 
 </script>
 

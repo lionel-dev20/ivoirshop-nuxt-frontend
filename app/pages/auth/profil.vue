@@ -132,27 +132,46 @@ onMounted(async () => {
 const loadProfileData = async () => {
   try {
     // Récupérer les données WooCommerce du profil
-    const { data: profileData } = await $fetch('/api/woocommerce/me', {
+    const response = await $fetch('/api/woocommerce/me', {
       credentials: 'include'
     })
     
-    if (profileData && !profileData.error) {
-      user.value = profileData
-      firstName.value = profileData.first_name || ''
-      lastName.value = profileData.last_name || ''
-      email.value = profileData.email || ''
+    if (response.data && !response.error) {
+      user.value = response.data
+      firstName.value = response.data.first_name || ''
+      lastName.value = response.data.last_name || ''
+      email.value = response.data.email || ''
+    } else if (response.error) {
+      console.error('Erreur profil:', response.error)
+      // Utiliser les données de base depuis authUser
+      if (authUser.value) {
+        user.value = authUser.value as User
+        firstName.value = authUser.value.first_name || ''
+        lastName.value = authUser.value.last_name || ''
+        email.value = authUser.value.email || ''
+      }
     }
 
     // Récupérer les commandes
-    const { data: ordersData } = await $fetch('/api/woocommerce/my-orders', {
+    const ordersResponse = await $fetch('/api/woocommerce/my-orders', {
       credentials: 'include'
     })
     
-    if (ordersData && !ordersData.error) {
-      orders.value = ordersData
+    if (ordersResponse.data && !ordersResponse.error) {
+      orders.value = ordersResponse.data
+    } else if (ordersResponse.error) {
+      console.error('Erreur commandes:', ordersResponse.error)
+      orders.value = []
     }
   } catch (err) {
     console.error('Erreur chargement profil :', err)
+    // Utiliser les données de base depuis authUser en cas d'erreur
+    if (authUser.value) {
+      user.value = authUser.value as User
+      firstName.value = authUser.value.first_name || ''
+      lastName.value = authUser.value.last_name || ''
+      email.value = authUser.value.email || ''
+    }
   } finally {
     loading.value = false
   }
@@ -160,7 +179,7 @@ const loadProfileData = async () => {
 
 const updateProfile = async () => {
   try {
-    const { data } = await $fetch('/api/woocommerce/update-user', {
+    const response = await $fetch('/api/woocommerce/update-user', {
       method: 'PUT',
       body: {
         first_name: firstName.value,
@@ -170,15 +189,17 @@ const updateProfile = async () => {
       credentials: 'include'
     })
     
-    if (data && !data.error) {
-      user.value = data
+    if (response.data && !response.error) {
+      user.value = response.data
+      // Mettre à jour aussi l'utilisateur dans le composable
+      await fetchUser()
       alert('Profil mis à jour avec succès !')
     } else {
-      alert("Impossible de mettre à jour le profil.")
+      alert(response.error || "Impossible de mettre à jour le profil.")
     }
-  } catch (err) {
+  } catch (err: any) {
     console.error('Erreur mise à jour :', err)
-    alert("Impossible de mettre à jour le profil.")
+    alert(err?.data?.error || "Impossible de mettre à jour le profil.")
   }
 }
 

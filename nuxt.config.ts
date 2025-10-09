@@ -25,8 +25,7 @@ export default defineNuxtConfig({
        */
       componentDir: './shadcn/ui'
     },
-  ], '@nuxt/fonts',
-  '@nuxt/image'
+  ], '@nuxt/fonts'
 ],
 
   runtimeConfig: {
@@ -64,9 +63,12 @@ export default defineNuxtConfig({
       charset: 'utf-8',
       viewport: 'width=device-width, initial-scale=1',
       title: 'IvoirShop CI - Votre boutique en ligne',
+      link: [
+        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+      ],
       meta: [
         { name: 'description', content: 'Découvrez notre large gamme de produits électroniques, électroménager et bien plus sur IvoirShop CI' },
-        { name: 'keywords', content: 'boutique en ligne, Côte d\'Ivoire, électronique, électroménager, smartphones, TV' }
+        { name: 'keywords', content: 'boutique en ligne, Côte dIvoire, électronique, électroménager, smartphones, TV' }
       ]
     }
   }

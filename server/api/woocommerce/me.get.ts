@@ -1,16 +1,32 @@
-import { defineEventHandler, getHeader } from 'h3'
+import { defineEventHandler, getCookie } from 'h3'
 import { createWooCommerceClient } from '../../utils/woocommerce'
 
 export default defineEventHandler(async (event) => {
   try {
-    const token = getHeader(event, 'authorization')?.replace('Bearer ', '')
-    if (!token) return { error: 'Non autorisé' }
+    // Récupérer le token depuis le cookie
+    const token = getCookie(event, 'auth_token')
+    
+    if (!token) {
+      return { 
+        data: null, 
+        error: 'Non autorisé - veuillez vous connecter' 
+      }
+    }
 
+    // Décoder le token JWT pour obtenir l'ID utilisateur
     const payload = token.split('.')[1]
-    if (!payload) return { error: 'Token invalide' }
+    if (!payload) {
+      return { data: null, error: 'Token invalide' }
+    }
+    
     const decoded = JSON.parse(Buffer.from(payload, 'base64').toString())
-    const customerId = decoded.data.user.id
+    const customerId = decoded.data?.user?.id || decoded.user_id
 
+    if (!customerId) {
+      return { data: null, error: 'ID utilisateur introuvable dans le token' }
+    }
+
+    // Récupérer les données du client WooCommerce
     const api = await createWooCommerceClient({
       url: process.env.WORDPRESS_URL!,
       consumerKey: process.env.WOOCOMMERCE_CONSUMER_KEY!,
@@ -19,8 +35,16 @@ export default defineEventHandler(async (event) => {
     })
 
     const { data } = await api.get(`customers/${customerId}`)
-    return data
-  } catch (err) {
-    return { error: 'Impossible de récupérer le profil' }
+    
+    return { 
+      data,
+      error: null 
+    }
+  } catch (err: any) {
+    console.error('Erreur récupération profil WooCommerce:', err)
+    return { 
+      data: null,
+      error: err.message || 'Impossible de récupérer le profil' 
+    }
   }
 })

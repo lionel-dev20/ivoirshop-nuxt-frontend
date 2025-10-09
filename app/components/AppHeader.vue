@@ -6,11 +6,9 @@
         <!-- Logo -->
         <div class="flex-shrink-0">
           <NuxtLink to="/" class="text-xl font-bold text-gray-900">
-            <NuxtImg
+            <img
               src="/logo/ivoirshopci-coteivoir.png"
               alt="IvoirShop Logo"
-              width="200"
-              height="70"
               class="h-14 w-auto mt-3" />
           </NuxtLink>
         </div>
@@ -85,11 +83,9 @@
       <!-- Header du menu mobile -->
       <div class="flex items-center justify-between p-4 border-b">
         <NuxtLink to="/" @click="closeMobileMenu" class="text-xl font-bold text-gray-900">
-          <NuxtImg
+          <img
             src="/logo/ivoirshopci-coteivoir.png"
             alt="IvoirShop Logo"
-            width="120"
-            height="40"
             class="h-8 w-auto" />
         </NuxtLink>
         <button 

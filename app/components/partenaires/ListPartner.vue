@@ -3,7 +3,7 @@
         <!-- Left here baner -->
         <NuxtLink v-for="(item, index) in bannerAdsPartener" :key="index" to="/"
             class="object-cover md:min-h-[380px] md:min-w-[250px]  rounded-md flex justify-start items-center gap-x-2 bg-white py-1.5 px-1.5 border-1 border-gray-100 shadow-md shadow-gray-100">
-            <NuxtImg :src="item.image" alt="Publicité 1" loading="lazy"
+            <img :src="item.image" alt="Publicité 1" loading="lazy"
                 class="object-cover h-[380px] w-[250px] rounded-md" />
         </NuxtLink>
 
@@ -16,7 +16,7 @@
             <div class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
                 <NuxtLink to="/" v-for="(item, index) in listParnerImg" :key="index"
                     class="object-cover h-full w-full rounded-md flex justify-start items-center gap-x-2 py-5 px-6 bg-white border-1 border-gray-100 shadow-md shadow-gray-100 hover:scale-103 transition-transform duration-200">
-                    <NuxtImg :src="item.image" :alt="item.title" loading="lazy"
+                    <img :src="item.image" :alt="item.title" loading="lazy"
                         class="object-cover block items-center justify-center rounded-md shadow-gray-100" />
                 </NuxtLink>
             </div>
@@ -26,7 +26,7 @@
         <!-- Right here baner -->
         <NuxtLink v-for="(item, index) in bannerAdsPartener" :key="index" to="/"
             class="object-cover md:min-h-[380px] md:min-w-[250px]  rounded-md flex justify-start items-center gap-x-3 bg-white py-1.5 px-1.5 border-1 border-gray-100 shadow-md shadow-gray-100">
-            <NuxtImg
+            <img
                 src="https://web.archive.org/web/20240216010846im_/https://www.ivoirshop.ci/wp-content/uploads/2023/11/Coupe-dafrique-2023.webp"
                 alt="Publicité 1" loading="lazy" class="object-cover h-[380px] w-[250px] rounded-md" />
         </NuxtLink>

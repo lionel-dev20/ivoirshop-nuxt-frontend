@@ -57,6 +57,9 @@
 
 <script setup lang="ts">
 import { reactive, ref } from "vue";
+import { useAuth } from '@/composables/useAuth'
+
+const { register } = useAuth()
 
 const form = reactive({
   name: "",
@@ -71,7 +74,7 @@ const errorMessage = ref("");
 // Validation simple
 const validate = () => {
   errors.name = !form.name ? "Le nom est requis" : "";
-  errors.email = !form.email ? "L’email est requis" : "";
+  errors.email = !form.email ? "L'email est requis" : "";
   errors.password = form.password.length < 6 ? "6 caractères minimum" : "";
   return !errors.name && !errors.email && !errors.password;
 };
@@ -83,26 +86,22 @@ const handleRegister = async () => {
   errorMessage.value = "";
 
   try {
-     const response = await $fetch('/api/auth/register', {
-      method: 'POST',
-      body: {
-        username: form.name,
-        email: form.email,
-        password: form.password,
-        first_name: form.name,
-        last_name: '',
-      },
-      credentials: 'include'
+    const response = await register({
+      username: form.name,
+      email: form.email,
+      password: form.password,
     });
 
-    if (response.success) {
+    if (response && response.success) {
       // Redirection vers la page de connexion après inscription
+      alert('Inscription réussie ! Vous pouvez maintenant vous connecter.')
       await navigateTo("/auth/login");
     } else {
-      errorMessage.value = response.error || "Erreur lors de l'inscription";
+      errorMessage.value = response?.error || "Erreur lors de l'inscription";
     }
   } catch (err: any) {
-    errorMessage.value = err.data?.message || err.message || "Erreur lors de l'inscription";
+    errorMessage.value = err.message || "Erreur lors de l'inscription";
+    console.error('Erreur inscription:', err)
   } finally {
     loading.value = false;
   }

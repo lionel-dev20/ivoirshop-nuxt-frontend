@@ -32,7 +32,18 @@
         <span v-else>Connexion...</span>
       </button>
 
-      <p class="mt-4 text-sm text-center text-red-500" v-if="error">{{ error }}</p>
+      <p class="mt-4 text-sm text-center text-red-500" v-if="localError || error">
+        {{ localError || error }}
+      </p>
+      
+      <div class="mt-4 text-center">
+        <p class="text-sm text-gray-600">
+          Pas encore de compte ? 
+          <NuxtLink to="/auth/signup" class="text-[#ff9900] hover:underline">
+            S'inscrire
+          </NuxtLink>
+        </p>
+      </div>
     </div>
   </div>
 </template>
@@ -45,22 +56,29 @@ const { signin, loading, error } = useAuth()
 
 const email = ref('')
 const password = ref('')
+const localError = ref('')
 
 const login = async () => {
+  localError.value = ''
+  
   if (!email.value || !password.value) {
+    localError.value = 'Veuillez remplir tous les champs'
     return
   }
 
   try {
-    await signin({
+    const result = await signin({
       username: email.value,
       password: password.value
     })
     
-    // Redirection automatique gérée par useAuth
-    await navigateTo('/auth/profil')
-  } catch (err) {
+    if (result && result.user) {
+      // Connexion réussie, redirection vers le profil
+      await navigateTo('/auth/profil')
+    }
+  } catch (err: any) {
     console.error('Erreur de connexion:', err)
+    localError.value = err.message || error.value || 'Erreur lors de la connexion'
   }
 }
 </script>

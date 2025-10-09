@@ -1,54 +1,37 @@
 <!-- pages/recherche.vue -->
 <template>
-  <div class="max-w-6xl mx-auto p-6">
-    <h1 class="text-2xl font-bold mb-6">
-      Résultats de recherche
-      <span v-if="searchQuery" class="text-blue-600">"{{ searchQuery }}"</span>
-    </h1>
-
+  <div class="max-w-[1440px] mx-auto p-6">
     <!-- Skeleton de chargement -->
-    <div v-if="loading" class="max-w-[1440px] mx-auto p-6">
-      <!-- Skeleton barre de recherche -->
-      <div class="mb-6">
-        <div class="animate-pulse">
-          <div class="h-12 bg-gray-200 rounded-lg w-full mb-4"></div>
-        </div>
-      </div>
-
-      <!-- Skeleton filtres -->
-      <div class="mb-6">
-        <div class="animate-pulse">
-          <div class="h-6 bg-gray-200 rounded w-1/4 mb-4"></div>
-          <div class="flex space-x-4">
-            <div class="h-8 bg-gray-200 rounded w-20"></div>
-            <div class="h-8 bg-gray-200 rounded w-24"></div>
-            <div class="h-8 bg-gray-200 rounded w-16"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Skeleton résultats -->
-      <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-0.5 md:gap-3.5">
-        <div v-for="i in 8" :key="i" class="bg-white border border-gray-100 rounded-md overflow-hidden shadow-md shadow-gray-100">
-          <!-- Skeleton image -->
-          <div class="w-full h-64 bg-gray-200 animate-pulse"></div>
-          
-          <!-- Skeleton contenu -->
-          <div class="p-3.5">
-            <div class="animate-pulse">
-              <div class="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-              <div class="h-3 bg-gray-200 rounded w-1/2 mb-4"></div>
-              <div class="flex items-center justify-between">
-                <div class="h-5 bg-gray-200 rounded w-20"></div>
-                <div class="h-6 bg-gray-200 rounded w-16"></div>
-              </div>
+    <div v-if="loading" class="flex flex-col lg:flex-row gap-6">
+      <!-- Skeleton sidebar -->
+      <div class="lg:w-1/4">
+        <div class="bg-white rounded-md shadow-sm border border-gray-100 p-5">
+          <div class="animate-pulse">
+            <div class="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
+            <div class="space-y-4">
+              <div class="h-4 bg-gray-200 rounded w-1/2"></div>
+              <div class="h-8 bg-gray-200 rounded"></div>
+              <div class="h-4 bg-gray-200 rounded w-2/3"></div>
+              <div class="h-8 bg-gray-200 rounded"></div>
             </div>
           </div>
-
-          <!-- Skeleton bouton -->
-          <div class="px-4 pb-4">
-            <div class="animate-pulse">
-              <div class="w-full h-10 bg-gray-200 rounded"></div>
+        </div>
+      </div>
+      
+      <!-- Skeleton contenu -->
+      <div class="lg:w-3/4">
+        <div class="animate-pulse">
+          <div class="flex justify-between items-center mb-6">
+            <div class="h-6 bg-gray-200 rounded w-32"></div>
+            <div class="h-8 bg-gray-200 rounded w-40"></div>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div v-for="i in 8" :key="i" class="bg-white border border-gray-100 rounded-md overflow-hidden shadow-sm">
+              <div class="w-full h-64 bg-gray-200"></div>
+              <div class="p-4">
+                <div class="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                <div class="h-5 bg-gray-200 rounded w-1/2"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -65,7 +48,7 @@
         </div>
         <div class="ml-3">
           <h3 class="text-sm font-medium text-red-800">
-            Erreur de recherche
+            Erreur de chargement
           </h3>
           <p class="mt-1 text-sm text-red-700">{{ error }}</p>
           <button 
@@ -78,187 +61,106 @@
       </div>
     </div>
 
-    <!-- Contenu principal -->
-    <div v-else>
-      <!-- Layout avec filtres et produits -->
-      <div class="flex flex-col lg:flex-row gap-6">
-        <!-- Colonne latérale - Filtres -->
-        <div class="lg:w-1/4">
-          <div class="sticky top-6">
-            <ProductFilters
-              :products="allProducts"
-              :attributes="searchAttributes"
-              @filter="handleFilter"
-              @clear="handleClearFilters"
-            />
+    <!-- Contenu principal avec layout sidebar + contenu -->
+    <div v-else class="flex flex-col lg:flex-row gap-6">
+      <!-- Sidebar - Filtres -->
+      <div class="lg:w-1/4">
+        <div class="sticky top-6">
+          <ProductFilters
+            :products="allProducts"
+            :attributes="searchAttributes"
+            @filter="handleFilter"
+            @clear="handleClearFilters"
+          />
+        </div>
+      </div>
+
+      <!-- Contenu principal - Résultats -->
+      <div class="lg:w-3/4">
+        <!-- En-tête avec compteur et tri -->
+        <div class="flex items-center justify-between mb-6">
+          <div class="flex items-center space-x-4">
+            <span class="text-sm font-medium text-gray-900">
+              {{ filteredProducts.length }} produit{{ filteredProducts.length > 1 ? 's' : '' }}
+            </span>
+            <span v-if="searchQuery" class="text-sm text-gray-500">
+              pour "{{ searchQuery }}"
+            </span>
+          </div>
+          
+          <div class="flex items-center space-x-2">
+            <select
+              v-model="sortBy"
+              @change="handleSort"
+              class="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="default">Trier par défaut</option>
+              <option value="price-asc">Prix croissant</option>
+              <option value="price-desc">Prix décroissant</option>
+              <option value="name-asc">Nom A-Z</option>
+              <option value="name-desc">Nom Z-A</option>
+              <option value="rating">Note</option>
+              <option value="newest">Plus récents</option>
+            </select>
           </div>
         </div>
 
-        <!-- Colonne principale - Produits -->
-        <div class="lg:w-3/4">
-          <!-- En-tête avec compteur et tri -->
-          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
-            <div class="flex items-center space-x-4">
-              <h2 class="text-lg font-semibold text-gray-900">
-                {{ filteredProducts.length }} résultat{{ filteredProducts.length > 1 ? 's' : '' }}
-              </h2>
-              <span v-if="hasActiveFilters" class="text-sm text-blue-600">
-                ({{ allProducts.length }} au total)
-              </span>
-            </div>
-            
-            <!-- Tri -->
-            <div class="mt-4 sm:mt-0">
-              <select
-                v-model="sortBy"
-                @change="handleSort"
-                class="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                <option value="default">Trier par défaut</option>
-                <option value="price-asc">Prix croissant</option>
-                <option value="price-desc">Prix décroissant</option>
-                <option value="name-asc">Nom A-Z</option>
-                <option value="name-desc">Nom Z-A</option>
-                <option value="rating-desc">Mieux notés</option>
-                <option value="newest">Plus récents</option>
-                <option value="relevance">Pertinence</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Liste des produits -->
-          <div v-if="filteredProducts.length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-            <div 
-              v-for="product in filteredProducts" 
-              :key="product.id" 
-              class="border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow group cursor-pointer"
-            >
-              <!-- Lien vers la fiche produit -->
-              <NuxtLink :to="`/produit/${product.slug}`" class="block">
-                <div class="aspect-w-16 aspect-h-9">
-                  <img
-                    v-if="product.images && product.images.length > 0"
-                    :src="product.images[0].src"
-                    :alt="product.name"
-                    class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                    @error="onImageError"
-                  />
-                  <div 
-                    v-else 
-                    class="w-full h-48 bg-gray-200 flex items-center justify-center group-hover:bg-gray-300 transition-colors"
-                  >
-                    <span class="text-gray-400">Aucune image</span>
-                  </div>
-                </div>
-                
-                <div class="p-4">
-                  <h2 class="font-semibold text-lg mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
-                    {{ product.name }}
-                  </h2>
-                  
-                  <!-- Prix -->
-                  <div class="flex items-center justify-between mb-3">
-                    <div>
-                      <span v-if="product.sale_price" class="text-red-600 font-bold">
-                        {{ formatPrice(product.sale_price) }}
-                      </span>
-                      <span 
-                        :class="product.sale_price ? 'line-through text-gray-500 text-sm ml-2' : 'text-gray-700 font-semibold'"
-                      >
-                        {{ formatPrice(product.regular_price || product.price) }}
-                      </span>
-                      <!-- Badge promotion -->
-                      <span 
-                        v-if="product.sale_price" 
-                        class="ml-2 bg-red-100 text-red-800 text-xs font-medium px-2 py-1 rounded"
-                      >
-                        -{{ Math.round((1 - product.sale_price / product.regular_price) * 100) }}%
-                      </span>
-                    </div>
-                    
-                    <!-- Badge stock -->
-                    <span 
-                      v-if="product.stock_status"
-                      :class="getStockStatusClass(product.stock_status)"
-                      class="px-2 py-1 rounded-full text-xs font-medium"
-                    >
-                      {{ getStockStatusText(product.stock_status) }}
-                    </span>
-                  </div>
-                  
-                  <!-- Description courte -->
-                  <p 
-                    v-if="product.short_description" 
-                    class="text-gray-600 text-sm mt-2 line-clamp-3"
-                    v-html="product.short_description"
-                  ></p>
-
-                  <!-- Call to action -->
-                  <div class="mt-4 flex items-center justify-between">
-                    <span class="text-sm text-gray-500">Voir les détails</span>
-                    <svg 
-                      class="w-5 h-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all" 
-                      fill="none" 
-                      stroke="currentColor" 
-                      viewBox="0 0 24 24"
-                    >
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                </div>
-              </NuxtLink>
-
-              <!-- Actions rapides -->
-              <div class="px-4 pb-4">
-                <button 
-                  @click.prevent="addToCartQuick(product)"
-                  :disabled="product.stock_status !== 'instock'"
-                  :class="[
-                    'w-full py-2 px-4 rounded-md text-sm font-medium transition-colors',
-                    product.stock_status === 'instock' 
-                      ? 'bg-blue-600 hover:bg-blue-700 text-white' 
-                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  ]"
-                >
-                  {{ product.stock_status === 'instock' ? 'Ajouter au panier' : 'Indisponible' }}
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Aucun produit filtré -->
-          <div v-else-if="hasActiveFilters" class="text-center py-12">
-            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.29-1.009-5.824-2.709M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-            <h3 class="mt-2 text-sm font-medium text-gray-900">Aucun résultat trouvé</h3>
-            <p class="mt-1 text-sm text-gray-500">
-              Aucun produit ne correspond à vos critères de filtrage.
-            </p>
+        <!-- Liste des produits -->
+        <div v-if="filteredProducts.length" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          <ProductCard
+            v-for="product in filteredProducts"
+            :key="product.id"
+            :product="product"
+          />
+        </div>
+        
+        <!-- Aucun produit filtré -->
+        <div v-else-if="hasActiveFilters" class="text-center py-12">
+          <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.29-1.009-5.824-2.709M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+          <h3 class="mt-2 text-sm font-medium text-gray-900">Aucun produit trouvé</h3>
+          <p class="mt-1 text-sm text-gray-500">
+            Essayez de modifier vos critères de recherche ou de supprimer certains filtres.
+          </p>
+          <div class="mt-6">
             <button
               @click="handleClearFilters"
-              class="mt-4 px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition-colors"
+              class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
-              Effacer les filtres
+              Effacer tous les filtres
             </button>
           </div>
-          
-          <!-- Aucun résultat de recherche -->
-          <div v-else class="text-center py-12">
-            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-            <h3 class="mt-2 text-sm font-medium text-gray-900">Aucun résultat</h3>
-            <p class="mt-1 text-sm text-gray-500">
-              Aucun produit trouvé pour "{{ searchQuery }}". Essayez avec d'autres mots-clés.
-            </p>
+        </div>
+
+        <!-- Aucun résultat de recherche -->
+        <div v-else-if="!hasResults && searchQuery" class="text-center py-12">
+          <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <h3 class="mt-2 text-sm font-medium text-gray-900">Aucun résultat</h3>
+          <p class="mt-1 text-sm text-gray-500">
+            Nous n'avons trouvé aucun produit correspondant à "{{ searchQuery }}".
+          </p>
+          <div class="mt-6">
             <button
               @click="goBack"
-              class="mt-4 px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition-colors"
+              class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
               Retour à l'accueil
             </button>
           </div>
+        </div>
+
+        <!-- Message par défaut -->
+        <div v-else class="text-center py-12">
+          <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <h3 class="mt-2 text-sm font-medium text-gray-900">Rechercher des produits</h3>
+          <p class="mt-1 text-sm text-gray-500">
+            Utilisez la barre de recherche pour trouver des produits.
+          </p>
         </div>
       </div>
     </div>
@@ -266,41 +168,84 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { ref, computed, onMounted, watch } from 'vue'
 
+// Interface pour les filtres
+interface ProductFilters {
+  priceMin: number | null
+  priceMax: number | null
+  rating: number | null
+  attributes: Record<string, string[]>
+  inStock: boolean
+  onSale: boolean
+}
+
+// Interface pour les attributs
+interface Attribute {
+  name: string
+  label: string
+  options: Array<{
+    value: string
+    label: string
+    count: number
+  }>
+}
+
+// Récupération des paramètres de route
 const route = useRoute()
 const router = useRouter()
 
-// Récupération du paramètre de recherche
-const searchQuery = computed(() => route.query.q as string || '')
+// État réactif
+const loading = ref(true)
+const error = ref<string | null>(null)
+const allProducts = ref<any[]>([])
+const searchAttributes = ref<Attribute[]>([])
 
-// Utilisation de useLazyFetch pour la recherche
-const { data, pending: loading, error: fetchError, refresh } = await useLazyFetch(`/api/search`, {
-  key: `search-${searchQuery.value}`,
-  server: true,
-  default: () => ({ products: [] }),
-  query: {
-    q: searchQuery
-  },
-  watch: [searchQuery]
-})
-
-// Données réactives
-const allProducts = computed(() => data.value?.products || [])
-const error = computed(() => fetchError.value?.data?.message || fetchError.value?.message || null)
-
-// État des filtres et tri
-const currentFilters = ref({
-  priceMin: null as number | null,
-  priceMax: null as number | null,
-  rating: null as number | null,
-  attributes: {} as Record<string, string[]>,
+// État des filtres
+const currentFilters = ref<ProductFilters>({
+  priceMin: null,
+  priceMax: null,
+  rating: null,
+  attributes: {},
   inStock: false,
   onSale: false
 })
 
-const sortBy = ref('relevance')
+const sortBy = ref('default')
+
+// Terme de recherche depuis l'URL
+const searchQuery = computed(() => route.query.q as string || '')
+
+// Utilisation de useLazyFetch pour récupérer les données de recherche
+const { data, pending, error: fetchError, refresh } = await useLazyFetch('/api/search', {
+  key: `search-${searchQuery.value}`,
+  server: true,
+  default: () => ({ products: [], total: 0 }),
+  query: computed(() => ({
+    q: searchQuery.value,
+    page: 1,
+    per_page: 50
+  }))
+})
+
+// Mise à jour des données
+watch(data, (newData) => {
+  if (newData) {
+    allProducts.value = newData.products || []
+    loading.value = false
+  }
+}, { immediate: true })
+
+watch(pending, (isPending) => {
+  loading.value = isPending
+})
+
+watch(fetchError, (err) => {
+  if (err) {
+    error.value = err.data?.message || err.message || 'Erreur lors de la recherche'
+    loading.value = false
+  }
+})
 
 // Produits filtrés et triés
 const filteredProducts = computed(() => {
@@ -354,11 +299,9 @@ const filteredProducts = computed(() => {
         // Vérifier les meta_data
         if (product.meta_data) {
           const meta = product.meta_data.find((m: any) => 
-            m.key === `pa_${attrName}` || m.key === `attribute_${attrName}`
+            m.key === attrName || m.key === `pa_${attrName}` || m.key === `attribute_${attrName}`
           )
-          if (meta && meta.value) {
-            return selectedValues.includes(meta.value)
-          }
+          return meta && selectedValues.includes(meta.value)
         }
         
         return false
@@ -388,40 +331,19 @@ const filteredProducts = computed(() => {
     case 'name-desc':
       filtered.sort((a, b) => b.name.localeCompare(a.name))
       break
-    case 'rating-desc':
+    case 'rating':
       filtered.sort((a, b) => (b.average_rating || 0) - (a.average_rating || 0))
       break
     case 'newest':
       filtered.sort((a, b) => new Date(b.date_created).getTime() - new Date(a.date_created).getTime())
-      break
-    case 'relevance':
-      // Tri par pertinence (produits avec le terme de recherche dans le nom en premier)
-      filtered.sort((a, b) => {
-        const query = searchQuery.value.toLowerCase()
-        const aName = a.name.toLowerCase()
-        const bName = b.name.toLowerCase()
-        
-        const aStartsWith = aName.startsWith(query)
-        const bStartsWith = bName.startsWith(query)
-        
-        if (aStartsWith && !bStartsWith) return -1
-        if (!aStartsWith && bStartsWith) return 1
-        
-        const aContains = aName.includes(query)
-        const bContains = bName.includes(query)
-        
-        if (aContains && !bContains) return -1
-        if (!aContains && bContains) return 1
-        
-        return 0
-      })
       break
   }
   
   return filtered
 })
 
-// Vérifier s'il y a des filtres actifs
+// Vérifications
+const hasResults = computed(() => allProducts.value.length > 0)
 const hasActiveFilters = computed(() => {
   return currentFilters.value.priceMin !== null ||
          currentFilters.value.priceMax !== null ||
@@ -431,18 +353,8 @@ const hasActiveFilters = computed(() => {
          Object.values(currentFilters.value.attributes).some(values => values.length > 0)
 })
 
-// Attributs de recherche (générés automatiquement)
-const searchAttributes = computed(() => {
-  return []
-})
-
-// Fonction pour recharger manuellement les données
-const refreshData = () => {
-  return refresh()
-}
-
 // Gestion des filtres
-const handleFilter = (filters: any) => {
+const handleFilter = (filters: ProductFilters) => {
   currentFilters.value = { ...filters }
 }
 
@@ -462,90 +374,31 @@ const handleSort = () => {
   // Le tri est géré automatiquement par le computed filteredProducts
 }
 
+// Rafraîchissement des données
+const refreshData = () => {
+  error.value = null
+  refresh()
+}
+
 // Retour à l'accueil
 const goBack = () => {
   router.push('/')
 }
 
-// Formatage du prix
-const formatPrice = (price: string | number) => {
-  const numPrice = typeof price === 'string' ? parseFloat(price) : price
-  return new Intl.NumberFormat('fr-FR', {
-    style: 'currency',
-    currency: 'EUR'
-  }).format(numPrice)
-}
-
-// Gestion du statut de stock
-const getStockStatusClass = (status: string) => {
-  switch (status) {
-    case 'instock':
-      return 'bg-green-100 text-green-800'
-    case 'outofstock':
-      return 'bg-red-100 text-red-800'
-    case 'onbackorder':
-      return 'bg-yellow-100 text-yellow-800'
-    default:
-      return 'bg-gray-100 text-gray-800'
-  }
-}
-
-const getStockStatusText = (status: string) => {
-  switch (status) {
-    case 'instock':
-      return 'En stock'
-    case 'outofstock':
-      return 'Rupture'
-    case 'onbackorder':
-      return 'Sur commande'
-    default:
-      return status
-  }
-}
-
-// Gestion d'erreur d'image
-const onImageError = (event: Event) => {
-  const img = event.target as HTMLImageElement
-  img.src = '/images/placeholder-product.jpg'
-}
-
-// Action rapide d'ajout au panier
-const addToCartQuick = (product: any) => {
-  const cartStore = useCartStore()
-  cartStore.addItem(product, 1)
-  cartStore.openCart()
-  
-  console.log('Ajout rapide au panier:', product.name)
-}
-
 // SEO Meta pour la recherche
 useSeoMeta({
-  title: () => searchQuery.value ? `Recherche: "${searchQuery.value}" - Ma Boutique` : 'Recherche - Ma Boutique',
-  description: () => `Résultats de recherche pour "${searchQuery.value}"`,
-  ogTitle: () => `Recherche: "${searchQuery.value}"`,
-  ogDescription: () => `Résultats de recherche pour "${searchQuery.value}"`
+  title: () => searchQuery.value ? `Recherche: "${searchQuery.value}" - IvoirShop CI` : 'Recherche - IvoirShop CI',
+  description: () => `Résultats de recherche pour "${searchQuery.value}" sur IvoirShop CI`,
+  ogTitle: () => searchQuery.value ? `Recherche: "${searchQuery.value}"` : 'Recherche',
+  ogDescription: () => `Découvrez nos produits correspondant à votre recherche "${searchQuery.value}"`
+})
+
+// Meta de la page
+definePageMeta({
+  layout: 'default'
 })
 </script>
 
-<style>
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.line-clamp-3 {
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-/* Animation hover pour les images */
-.group:hover .group-hover\:scale-105 {
-  transform: scale(1.05);
-}
+<style scoped>
+/* Styles personnalisés si nécessaire */
 </style>
-
-

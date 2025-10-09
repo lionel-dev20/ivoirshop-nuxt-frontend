@@ -83,105 +83,12 @@
           </div>
 
           <!-- Liste des produits -->
-          <div v-if="filteredProducts.length" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-0.5 md:gap-3.5">
-            <div 
-              v-for="product in filteredProducts" 
-              :key="product.id" 
-              class="bg-white border border-gray-100 rounded-md overflow-hidden shadow-md shadow-gray-100 hover:shadow-md transition-shadow group cursor-pointer"
-            >
-              <!-- Lien vers la fiche produit -->
-              <NuxtLink :to="`/produit/${product.slug}`" class="block relative">
-                <div class="aspect-w-16 aspect-h-9">
-                  <img
-                    v-if="product.images && product.images.length > 0"
-                    :src="product.images[0].src"
-                    :alt="product.name"
-                    class="w-full h-64 object-cover p-6.5 pb-0 bg-white group-hover:scale-103 transition-transform duration-300"
-                    @error="onImageError"
-                  />
-                  <div 
-                    v-else 
-                    class="w-full h-54 bg-gray-50 flex items-center justify-center group-hover:bg-gray-300 transition-colors"
-                  >
-                    <span class="text-gray-400">Aucune image</span>
-                  </div>
-                </div>
-                
-                <div class="p-3.5">
-                  <h2 class="font-medium text-[13px] text-gray-700 mb-4 line-clamp-2 group-hover:text-gray-600 transition-colors">
-                    {{ product.name }}
-                  </h2>
-                  
-                  <!-- Prix -->
-                  <div class="flex items-center justify-between mb-3">
-                    <div>
-                      <div class="flex flex-col gap-0.5">
-                      <span v-if="product.sale_price" class="text-gray-800 text-[17px] font-black">
-                        {{ formatPrice(product.sale_price) }}
-                      </span>
-                      <span 
-                        :class="product.sale_price ? 'line-through text-gray-500 text-[13px]' : 'text-gray-700 font-semibold'"
-                      >
-                        {{ formatPrice(product.regular_price || product.price) }}
-                      </span>
-                    </div>
-                      <!-- Badge promotion -->
-                      <span 
-                        v-if="product.sale_price" 
-                        class="absolute top-2 right-2 bg-red-100 text-red-800 text-xs font-medium px-2 py-1 rounded"
-                      >
-                        -{{ Math.round((1 - product.sale_price / product.regular_price) * 100) }}%
-                      </span>
-                    </div>
-                    
-                    <!-- Badge stock -->
-                    <span 
-                      v-if="product.stock_status"
-                      :class="getStockStatusClass(product.stock_status)"
-                      class="px-2 py-1 rounded-full text-xs font-medium"
-                    >
-                      {{ getStockStatusText(product.stock_status) }}
-                    </span>
-                  </div>
-                  
-                  <!-- Description courte -->
-                  <!-- <p 
-                    v-if="product.short_description" 
-                    class="text-gray-600 text-sm mt-2 line-clamp-3"
-                    v-html="product.short_description"
-                  ></p> -->
-
-                  <!-- Call to action -->
-                  <!-- <div class="mt-4 flex items-center justify-between">
-                    <span class="text-sm text-gray-500">Voir les détails</span>
-                    <svg 
-                      class="w-5 h-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all" 
-                      fill="none" 
-                      stroke="currentColor" 
-                      viewBox="0 0 24 24"
-                    >
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div> -->
-                </div>
-              </NuxtLink>
-
-              <!-- Actions rapides (optionnel) -->
-              <div class="px-4 pb-4">
-                <button 
-                  @click.prevent="addToCartQuick(product)"
-                  :disabled="product.stock_status !== 'instock'"
-                  :class="[
-                    'w-full py-2 px-4 rounded-[4px] cursor-pointer text-sm font-medium transition-colors',
-                    product.stock_status === 'instock' 
-                      ? 'bg-[#ff9900] text-white hover:bg-[#ff9900]/80' 
-                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  ]"
-                >
-                  {{ product.stock_status === 'instock' ? 'Ajouter au panier' : 'Indisponible' }}
-                </button>
-              </div>
-            </div>
+          <div v-if="filteredProducts.length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <ProductCard
+              v-for="product in filteredProducts"
+              :key="product.id"
+              :product="product"
+            />
           </div>
           
           <!-- Aucun produit filtré -->
@@ -395,58 +302,7 @@ const handleSort = () => {
   // Le tri est géré automatiquement par le computed filteredProducts
 }
 
-// Formatage du prix
-const formatPrice = (price: string | number) => {
-  const numPrice = typeof price === "string" ? parseFloat(price) : price
-
-  return new Intl.NumberFormat("en-US", {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(numPrice) + " FCFA"
-}
-
-
-// Gestion du statut de stock
-const getStockStatusClass = (status: string) => {
-  switch (status) {
-    case 'instock':
-      return 'bg-green-100 text-green-800'
-    case 'outofstock':
-      return 'bg-red-100 text-red-800'
-    case 'onbackorder':
-      return 'bg-yellow-100 text-yellow-800'
-    default:
-      return 'bg-gray-100 text-gray-800'
-  }
-}
-
-const getStockStatusText = (status: string) => {
-  switch (status) {
-    case 'instock':
-      return 'En stock'
-    case 'outofstock':
-      return 'Rupture'
-    case 'onbackorder':
-      return 'Sur commande'
-    default:
-      return status
-  }
-}
-
-// Gestion d'erreur d'image
-const onImageError = (event: Event) => {
-  const img = event.target as HTMLImageElement
-  img.src = '/images/placeholder-product.jpg' // Remplacez par votre image placeholder
-}
-
-// Action rapide d'ajout au panier
-const addToCartQuick = (product: any) => {
-  const cartStore = useCartStore()
-  cartStore.addItem(product, 1)
-  cartStore.openCart()
-  
-  console.log('Ajout rapide au panier:', product.name)
-}
+// Ces fonctions sont maintenant gérées par le composant ProductCard
 
 // SEO Meta pour la catégorie
 useSeoMeta({

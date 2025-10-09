@@ -35,8 +35,8 @@ export default defineEventHandler(async (event) => {
         per_page: Math.min(limit, 20),
         status: 'publish',
         stock_status: 'instock',
-        orderby: 'relevance',
-        order: 'desc',
+        orderby: 'title',
+        order: 'asc',
         fields: 'id,name,slug,price,regular_price,sale_price,images,categories'
       })
 

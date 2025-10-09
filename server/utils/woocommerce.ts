@@ -1,20 +1,5 @@
 // server/utils/woocommerce.ts
-// Utilitaire pour gérer l'import dynamique de WooCommerceRestApi
-
-let WooCommerceRestApi: any = null
-
-export async function getWooCommerceApi() {
-  if (!WooCommerceRestApi) {
-    try {
-      const WooCommerceModule = await import('@woocommerce/woocommerce-rest-api')
-      WooCommerceRestApi = WooCommerceModule.default
-    } catch (error) {
-      console.error('Erreur lors de l\'import de WooCommerceRestApi:', error)
-      throw new Error('Impossible d\'importer WooCommerceRestApi')
-    }
-  }
-  return WooCommerceRestApi
-}
+// Utilitaire pour gérer l'import de WooCommerceRestApi
 
 export async function createWooCommerceClient(config: {
   url: string
@@ -22,13 +7,35 @@ export async function createWooCommerceClient(config: {
   consumerSecret: string
   version?: string
 }) {
-  const WooCommerceClass = await getWooCommerceApi()
-  return new WooCommerceClass({
-    url: config.url,
-    consumerKey: config.consumerKey,
-    consumerSecret: config.consumerSecret,
-    version: config.version || 'wc/v3',
-  })
+  try {
+    console.log('🔧 Création client WooCommerce...')
+    
+    // Import dynamique avec la bonne structure
+    const WooCommerceModule = await import('@woocommerce/woocommerce-rest-api')
+    
+    // Le constructeur est dans WooCommerceModule.default.default
+    const WooCommerceRestApi = WooCommerceModule.default.default || WooCommerceModule.default
+    
+    console.log('Type constructeur:', typeof WooCommerceRestApi)
+    
+    if (typeof WooCommerceRestApi !== 'function') {
+      console.error('Structure du module:', WooCommerceModule)
+      throw new Error(`WooCommerceRestApi n'est pas un constructeur (type: ${typeof WooCommerceRestApi})`)
+    }
+    
+    const api = new WooCommerceRestApi({
+      url: config.url,
+      consumerKey: config.consumerKey,
+      consumerSecret: config.consumerSecret,
+      version: config.version || 'wc/v3',
+    })
+    
+    console.log('✅ Client WooCommerce créé')
+    return api
+  } catch (error) {
+    console.error('Erreur lors de la création du client WooCommerce:', error)
+    throw new Error(`Impossible de créer le client WooCommerce: ${error.message}`)
+  }
 }
 
 

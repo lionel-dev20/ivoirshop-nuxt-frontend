@@ -268,6 +268,11 @@ const selectSuggestion = (suggestion: any) => {
 
 // Recherche
 const performSearch = (query?: string) => {
+  // Si query est un objet (événement), on l'ignore
+  if (typeof query === 'object' || query === '[object KeyboardEvent]' || query === '[object PointerEvent]') {
+    query = undefined
+  }
+  
   const searchTerm = query || searchQuery.value.trim()
   if (!searchTerm) return
   

@@ -389,7 +389,7 @@ const props = defineProps({
 
 // Configuration
 const config = useRuntimeConfig()
-const baseURL = config.public.wordpressUrl || 'http://localhost'
+const baseURL = config.public.wordpressUrl || 'https://admin.ivoirshop.ci'
 
 // États réactifs
 const categoryData = ref(null)

@@ -620,8 +620,8 @@ const formatPrice = (price) => {
   const numericPrice = parseFloat(price)
   return new Intl.NumberFormat('fr-FR', {
     style: 'currency',
-    currency: 'EUR'
-  }).format(numericPrice)
+    currency: 'XOF'
+  }).format(numericPrice).replace('XOF', 'FCFA')
 }
 
 const handleImageError = (event) => {

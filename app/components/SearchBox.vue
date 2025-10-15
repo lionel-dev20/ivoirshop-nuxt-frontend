@@ -291,8 +291,8 @@ const formatPrice = (price: string | number) => {
   const numPrice = typeof price === 'string' ? parseFloat(price) : price
   return new Intl.NumberFormat('fr-FR', {
     style: 'currency',
-    currency: 'EUR'
-  }).format(numPrice)
+    currency: 'XOF'
+  }).format(numPrice).replace('XOF', 'FCFA')
 }
 
 // Index des suggestions pour la navigation

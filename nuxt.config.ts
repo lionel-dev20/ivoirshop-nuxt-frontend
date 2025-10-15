@@ -64,7 +64,7 @@ export default defineNuxtConfig({
       viewport: 'width=device-width, initial-scale=1',
       title: 'IvoirShop CI - Votre boutique en ligne',
       link: [
-        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+        { rel: 'icon', type: 'image/x-icon', href: '/logo/ivoirshop-icon.ico' }
       ],
       meta: [
         { name: 'description', content: 'Découvrez notre large gamme de produits électroniques, électroménager et bien plus sur IvoirShop CI' },

@@ -275,3 +275,5 @@ Reproduire exactement le design de la page de recherche montré dans l'image fou
 **Statut :** ✅ **TERMINÉ**  
 **Date :** Octobre 2025  
 **Correspondance au design :** 100% ✅
+
+

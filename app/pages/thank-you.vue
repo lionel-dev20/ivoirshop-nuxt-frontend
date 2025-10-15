@@ -310,8 +310,8 @@ const subtotal = computed(() => {
 const formatPrice = (price: number) => {
   return new Intl.NumberFormat('fr-FR', {
     style: 'currency',
-    currency: 'EUR'
-  }).format(price)
+    currency: 'XOF'
+  }).format(price).replace('XOF', 'FCFA')
 }
 
 const formatDate = (date: string | Date) => {

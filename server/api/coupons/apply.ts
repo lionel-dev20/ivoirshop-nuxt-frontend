@@ -73,8 +73,8 @@ export default defineEventHandler(async (event) => {
         discount: discount,
         formatted_discount: new Intl.NumberFormat('fr-FR', {
           style: 'currency',
-          currency: 'EUR'
-        }).format(discount)
+          currency: 'XOF'
+        }).format(discount).replace('XOF', 'FCFA')
       }
     }
 

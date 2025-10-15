@@ -45,6 +45,7 @@
             <ProductFilters
               :products="allProducts"
               :attributes="categoryAttributes"
+              :brands="categoryBrands"
               @filter="handleFilter"
               @clear="handleClearFilters"
             />
@@ -148,6 +149,8 @@ const { data, pending: loading, error: fetchError, refresh } = await useLazyFetc
 // Données réactives extraites de la réponse
 const category = computed(() => (data.value as any)?.category || null)
 const allProducts = computed(() => (data.value as any)?.products || [])
+const categoryAttributes = computed(() => (data.value as any)?.attributes || [])
+const categoryBrands = computed(() => (data.value as any)?.brands || [])
 const error = computed(() => fetchError.value?.data?.message || fetchError.value?.message || null)
 
 // État des filtres et tri
@@ -156,6 +159,7 @@ const currentFilters = ref({
   priceMax: null as number | null,
   rating: null as number | null,
   attributes: {} as Record<string, string[]>,
+  brands: [] as string[],
   inStock: false,
   onSale: false
 })
@@ -226,6 +230,35 @@ const filteredProducts = computed(() => {
     }
   })
   
+  // Filtrage par marques
+  if (currentFilters.value.brands && currentFilters.value.brands.length > 0) {
+    filtered = filtered.filter(product => {
+      // Vérifier le tableau brands
+      if (product.brands && Array.isArray(product.brands)) {
+        return product.brands.some((brand: any) => 
+          currentFilters.value.brands.includes(brand.name)
+        )
+      }
+      
+      // Vérifier l'attribut brand dans attributes
+      if (product.attributes) {
+        const brandAttr = product.attributes.find((a: any) => 
+          a.name === 'brand' || 
+          a.name === 'Marque' ||
+          a.slug === 'pa_brand' ||
+          a.slug === 'pa_marque'
+        )
+        if (brandAttr && brandAttr.options) {
+          return brandAttr.options.some((option: string) => 
+            currentFilters.value.brands.includes(option)
+          )
+        }
+      }
+      
+      return false
+    })
+  }
+  
   // Tri
   switch (sortBy.value) {
     case 'price-asc':
@@ -266,14 +299,8 @@ const hasActiveFilters = computed(() => {
          currentFilters.value.rating !== null ||
          currentFilters.value.inStock ||
          currentFilters.value.onSale ||
+         currentFilters.value.brands.length > 0 ||
          Object.values(currentFilters.value.attributes).some(values => values.length > 0)
-})
-
-// Attributs de catégorie (peut être étendu)
-const categoryAttributes = computed(() => {
-  // Ici vous pouvez définir des attributs spécifiques à la catégorie
-  // ou les laisser être générés automatiquement par le composant ProductFilters
-  return []
 })
 
 // Fonction pour recharger manuellement les données
@@ -292,6 +319,7 @@ const handleClearFilters = () => {
     priceMax: null,
     rating: null,
     attributes: {},
+    brands: [],
     inStock: false,
     onSale: false
   }

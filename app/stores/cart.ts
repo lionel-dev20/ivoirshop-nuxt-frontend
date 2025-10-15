@@ -15,6 +15,8 @@ export interface CartItem {
   }
   stock_status: string
   sku?: string
+  shipping_class?: string // light, medium, heavy
+  weight?: string // poids du produit
 }
 
 export const useCartStore = defineStore('cart', {
@@ -38,8 +40,8 @@ export const useCartStore = defineStore('cart', {
       }, 0)
       return new Intl.NumberFormat('fr-FR', {
         style: 'currency',
-        currency: 'EUR'
-      }).format(total)
+        currency: 'XOF'
+      }).format(total).replace('XOF', 'FCFA')
     },
 
     isEmpty: (state) => state.items.length === 0
@@ -52,6 +54,26 @@ export const useCartStore = defineStore('cart', {
       if (existingItem) {
         existingItem.quantity += quantity
       } else {
+        // Déterminer le shipping_class en fonction du poids ou de la classe de shipping WooCommerce
+        let shippingClass = product.shipping_class || ''
+        const weight = product.weight ? parseFloat(product.weight) : 0
+        
+        // Si pas de shipping_class défini, le déterminer automatiquement selon le poids
+        if (!shippingClass && weight > 0) {
+          if (weight < 2) {
+            shippingClass = 'light'
+          } else if (weight >= 2 && weight <= 10) {
+            shippingClass = 'medium'
+          } else {
+            shippingClass = 'heavy'
+          }
+        }
+        
+        // Si toujours pas de shipping_class, utiliser 'medium' par défaut
+        if (!shippingClass) {
+          shippingClass = 'medium'
+        }
+        
         const cartItem: CartItem = {
           id: product.id,
           name: product.name,
@@ -65,7 +87,9 @@ export const useCartStore = defineStore('cart', {
             alt: product.images[0].alt || product.name
           } : undefined,
           stock_status: product.stock_status,
-          sku: product.sku
+          sku: product.sku,
+          shipping_class: shippingClass,
+          weight: product.weight
         }
         this.items.push(cartItem)
       }

@@ -68,6 +68,28 @@
       </div>
     </div>
 
+    <!-- Filtres par marques -->
+    <div v-if="props.brands && props.brands.length > 0" class="mb-6">
+      <h4 class="text-sm font-medium text-gray-700 mb-3">Marques</h4>
+      <div class="space-y-2 max-h-48 overflow-y-auto">
+        <label
+          v-for="brand in props.brands"
+          :key="brand.slug"
+          class="flex items-center cursor-pointer hover:bg-gray-50 p-2 rounded"
+        >
+          <input
+            v-model="filters.brands"
+            :value="brand.name"
+            type="checkbox"
+            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+            @change="updateFilters"
+          />
+          <span class="ml-3 text-sm text-gray-700">{{ brand.name }}</span>
+          <span class="ml-auto text-xs text-gray-500">({{ brand.count }})</span>
+        </label>
+      </div>
+    </div>
+
     <!-- Filtres par attributs dynamiques -->
     <div
       v-for="attribute in availableAttributes"
@@ -150,8 +172,15 @@ interface FilterOption {
 
 interface Attribute {
   name: string
+  slug: string
   label: string
   options: FilterOption[]
+}
+
+interface Brand {
+  name: string
+  slug: string
+  count: number
 }
 
 interface ProductFilters {
@@ -159,6 +188,7 @@ interface ProductFilters {
   priceMax: number | null
   rating: number | null
   attributes: Record<string, string[]>
+  brands: string[]
   inStock: boolean
   onSale: boolean
 }
@@ -166,6 +196,7 @@ interface ProductFilters {
 const props = defineProps<{
   products: any[]
   attributes?: Attribute[]
+  brands?: Brand[]
 }>()
 
 const emit = defineEmits<{
@@ -179,6 +210,7 @@ const filters = ref<ProductFilters>({
   priceMax: null,
   rating: null,
   attributes: {},
+  brands: [],
   inStock: false,
   onSale: false
 })
@@ -292,8 +324,8 @@ const formatPriceRange = () => {
 const formatPrice = (price: number) => {
   return new Intl.NumberFormat('fr-FR', {
     style: 'currency',
-    currency: 'EUR'
-  }).format(price)
+    currency: 'XOF'
+  }).format(price).replace('XOF', 'FCFA')
 }
 
 // Mise à jour des filtres
@@ -313,6 +345,7 @@ const clearFilters = () => {
     priceMax: null,
     rating: null,
     attributes: {},
+    brands: [],
     inStock: false,
     onSale: false
   }

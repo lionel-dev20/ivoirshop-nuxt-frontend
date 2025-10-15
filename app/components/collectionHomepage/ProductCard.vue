@@ -106,9 +106,6 @@
             </span>
           </template>
         </div>
-        
-        <!-- HTML du prix WooCommerce (si disponible) -->
-        <div v-if="product.price_html" class="wc-price" v-html="product.price_html"></div>
       </div>
 
       <!-- Stock status -->
@@ -220,8 +217,8 @@ const formatPrice = (price) => {
   const numericPrice = parseFloat(price)
   return new Intl.NumberFormat('fr-FR', {
     style: 'currency',
-    currency: 'EUR'
-  }).format(numericPrice)
+    currency: 'XOF'
+  }).format(numericPrice).replace('XOF', 'FCFA')
 }
 
 // Gestionnaires d'événements

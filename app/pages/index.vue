@@ -46,28 +46,28 @@
               <div class="bg-[#ff9900] text-white text-3xl md:text-4xl font-bold rounded-lg py-4 px-2 min-w-[80px]">
                 {{ timeLeft.days }}
               </div>
-              <div class="text-white text-sm md:text-base mt-2 font-medium">Jours</div>
+              <div class="text-[#ff9900] text-sm md:text-base mt-2 font-medium">Jours</div>
             </div>
             
             <div class="text-center">
               <div class="bg-[#ff9900] text-white text-3xl md:text-4xl font-bold rounded-lg py-4 px-2 min-w-[80px]">
                 {{ timeLeft.hours }}
               </div>
-              <div class="text-white text-sm md:text-base mt-2 font-medium">Heures</div>
+              <div class="text-[#ff9900] text-sm md:text-base mt-2 font-medium">Heures</div>
             </div>
             
             <div class="text-center">
               <div class="bg-[#ff9900] text-white text-3xl md:text-4xl font-bold rounded-lg py-4 px-2 min-w-[80px]">
                 {{ timeLeft.minutes }}
               </div>
-              <div class="text-white text-sm md:text-base mt-2 font-medium">Minutes</div>
+              <div class="text-[#ff9900] text-sm md:text-base mt-2 font-medium">Minutes</div>
             </div>
             
             <div class="text-center">
               <div class="bg-[#ff9900] text-white text-3xl md:text-4xl font-bold rounded-lg py-4 px-2 min-w-[80px]">
                 {{ timeLeft.seconds }}
               </div>
-              <div class="text-white text-sm md:text-base mt-2 font-medium">Secondes</div>
+              <div class="text-[#ff9900] text-sm md:text-base mt-2 font-medium">Secondes</div>
             </div>
           </div>
         </div>
@@ -177,7 +177,7 @@ const successMessage = ref('')
 
 // Date d'ouverture (dans 30 jours par exemple)
 const openingDate = new Date()
-openingDate.setDate(openingDate.getDate() + 30)
+openingDate.setDate(openingDate.getDate() + 10)
 openingDate.setHours(9, 0, 0, 0) // 9h00 le matin
 
 // Compteur

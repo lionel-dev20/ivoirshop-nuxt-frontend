@@ -2,6 +2,31 @@ import { defineEventHandler, getRouterParams, createError } from 'h3'
 import axios from 'axios'
 import { useRuntimeConfig } from '#imports'
 
+// Fonction helper pour formater les labels d'attributs
+function formatAttributeLabel(name: string): string {
+  const labels: Record<string, string> = {
+    'color': 'Couleur',
+    'colour': 'Couleur',
+    'size': 'Taille',
+    'storage': 'Stockage',
+    'capacity': 'Capacité',
+    'ram': 'Mémoire RAM',
+    'brand': 'Marque',
+    'marque': 'Marque',
+    'material': 'Matériau',
+    'weight': 'Poids',
+    'dimensions': 'Dimensions',
+    'screen-size': 'Taille d\'écran',
+    'processor': 'Processeur',
+    'operating-system': 'Système d\'exploitation',
+    'connectivity': 'Connectivité',
+    'warranty': 'Garantie'
+  }
+  
+  const normalizedName = name.toLowerCase().replace(/[_\s]+/g, '-')
+  return labels[normalizedName] || name.charAt(0).toUpperCase() + name.slice(1).replace(/-/g, ' ')
+}
+
 export default defineEventHandler(async (event) => {
   try {
     const runtimeConfig = useRuntimeConfig()
@@ -81,9 +106,65 @@ export default defineEventHandler(async (event) => {
 
     console.log(`${products.length} produits trouvés pour la catégorie ${currentCategory.name}`)
 
+    // Extraire les attributs uniques des produits de cette catégorie
+    const attributesMap = new Map<string, Set<string>>()
+    const brandsSet = new Set<string>()
+
+    products.forEach((product: any) => {
+      // Extraire les attributs WooCommerce
+      if (product.attributes && Array.isArray(product.attributes)) {
+        product.attributes.forEach((attr: any) => {
+          if (attr.variation) { // Seulement les attributs utilisés pour les variations
+            if (!attributesMap.has(attr.name)) {
+              attributesMap.set(attr.name, new Set())
+            }
+            if (attr.options && Array.isArray(attr.options)) {
+              attr.options.forEach((option: string) => {
+                attributesMap.get(attr.name)?.add(option)
+              })
+            }
+          }
+        })
+      }
+
+      // Extraire les marques
+      if (product.brands && Array.isArray(product.brands)) {
+        product.brands.forEach((brand: any) => {
+          brandsSet.add(brand.name)
+        })
+      }
+    })
+
+    // Convertir en format utilisable par le frontend
+    const categoryAttributes = Array.from(attributesMap.entries()).map(([name, values]) => ({
+      name,
+      slug: name.toLowerCase().replace(/\s+/g, '-'),
+      label: formatAttributeLabel(name),
+      options: Array.from(values).map(value => ({
+        value,
+        label: value,
+        count: products.filter((p: any) => 
+          p.attributes?.some((a: any) => a.name === name && a.options?.includes(value))
+        ).length
+      }))
+    }))
+
+    const categoryBrands = Array.from(brandsSet).map(brand => ({
+      name: brand,
+      slug: brand.toLowerCase().replace(/\s+/g, '-'),
+      count: products.filter((p: any) => 
+        p.brands?.some((b: any) => b.name === brand)
+      ).length
+    }))
+
+    console.log(`${categoryAttributes.length} types d'attributs trouvés`)
+    console.log(`${categoryBrands.length} marques trouvées`)
+
     return { 
       category: currentCategory, 
-      products: products || [] 
+      products: products || [],
+      attributes: categoryAttributes,
+      brands: categoryBrands
     }
     
   } catch (err: any) {

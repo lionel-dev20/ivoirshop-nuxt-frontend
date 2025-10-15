@@ -173,3 +173,5 @@ const WooCommerceRestApi = WooCommerceModule.default
 **Date de résolution :** Octobre 2025  
 **Tests :** Tous passés avec succès
 
+
+

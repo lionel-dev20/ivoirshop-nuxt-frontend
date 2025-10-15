@@ -137,3 +137,5 @@ Après avoir suivi ces étapes, votre site en production devrait :
 **Date :** Octobre 2025  
 **Statut :** ✅ **Prêt pour le déploiement**  
 **Action requise :** Configurer les variables d'environnement et redéployer
+
+

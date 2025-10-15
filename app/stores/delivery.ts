@@ -60,8 +60,8 @@ export const useDeliveryStore = defineStore('delivery', {
     formattedShippingCost: (state) => {
       return new Intl.NumberFormat('fr-FR', {
         style: 'currency',
-        currency: 'EUR'
-      }).format(state.selectedDelivery.shipping_cost)
+        currency: 'XOF'
+      }).format(state.selectedDelivery.shipping_cost).replace('XOF', 'FCFA')
     },
 
     selectedCity: (state) => {

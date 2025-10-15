@@ -235,3 +235,5 @@ WOOCOMMERCE_CONSUMER_SECRET=cs_xxxxx
 **Date :** Octobre 2025  
 **Version :** 1.0.0
 
+
+

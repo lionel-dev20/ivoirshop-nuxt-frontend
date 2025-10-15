@@ -56,6 +56,13 @@
               </div>
             </div>
 
+
+
+
+
+            
+          
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div class="mt-4">
               <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
                 Email *
@@ -80,6 +87,7 @@
                 required
                 class="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
+            </div>
             </div>
 
             <!-- Les champs d'adresse sont maintenant automatiquement remplis par la sélection de zone de livraison -->
@@ -172,7 +180,17 @@
                 <label class="block text-sm font-medium text-gray-700 mb-3">
                   Type de produit (pour calculer la livraison) *
                 </label>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                
+                <!-- Message si aucun type disponible -->
+                <div v-if="productTypes.length === 0" class="text-center py-8 bg-gray-50 rounded-lg border border-gray-200">
+                  <svg class="mx-auto h-12 w-12 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                  </svg>
+                  <p class="text-sm text-gray-600">Aucun type de livraison configuré pour ces produits</p>
+                </div>
+                
+                <!-- Affichage des types disponibles -->
+                <div v-else class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <label
                     v-for="type in productTypes"
                     :key="type.value"
@@ -196,6 +214,14 @@
                     </div>
                   </label>
                 </div>
+                
+                <!-- Note informative -->
+                <p class="mt-2 text-xs text-gray-500">
+                  <svg class="inline w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                  </svg>
+                  Les types de livraison affichés correspondent aux produits dans votre panier
+                </p>
               </div>
 
               <!-- Récapitulatif livraison -->
@@ -464,12 +490,32 @@ const selectedProductType = ref<'light' | 'medium' | 'heavy'>('medium')
 // État pour les coupons
 const couponCode = ref('')
 
-// Types de produits
-const productTypes = [
+// Types de produits disponibles (tous)
+const allProductTypes = [
   { value: 'light', label: 'Léger', description: 'Moins de 2kg' },
   { value: 'medium', label: 'Moyen', description: '2kg à 10kg' },
   { value: 'heavy', label: 'Lourd', description: 'Plus de 10kg' }
 ]
+
+// Filtrer les types de produits en fonction des produits du panier
+const productTypes = computed(() => {
+  // Récupérer les shipping_class uniques des produits du panier
+  const cartShippingClasses = new Set<string>()
+  
+  cartStore.items.forEach(item => {
+    if (item.shipping_class) {
+      cartShippingClasses.add(item.shipping_class)
+    }
+  })
+  
+  // Si aucun shipping_class trouvé, afficher tous les types
+  if (cartShippingClasses.size === 0) {
+    return allProductTypes
+  }
+  
+  // Filtrer pour n'afficher que les types configurés dans les produits
+  return allProductTypes.filter(type => cartShippingClasses.has(type.value))
+})
 
 // Calculs
 const finalTotal = computed(() => {
@@ -520,7 +566,7 @@ const getPrice = (productType: string) => {
 }
 
 const getProductTypeLabel = (type: string) => {
-  const productType = productTypes.find(t => t.value === type)
+  const productType = productTypes.value.find((t: any) => t.value === type)
   return productType ? productType.label : type
 }
 
@@ -676,6 +722,22 @@ const submitOrder = async () => {
   }
 }
 
+// Watcher pour s'assurer que le selectedProductType est toujours valide
+watch(productTypes, (newTypes) => {
+  // Si le type sélectionné n'est plus dans les types disponibles
+  const currentTypeAvailable = newTypes.some(type => type.value === selectedProductType.value)
+  
+  if (!currentTypeAvailable && newTypes.length > 0) {
+    // Sélectionner le premier type disponible
+    selectedProductType.value = (newTypes[0]?.value || 'medium') as 'light' | 'medium' | 'heavy'
+    
+    // Recalculer la livraison si une commune est sélectionnée
+    if (selectedCommuneId.value) {
+      onProductTypeChange()
+    }
+  }
+}, { immediate: true })
+
 // Initialisation
 onMounted(async () => {
   // Charge les villes disponibles
@@ -697,7 +759,19 @@ onMounted(async () => {
       selectedCommuneId.value = deliveryStore.selectedDelivery.commune_id
     }
     
-    selectedProductType.value = deliveryStore.selectedDelivery.product_type
+    // Vérifier que le product_type du store est toujours valide pour les produits actuels
+    const storedType = deliveryStore.selectedDelivery.product_type
+    const typeIsAvailable = productTypes.value.some(type => type.value === storedType)
+    
+    if (typeIsAvailable) {
+      selectedProductType.value = storedType
+    } else if (productTypes.value.length > 0) {
+      // Sélectionner le premier type disponible si le type stocké n'est plus valide
+      selectedProductType.value = (productTypes.value[0]?.value || 'medium') as 'light' | 'medium' | 'heavy'
+    }
+  } else if (productTypes.value.length > 0) {
+    // Si pas de sélection précédente, utiliser le premier type disponible
+    selectedProductType.value = (productTypes.value[0]?.value || 'medium') as 'light' | 'medium' | 'heavy'
   }
 })
 

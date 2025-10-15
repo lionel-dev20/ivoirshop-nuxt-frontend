@@ -134,3 +134,5 @@ modules: ['@pinia/nuxt', 'shadcn-nuxt', '@nuxt/fonts']
 **Date de résolution :** Octobre 2025  
 **Tests :** Images stables et bien dimensionnées
 
+
+

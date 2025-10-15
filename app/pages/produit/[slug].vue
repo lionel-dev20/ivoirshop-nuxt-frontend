@@ -1,6 +1,6 @@
 <!-- pages/produit/[slug].vue -->
 <template>
-  <div class="max-w-[1440px] mx-auto p-6">
+  <div class="max-w-[1440px] mx-auto md:p-6 p-2">
     <!-- Skeleton de chargement -->
     <div v-if="loading" class="max-w-[1440px] mx-auto p-6">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -85,11 +85,11 @@
             <NuxtLink to="/categories" class="hover:text-gray-700">Catégories</NuxtLink>
           </li> -->
           <li v-for="category in product.categories" :key="category.id" class="before:content-['>'] before:mx-2">
-            <NuxtLink :to="`/categorie/${category.slug}`" class="hover:text-gray-700">
+            <NuxtLink :to="`/categorie/${category.slug}`" class="hover:text-gray-700 ">
               {{ category.name }}
             </NuxtLink>
           </li>
-          <li class="before:content-['>'] before:mx-2 text-gray-900">{{ product.name }}</li>
+          <li class="before:content-['>'] before:mx-2 text-gray-900 truncate">{{ product.name }}</li>
         </ol>
       </nav>
 
@@ -117,7 +117,7 @@
         </div>
 
         <!-- Informations du produit -->
-        <div class="w-3/3 space-y-6 rounded-md bg-white border border-gray-50 shadow shadow-gray-100 md:p-8">
+        <div class="w-3/3 space-y-6 rounded-md p-6 bg-white border border-gray-50 shadow shadow-gray-100 md:p-8">
           <div>
             <h1 class="text-[18px] font-medium text-gray-700 mb-2">{{ product.name }}</h1>
 
@@ -212,11 +212,11 @@
           </div>
 
 
-          <div class="flex items-center justify-between">
+          <div class="flex flex-col lg:flex-row items-center justify-between">
             
           <!--Methode de paiement disponoble-->
-          <div class="flex flex-row items-center gap-x-1 bg-sky-50 px-4 py-6  rounded-md">
-            <span class="text-[15px] w-28 font-bold text-sky-800">Vous pouvez en par</span>
+          <div class="flex  w-full  md:w-auto flex-col lg:flex-row items-center gap-x-1 bg-sky-50 px-4 py-6  rounded-md">
+            <span class="text-[15px] w-28 font-bold text-sky-800">Vous pouvez payer en par</span>
             <div class="flex flex-row items-center gap-x-3">
               <ul v-for="methode in logoMethodePaiement" :key="methode.name">
                 <li>
@@ -232,7 +232,7 @@
           </div>
 
           <!--besoin d'aide-->
-          <div class="flex gap-x-2.5 items-center bg-slate-50 p-4 rounded-sm">
+          <div class="flex w-full md:w-auto gap-x-2.5 mt-3 md:mt-0  items-center bg-slate-50 p-4 rounded-sm">
             <img src="/images/service.jpg" alt="Besoin d'aide" class="w-22 h-22 rounded-full" loading="lazy" decoding="async" 
               height="48">
             <div>  

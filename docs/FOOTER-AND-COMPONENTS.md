@@ -240,3 +240,4 @@ interface Product {
 **Impact :** Amélioration significative de l'UX et de la maintenabilité
 
 
+

@@ -645,14 +645,10 @@ const submitOrder = async () => {
       } : null
     }
 
-    console.log('Envoi de la commande:', orderData)
-
     const response = await $fetch('/api/orders/create', {
       method: 'POST',
       body: orderData
     })
-
-    console.log('Réponse reçue:', response)
 
     if (response.success) {
       // Prépare les données pour la page de remerciements
@@ -676,23 +672,18 @@ const submitOrder = async () => {
         payment_method: orderForm.value.paymentMethod
       }
       
-      console.log('Données pour page remerciements:', thankYouData)
-      
       // Sauvegarde dans sessionStorage
       if (process.client) {
         sessionStorage.setItem('lastOrder', JSON.stringify(thankYouData))
-        console.log('Données sauvegardées dans sessionStorage')
       }
       
       // Vide le panier et reset les données
       cartStore.clearCart()
       deliveryStore.resetDelivery()
       deliveryStore.removeCoupon()
-      console.log('Panier et données vidés')
       
       // Redirection avec gestion d'erreur
       try {
-        console.log('Redirection vers /merci...')
         await navigateTo('/thank-you', { 
           replace: true,
           external: false

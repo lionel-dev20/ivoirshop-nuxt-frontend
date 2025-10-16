@@ -295,7 +295,6 @@ onMounted(() => {
   
   // Redirection si aucune donnée
   if (!orderData.value) {
-    console.log('Aucune donnée de commande, redirection...')
     navigateTo('/')
   }
 })

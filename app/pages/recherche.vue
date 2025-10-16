@@ -111,6 +111,7 @@
             v-for="product in filteredProducts"
             :key="product.id"
             :product="product"
+            :show-add-to-cart="true"
           />
         </div>
         

@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-[1440px] mx-auto p-6">
+  <div class="max-w-[1440px] mx-auto p-2 md:p-6">
     <!-- <h1 class="text-2xl font-bold mb-6">
       {{ category?.name || 'Catégorie' }}
     </h1> -->
@@ -38,7 +38,7 @@
       </div>
 
       <!-- Layout avec filtres et produits -->
-      <div class="flex flex-col lg:flex-row gap-6">
+      <div class="flex flex-col lg:flex-row gap-1">
         <!-- Colonne latérale - Filtres -->
         <div class="lg:w-1/4">
           <div class="sticky top-6">
@@ -84,11 +84,12 @@
           </div>
 
           <!-- Liste des produits -->
-          <div v-if="filteredProducts.length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          <div v-if="filteredProducts.length" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-4 gap-1">
             <ProductCard
               v-for="product in filteredProducts"
               :key="product.id"
               :product="product"
+              :show-add-to-cart="true"
             />
           </div>
           

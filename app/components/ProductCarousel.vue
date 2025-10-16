@@ -1,8 +1,8 @@
 <!-- components/ProductCarousel.vue -->
 <template>
-  <div class="product-carousel-container">
+  <div class="product-carousel-container ">
     <!-- Header du carousel -->
-    <div class="carousel-header">
+    <div class="carousel-header bg-white px-2 py-1.5 lg:px-6 lg:py-3 p-2 border border-gray-100 rounded-sm shadow shadow-gray-100">
       <h2 class="carousel-title">{{ title }}</h2>
       <div class="carousel-navigation">
         <button 
@@ -412,11 +412,11 @@ watch(() => props.categorySlug, () => {
 }
 
 .carousel-header {
-  @apply flex items-center justify-between mb-6;
+  @apply flex items-center justify-between md:mb-3 mb-1;
 }
 
 .carousel-title {
-  @apply text-2xl font-bold text-gray-900;
+  @apply md:text-2xl text-lg font-bold text-gray-900 mb-0;
 }
 
 .carousel-navigation {
@@ -526,5 +526,15 @@ watch(() => props.categorySlug, () => {
   .carousel-navigation {
     @apply self-end;
   }
+}
+
+
+@media (max-width: 640px) {
+    .carousel-header {
+        &[data-v-76bbd7dd] {
+            flex-direction: row;
+            align-items: flex-start;
+        }
+    }
 }
 </style>

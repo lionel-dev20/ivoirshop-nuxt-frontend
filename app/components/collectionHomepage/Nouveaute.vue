@@ -25,202 +25,23 @@
     <div v-if="categoryData" class="category-content">
       
       <!-- Header de la catégorie -->
-      <div class="category-header">
+      <div class="category-header bg-white px-2 py-1.5 lg:px-5 lg:py-1 p-2 border border-gray-100 rounded-sm shadow shadow-gray-100">
         <div class="category-hero" :class="{ 'with-image': categoryData.image }">
-          
-          <!-- Image de la catégorie -->
-          <!-- <div v-if="categoryData.image" class="category-image-container">
-            <img
-              :src="categoryData.image.src"
-              :alt="categoryData.image.alt || categoryData.name"
-              class="category-image"
-              @error="handleImageError"
-            />
-            <div class="image-overlay"></div>
-          </div> -->
-          
-          <!-- Informations de la catégorie -->
           <div class="category-info" :class="{ 'overlay-content': categoryData.image }">
             
-            <!-- Breadcrumb -->
-            <!-- <nav v-if="showBreadcrumb && breadcrumbItems.length > 0" class="breadcrumb">
-              <ol class="breadcrumb-list">
-                <li v-for="(item, index) in breadcrumbItems" :key="item.id" class="breadcrumb-item">
-                  <NuxtLink 
-                    v-if="index < breadcrumbItems.length - 1" 
-                    :to="item.link"
-                    class="breadcrumb-link"
-                  >
-                    {{ item.name }}
-                  </NuxtLink>
-                  <span v-else class="breadcrumb-current">{{ item.name }}</span>
-                  <svg v-if="index < breadcrumbItems.length - 1" class="w-4 h-4 breadcrumb-separator" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                  </svg>
-                </li>
-              </ol>
-            </nav> -->
+          
             
             <!-- Titre et description -->
             <div class="category-details">
               <h1 class="category-title">{{ categoryData.name }}</h1>
-              
-              <!-- <p v-if="categoryData.description && showDescription" class="category-description">
-                {{ categoryData.description }}
-              </p> -->
-              
-              <!-- Statistiques -->
-              <!-- <div v-if="showStats" class="category-stats">
-                <div class="stat-item">
-                  <Icon name="package" />
-                  <span>{{ productsData?.total || categoryData.count }} produit{{ (productsData?.total || categoryData.count) > 1 ? 's' : '' }}</span>
-                </div>
-                
-                <div v-if="subcategoriesCount > 0" class="stat-item">
-                  <Icon name="folder" />
-                  <span>{{ subcategoriesCount }} sous-catégorie{{ subcategoriesCount > 1 ? 's' : '' }}</span>
-                </div>
-                
-                <div v-if="averagePrice > 0" class="stat-item">
-                  <Icon name="trending-up" />
-                  <span>Prix moyen: {{ formatPrice(averagePrice) }}</span>
-                </div>
-              </div> -->
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Sous-catégories -->
-      <!-- <div v-if="showSubcategories && subcategories.length > 0" class="subcategories-section">
-        <h2 class="section-title">Sous-catégories</h2>
-        <div class="subcategories-grid">
-          <NuxtLink
-            v-for="subcategory in subcategories"
-            :key="subcategory.id"
-            :to="`/categorie/${subcategory.slug}`"
-            class="subcategory-card"
-          >
-            <div v-if="subcategory.image" class="subcategory-image">
-              <img 
-                :src="subcategory.image.src" 
-                :alt="subcategory.image.alt || subcategory.name"
-                loading="lazy"
-              />
-            </div>
-              <div v-else class="subcategory-placeholder">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z" />
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 21v-4a2 2 0 012-2h4a2 2 0 012 2v4" />
-                </svg>
-              </div>
-            
-            <div class="subcategory-info">
-              <h3 class="subcategory-name">{{ subcategory.name }}</h3>
-              <p class="subcategory-count">{{ subcategory.count }} produits</p>
-            </div>
-          </NuxtLink>
-        </div>
-      </div> -->
 
       <!-- Filtres et tri -->
-      <div v-if="showFilters && productsData?.products?.length > 0" class="filters-section">
-        <div class="filters-header">
-          <!-- <h2 class="section-title">Produits</h2> -->
-          <div class="filters-controls">
-            
-            <!-- Filtres rapides -->
-            <!-- <div class="quick-filters">
-              <button
-                @click="toggleFilter('sale')"
-                :class="{ active: activeFilters.sale }"
-                class="filter-button"
-              >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                </svg>
-                Promotions
-                <span v-if="saleCount > 0" class="filter-count">({{ saleCount }})</span>
-              </button>
-              
-              <button
-                @click="toggleFilter('featured')"
-                :class="{ active: activeFilters.featured }"
-                class="filter-button"
-              >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-                </svg>
-                Favoris
-                <span v-if="featuredCount > 0" class="filter-count">({{ featuredCount }})</span>
-              </button>
-              
-              <button
-                @click="toggleFilter('inStock')"
-                :class="{ active: activeFilters.inStock }"
-                class="filter-button"
-              >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                En stock
-              </button>
-            </div> -->
-            
-            <!-- Tri -->
-            <!-- <div class="sort-controls">
-              <select v-model="sortBy" @change="applySorting" class="sort-select">
-                <option value="menu_order">Tri par défaut</option>
-                <option value="date">Plus récents</option>
-                <option value="price_asc">Prix croissant</option>
-                <option value="price_desc">Prix décroissant</option>
-                <option value="popularity">Popularité</option>
-                <option value="rating">Meilleures notes</option>
-              </select>
-            </div> -->
-          </div>
-        </div>
-        
-        <!-- Résultats actifs -->
-        <!-- <div v-if="hasActiveFilters" class="active-filters">
-          <span class="active-filters-label">Filtres actifs:</span>
-          <div class="active-filters-list">
-            <button
-              v-if="activeFilters.sale"
-              @click="activeFilters.sale = false"
-              class="active-filter-tag"
-            >
-              Promotions
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-            <button
-              v-if="activeFilters.featured"
-              @click="activeFilters.featured = false"
-              class="active-filter-tag"
-            >
-              Favoris
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-            <button
-              v-if="activeFilters.inStock"
-              @click="activeFilters.inStock = false"
-              class="active-filter-tag"
-            >
-              En stock
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
-          <button @click="clearAllFilters" class="clear-filters-button">
-            Effacer tous les filtres
-          </button>
-        </div> -->
-      </div>
+      
 
       <!-- Grille de produits -->
       <div v-if="filteredProducts.length > 0" class="products-section">
@@ -758,7 +579,7 @@ if (categoryData.value) {
 
 /* Header de catégorie */
 .category-header {
-  @apply mb-12;
+  @apply mb-3;
 }
 
 .category-hero {
@@ -782,12 +603,12 @@ if (categoryData.value) {
 }
 
 .category-info {
-  @apply p-6 lg:p-8;
+  @apply p-2 lg:p-4;
 }
 
-.category-info.overlay-content {
+/* .category-info.overlay-content {
   @apply absolute inset-0 flex flex-col justify-end text-white;
-}
+} */
 
 /* Breadcrumb */
 .breadcrumb {
@@ -820,7 +641,7 @@ if (categoryData.value) {
 
 /* Détails de catégorie */
 .category-title {
-  @apply text-3xl lg:text-4xl font-bold mb-4;
+  @apply text-xl lg:text-2xl font-bold mb-1;
 }
 
 .category-description {
@@ -948,17 +769,17 @@ if (categoryData.value) {
 
 /* Grille de produits */
 .products-section {
-  @apply mb-12;
+  @apply mb-8;
 }
 
 .products-grid {
-  @apply grid gap-3 md:gap-3;
+  @apply grid gap-1 md:gap-3;
 }
 
 .grid-2 { @apply grid-cols-1 sm:grid-cols-2; }
 .grid-3 { @apply grid-cols-1 sm:grid-cols-2 lg:grid-cols-3; }
 .grid-4 { @apply grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4; }
-.grid-5 { @apply grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5; }
+.grid-5 { @apply grid-cols-2 md:grid-cols-3 2xl:grid-cols-5; }
 .grid-6 { @apply grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6; }
 
 /* Pagination */

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="relative flex flex-col bg-white border border-gray-100 rounded-sm shadow shadow-gray-100 hover:shadow-md transition p-3"
+    class="relative lg:min-h-[310px] flex flex-col bg-white border border-gray-100 rounded-sm shadow shadow-gray-100 hover:shadow-md transition p-3"
   >
     <!-- Badge -->
     <div class="absolute top-2 left-2 flex flex-col gap-1">
@@ -11,10 +11,10 @@
         Nouveau
       </span>
       <span
-        v-if="product.on_sale || product.onSale"
-        class="bg-red-600 text-white text-xs font-medium px-2 py-0.5 rounded"
+        class="bg-orange-200 text-orange-700 text-xs font-medium px-2 py-0.5 rounded z-20 absolute top-0  md:left-52 left-28 "
       >
         -{{ discountPercent }}%
+        
       </span>
     </div>
 
@@ -32,19 +32,21 @@
     <div class="flex flex-col flex-1">
       <NuxtLink
         :to="`/product/${product.slug}`"
-        class="text-gray-800 font-medium line-clamp-2"
+        class="text-gray-800 font-medium line-clamp-1"
       >
         {{ product.name }}
       </NuxtLink>
 
       <!-- Prix -->
-      <div class="mt-2 flex items-center gap-2">
-        <span v-if="product.on_sale || product.onSale" class="text-red-600 text-lg font-semibold">
+      <div class="mt-2 flex-col flex items-start">
+        <span class="text-gray-800 text-lg font-semibold">{{ formatPrice(product.salePrice || product.sale_price) }}</span>
+
+        <!-- <span v-if="product.on_sale || product.onSale" class="text-red-600 text-lg font-semibold">
           {{ formatPrice(product.salePrice || product.sale_price || 0) }}
-        </span>
+        </span> -->
         <span
           :class="[
-            (product.on_sale || product.onSale) ? 'line-through text-gray-400 text-sm' : 'text-gray-900 text-[16px] font-semibold'
+            (product.on_sale || product.onSale) ? 'line-through text-gray-400 text-sm' : 'text-gray-500 text-[14px] line-through font-semibold'
           ]"
         >
           {{ formatPrice(product.regularPrice || product.regular_price || 0) }}
@@ -53,7 +55,7 @@
     </div>
 
     <!-- Bouton -->
-    <button
+    <!-- <button
       @click="addToCart"
       :disabled="!canAddToCart"
       :class="[
@@ -62,15 +64,15 @@
           ? 'bg-[#ff9900] text-white hover:bg-[#ff9900]/80' 
           : 'bg-gray-300 text-gray-500 cursor-not-allowed'
       ]"
-    >
-      <div v-if="isAdding" class="animate-pulse">
+    > -->
+      <!-- <div v-if="isAdding" class="animate-pulse">
         <div class="h-4 w-4 bg-white rounded"></div>
-      </div>
+      </div> -->
       <!-- <svg v-else class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01"></path>
       </svg> -->
-      {{ buttonText }}
-    </button>
+      <!-- {{ buttonText }}
+    </button> -->
   </div>
 </template>
 

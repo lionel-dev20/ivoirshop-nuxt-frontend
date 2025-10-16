@@ -7,7 +7,7 @@
       :autoplay="{ delay: 5000, disableOnInteraction: false }"
       :loop="true"
       :breakpoints="{
-        640: { slidesPerView: 1/0.5 },   // mobile
+        640: { slidesPerView: 1 },   // mobile
         768: { slidesPerView: 1 },   // tablette
         1024: { slidesPerView: 1 }   // desktop
       }"

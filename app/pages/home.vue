@@ -3,7 +3,7 @@
       <div class="flex gap-x-2 items-center max-h-[480px]">
         <MegamenuMegaMenuHorizontalColumns />
         <HerosectionMyCarousel />
-        <RightDoubleAds />
+        <RightDoubleAds class="hidden md:block" />
       </div>
       <div class="h-8"></div>
       <ListPartner />
@@ -45,9 +45,9 @@
       <CollectionHomepageDoubleBanner1 />
       <div class="h-8"></div>
       <Nouveaute 
-       category-slug="air-fryers"
+       category-slug="televisions"
        :grid-columns="5"
-       :products-per-page="12"
+       :products-per-page="20"
      />
   
       <!-- Blocs de catégories -->

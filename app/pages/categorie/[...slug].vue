@@ -38,7 +38,7 @@
       </div>
 
       <!-- Layout avec filtres et produits -->
-      <div class="flex flex-col lg:flex-row gap-1">
+      <div class="flex flex-col lg:flex-row gap-1 md:gap-6">
         <!-- Colonne latérale - Filtres -->
         <div class="lg:w-1/4">
           <div class="sticky top-6">
@@ -84,7 +84,7 @@
           </div>
 
           <!-- Liste des produits -->
-          <div v-if="filteredProducts.length" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-4 gap-1">
+          <div v-if="filteredProducts.length" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-2 gap-1">
             <ProductCard
               v-for="product in filteredProducts"
               :key="product.id"

@@ -131,7 +131,7 @@
               </svg>
               <div>
                 <p class="text-gray-300 text-sm">
-                  +225 XX XX XX XX
+                  +225 07 01 51 88 45
                 </p>
               </div>
             </div>

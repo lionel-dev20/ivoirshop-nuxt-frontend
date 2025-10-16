@@ -241,7 +241,7 @@
             <button class="mt-4">
               <NuxtLink to=""
                 class=" border-amber-400 border-2 px-3.5 text-[#f90] py-2 rounded-sm text-xl font-bold hover:text-[#fff] hover:bg-[#f90] hover:border-[#f90] cursor-pointer transition-all duration-300">
-                6 69 80 50 74</NuxtLink>
+                +225 0701518845</NuxtLink>
             </button>
           </div>
           </div>

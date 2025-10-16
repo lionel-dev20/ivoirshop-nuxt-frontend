@@ -62,7 +62,7 @@
     </div>
 
     <!-- Contenu principal avec layout sidebar + contenu -->
-    <div v-else class="flex flex-col lg:flex-row gap-6">
+    <div v-else class="flex flex-col lg:flex-row gap-1 md:gap-6">
       <!-- Sidebar - Filtres -->
       <div class="lg:w-1/4">
         <div class="sticky top-6">
@@ -106,7 +106,7 @@
         </div>
 
         <!-- Liste des produits -->
-        <div v-if="filteredProducts.length" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div v-if="filteredProducts.length" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-1 md:gap-4">
           <ProductCard
             v-for="product in filteredProducts"
             :key="product.id"

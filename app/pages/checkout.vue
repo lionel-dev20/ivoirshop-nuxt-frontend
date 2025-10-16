@@ -444,7 +444,7 @@
               <li>• Tarifs de livraison selon la zone et le poids</li>
               <li>• Délai de livraison: 2-3 jours ouvrés</li>
               <li>• Paiement à la réception de votre commande</li>
-              <li>• Service client: +225 XX XX XX XX XX</li>
+              <li>• Service client: +225 07 01 51 88 45</li>
             </ul>
           </div>
         </div>

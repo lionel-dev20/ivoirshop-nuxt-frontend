@@ -9,7 +9,7 @@
     </div>
 
     <!-- Layout skeleton avec filtres et produits -->
-    <div class="flex flex-col lg:flex-row gap-6">
+    <div class="flex flex-col lg:flex-row gap-1 md:gap-6">
       <!-- Skeleton colonne latérale - Filtres -->
       <div class="lg:w-1/4">
         <div class="sticky top-6">

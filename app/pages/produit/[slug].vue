@@ -192,13 +192,13 @@
                 </label>
                 <input id="quantity" v-model.number="quantity" type="number" min="1"
                   :max="product.stock_quantity || 999"
-                  class="w-20 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                  class="w-20 text-center px-3 py-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
               </div>
             </div>
 
             <button v-if="product.in_stock" @click="addToCart"
-              class="w-full cursor-pointer bg-[#ff9900] hover:bg-[#ff9900]/80 text-white font-semibold py-3 px-6 rounded-[4px] transition-colors flex items-center justify-center space-x-2">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              class="w-full h-13 cursor-pointer bg-[#ff9900] hover:bg-[#ff9900]/80 text-white font-semibold py-3 px-4 rounded-[4px] transition-colors flex items-center justify-center space-x-2">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13l-1.5 6m0 0h9M17 21v-2a2 2 0 00-2-2H9a2 2 0 00-2 2v2">
                 </path>
@@ -233,8 +233,8 @@
 
           <!--besoin d'aide-->
           <div class="flex w-full md:w-auto gap-x-2.5 mt-3 md:mt-0  items-center bg-slate-50 p-4 rounded-sm">
-            <img src="/images/service.jpg" alt="Besoin d'aide" class="w-22 h-22 rounded-full" loading="lazy" decoding="async" 
-              height="48">
+            <img src="/logo/call.png" alt="Besoin d'aide" class="w-20 h-20 rounded-full shadow-md " loading="lazy" decoding="async" 
+              height="46">
             <div>  
             <span class="text-[13px] font-bold text-gray-900">Besoin d'aide pour Acheter ?</span>
             <p>Cliquez et appeler</p>

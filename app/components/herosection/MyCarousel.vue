@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-[62%] mx-auto shadow-sm shadow-gray-100 border-1 border-gray-100">
+  <div class="w-full px-1.5 px-0 md:max-w-[62%] mx-auto shadow-sm shadow-gray-100 md:border-1 border-0 border-gray-100">
     <Swiper
       :modules="[Navigation, Pagination, Autoplay]"
       :slides-per-view="1"
@@ -41,7 +41,7 @@ const slides = [
   { image: 'https://web.archive.org/web/20240216010935if_/https://app.ivoirshop.ci/wp-content/uploads/2023/11/Slider-8.png' },
   { image: 'https://web.archive.org/web/20240216010855if_/https://www.ivoirshop.ci/wp-content/uploads/2024/01/IVS_SLIDER_GEN_2.jpg' },
   { image: 'https://web.archive.org/web/20240216010935if_/https://app.ivoirshop.ci/wp-content/uploads/2023/11/Slider-8.png' }
-]
+] as const
 </script>
 
 <style scoped>
@@ -52,5 +52,14 @@ const slides = [
 .swiper-button-next,
 .swiper-button-prev {
   color: #000 !important;
+  background: rgba(255, 255, 255, 0.4) !important;
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50% !important;
+}
+
+.swiper-button-next::after,
+.swiper-button-prev::after {
+  font-size: 24px !important;
 }
 </style>

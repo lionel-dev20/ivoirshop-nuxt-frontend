@@ -10,6 +10,9 @@ export default defineNuxtConfig({
     plugins: [
       tailwindcss(),
     ],
+    esbuild: {
+      drop: process.env.NODE_ENV === 'production' ? ['console', 'debugger'] : [],
+    },
   },
 
   modules: ['@pinia/nuxt', [

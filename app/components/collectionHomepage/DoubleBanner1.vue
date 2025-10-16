@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-white flex justify-between items-center border-slate-100 p-3 rounded-[12px]">
+    <div class="bg-white flex-col md:flex-row gap-y-2 md:gap-y-0  flex justify-between items-center border-slate-100 p-3 rounded-[12px]">
     <NuxtLink to="/">
         <img src="https://site.glotelho.cm/media/wysiwyg/DOUBLE-BANNER1209_02.webp" alt="Banner" class="object-cover h-full w-full rounded-[8px]" />
     </NuxtLink>

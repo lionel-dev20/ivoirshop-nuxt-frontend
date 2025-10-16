@@ -221,7 +221,7 @@
               <ul v-for="methode in logoMethodePaiement" :key="methode.name">
                 <li>
                   <NuxtLink to="">
-                    <img :src="methode.logo" :alt="methode.name" class="w-12 h-12 rounded-full" loading="lazy"
+                    <img :src="methode.logo" :alt="methode.name" class="w-12 h-12 rounded-full shadow-md" loading="lazy"
                       decoding="async" width="48" height="48">
                     <p class="text-sm text-sky-700 font-bold text-center mt-2">{{ methode.name }}</p>
 
@@ -430,9 +430,6 @@ const addToCart = () => {
   const cartStore = useCartStore()
   cartStore.addItem(product.value, quantity.value)
   cartStore.openCart()
-
-  // Feedback visuel
-  console.log(`Ajout au panier: ${product.value.name}, quantité: ${quantity.value}`)
 }
 
 const openLightbox = () => {

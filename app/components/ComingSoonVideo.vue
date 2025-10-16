@@ -75,18 +75,16 @@ const checkMobile = () => {
 
 // Gestion des événements vidéo
 const handleVideoError = () => {
-  console.log('Erreur de chargement de la vidéo, utilisation du fallback')
   videoError.value = true
 }
 
 const onVideoLoadStart = () => {
-  console.log('Chargement de la vidéo...')
+  // Vidéo en cours de chargement
 }
 
 const onVideoCanPlay = () => {
-  console.log('Vidéo prête à être lue')
   if (videoElement.value) {
-    videoElement.value.play().catch(console.log)
+    videoElement.value.play().catch(() => {})
   }
 }
 
@@ -98,8 +96,7 @@ onMounted(() => {
   // Essayer de jouer la vidéo après un délai
   setTimeout(() => {
     if (videoElement.value && !videoError.value && !isMobile.value) {
-      videoElement.value.play().catch((err) => {
-        console.log('Impossible de jouer la vidéo automatiquement:', err)
+      videoElement.value.play().catch(() => {
         videoError.value = true
       })
     }

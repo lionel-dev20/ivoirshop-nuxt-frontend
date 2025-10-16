@@ -232,19 +232,12 @@ const { data: fetchedCategory, pending, error, refresh: refreshCategory } = awai
       let categoryInfo = null
       
       // Récupérer les informations de la catégorie
-      console.log('Recherche de catégorie:', { categoryId: props.categoryId, categorySlug: props.categorySlug })
-      
       if (props.categoryId) {
         const categories = await $fetch('/api/api/v1/categories')
-        console.log('Catégories récupérées par ID:', categories.length)
         categoryInfo = categories.find(cat => cat.id == props.categoryId)
-        console.log('Catégorie trouvée par ID:', categoryInfo)
       } else if (props.categorySlug) {
         const categories = await $fetch('/api/api/v1/categories')
-        console.log('Catégories récupérées par slug:', categories.length)
-        console.log('Slugs disponibles:', categories.map(cat => cat.slug))
         categoryInfo = categories.find(cat => cat.slug === props.categorySlug)
-        console.log('Catégorie trouvée par slug:', categoryInfo)
       }
       
       if (!categoryInfo) {

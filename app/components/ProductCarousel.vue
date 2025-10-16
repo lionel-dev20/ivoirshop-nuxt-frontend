@@ -218,13 +218,11 @@ const initSwiper = () => {
     on: {
       init: () => {
         swiperInitialized.value = true
-        console.log('Swiper initialized')
       },
       slideChange: () => {
         // Événement personnalisé si nécessaire
       },
       resize: () => {
-        console.log('Window resized, updating swiper')
         if (swiper.value) {
           swiper.value.update()
         }
@@ -246,11 +244,7 @@ const slidePrev = () => {
 }
 
 const loadProducts = async () => {
-  console.log('=== ProductCarousel loadProducts Debug ===')
-  console.log('Props:', { categoryId: props.categoryId, categorySlug: props.categorySlug, maxProducts: props.maxProducts })
-  
   if (!props.categoryId && !props.categorySlug) {
-    console.log('Aucune catégorie spécifiée, chargement des produits génériques')
     // Charger des produits génériques si aucune catégorie spécifiée
     await loadGenericProducts()
     return
@@ -273,20 +267,14 @@ const loadProducts = async () => {
       apiUrl += `?categorySlug=${encodeURIComponent(props.categorySlug)}`
     }
 
-    console.log('URL de l\'API:', apiUrl)
     const response = await $fetch(apiUrl) as any
-    console.log('Réponse de l\'API:', response)
     
     // Gérer la réponse selon le format de l'API
     if (response?.products && Array.isArray(response.products)) {
-      console.log(`Produits trouvés: ${response.products.length}`)
       products.value = response.products.slice(0, props.maxProducts)
-      console.log(`Produits affichés: ${products.value.length}`)
     } else if (response && Array.isArray(response)) {
       // Si l'API retourne directement un tableau de produits
-      console.log(`Produits trouvés (array direct): ${response.length}`)
       products.value = response.slice(0, props.maxProducts)
-      console.log(`Produits affichés: ${products.value.length}`)
     } else {
       console.warn('Format de réponse API inattendu:', response)
       products.value = []
@@ -361,11 +349,9 @@ const handleWishlistToggle = (product: any) => {
 // Gestion du chargement d'images
 const handleImageLoaded = () => {
   loadedImagesCount.value++
-  console.log(`Images chargées: ${loadedImagesCount.value}/${totalImagesCount.value}`)
   
   // Mettre à jour Swiper si toutes les images sont chargées
   if (loadedImagesCount.value >= totalImagesCount.value && swiper.value && swiperInitialized.value) {
-    console.log('Toutes les images chargées, mise à jour de Swiper')
     setTimeout(() => {
       swiper.value?.update()
     }, 50)

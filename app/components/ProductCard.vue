@@ -11,7 +11,7 @@
         Nouveau
       </span>
       <span
-        class="bg-orange-200 text-orange-700 text-xs font-medium px-2 py-0.5 rounded z-20 absolute top-0  md:left-52 left-28 "
+        class="bg-orange-200 text-orange-700 text-xs font-medium px-2 py-0.5 rounded z-20 absolute top-0  md:left-50 left-28 "
       >
         -{{ discountPercent }}%
         
@@ -140,33 +140,23 @@ const formatPrice = (price: string | number) => {
 
 // Récupérer la source d'image du produit pour le composant ProductImage
 const getProductImageSrc = (product: Product): string | string[] | null => {
-  console.log('=== ProductCard Image Debug ===')
-  console.log('Product:', product)
-  console.log('Product image property:', product.image)
-  console.log('Product images array:', product.images)
-  console.log('Product thumbnail:', product.thumbnail)
-  
   // Priorité 1: Propriété image directe
   if (product.image && product.image !== '/images/placeholder-product.jpg') {
-    console.log('Using product.image:', product.image)
     return product.image
   }
   
   // Priorité 2: Si thumbnail existe, l'utiliser
   if (product.thumbnail && product.thumbnail !== '/images/placeholder-product.jpg') {
-    console.log('Using product.thumbnail:', product.thumbnail)
     return product.thumbnail
   }
   
   // Priorité 3: Retourner le tableau images complet pour que ProductImage le gère
   if (product.images && Array.isArray(product.images) && product.images.length > 0) {
-    console.log('Using product.images array:', product.images)
     // Convertir en tableau de strings pour compatibilité
     return product.images.map(img => img.src)
   }
   
   // Aucune image trouvée
-  console.log('No image found, returning null')
   return null
 }
 
@@ -185,7 +175,6 @@ const isAdding = ref(false)
 // Vérifier si on peut ajouter au panier
 const canAddToCart = computed(() => {
   const stockStatus = product.value.stock_status?.toLowerCase()
-  console.log('Stock status:', stockStatus, 'Product:', product.value.name)
   
   // Considérer comme disponible si pas de statut défini ou si en stock
   if (!stockStatus || stockStatus === 'instock' || stockStatus === 'onbackorder') {
@@ -231,9 +220,6 @@ const addToCart = async () => {
     
     // Ouvrir le panier
     cartStore.openCart()
-    
-    // Notification de succès (optionnel)
-    console.log('Produit ajouté au panier:', props.product.name)
     
   } catch (error) {
     console.error('Erreur lors de l\'ajout au panier:', error)

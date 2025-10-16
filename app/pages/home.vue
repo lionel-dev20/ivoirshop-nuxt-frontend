@@ -5,10 +5,9 @@
         <HerosectionMyCarousel />
         <RightDoubleAds class="hidden md:block" />
       </div>
-      <div class="h-8"></div>
+      <div class="md:h-8 h-4"></div>
       <ListPartner />
-      <div class="h-8"></div>
-      <div class="h-8"></div>
+      <div class="md:h-8 h-4"></div>      <!-- <div class="h-8"></div> -->
      
       <!-- Carousel de produits -->
       <ProductCarousel 
@@ -25,8 +24,8 @@
         @wishlist-toggle="handleWishlistToggle"
       />
   
-      <div class="h-8"></div>
-     <CollectionHomepageDoubleBanner />
+      <div class="md:h-8 h-4"></div>
+      <CollectionHomepageDoubleBanner />
      <div class="h-8"></div>
       <!-- Carousel de promotions -->
       <ProductCarousel 
@@ -41,8 +40,8 @@
         @quick-view="handleQuickView"
         @wishlist-toggle="handleWishlistToggle"
       />
-      <div class="h-8"></div>
-      <CollectionHomepageDoubleBanner1 />
+      <div class="md:h-8 h-4"></div>
+            <CollectionHomepageDoubleBanner1 />
       <div class="h-8"></div>
       <Nouveaute 
        category-slug="televisions"
@@ -59,7 +58,7 @@
        :grid-columns="4"
        :products-per-page="12"
      /> -->
-      <div class="h-8"></div>
+     <div class="md:h-8 h-4"></div>
       <!-- <div class="container mx-auto px-4">
           <DualBannerSlider
             :limit="6"
@@ -116,23 +115,19 @@
   
   // Gestionnaires d'événements pour le carousel
   const handleAddToCart = (product) => {
-    console.log('Ajouter au panier:', product);
     // Logique d'ajout au panier
   }
   
   const handleProductClick = (product) => {
-    console.log('Clic sur produit:', product);
     // Navigation vers la page produit
     navigateTo(`/produit/${product.slug}`);
   }
   
   const handleQuickView = (product) => {
-    console.log('Vue rapide:', product);
     // Ouvrir modal de vue rapide
   }
   
   const handleWishlistToggle = (product) => {
-    console.log('Toggle wishlist:', product);
     // Ajouter/retirer des favoris
   }
   

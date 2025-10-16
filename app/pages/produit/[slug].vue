@@ -85,7 +85,7 @@
             <NuxtLink to="/categories" class="hover:text-gray-700">Catégories</NuxtLink>
           </li> -->
           <li v-for="category in product.categories" :key="category.id" class="before:content-['>'] before:mx-2">
-            <NuxtLink :to="`/categorie/${category.slug}`" class="hover:text-gray-700 ">
+            <NuxtLink :to="`/categorie/${category.slug}`" class="hover:text-gray-700 truncate">
               {{ category.name }}
             </NuxtLink>
           </li>
@@ -212,7 +212,7 @@
           </div>
 
 
-          <div class="flex flex-col lg:flex-row items-center justify-between">
+          <div class="flex flex-col lg:flex-row md:gap-x-2 items-center justify-between">
             
           <!--Methode de paiement disponoble-->
           <div class="flex  w-full  md:w-auto flex-col lg:flex-row items-center gap-x-1 bg-sky-50 px-4 py-6  rounded-md">
@@ -238,9 +238,9 @@
             <div>  
             <span class="text-[13px] font-bold text-gray-900">Besoin d'aide pour Acheter ?</span>
             <p>Cliquez et appeler</p>
-            <button class="mt-4">
+            <button class="mt-4 md:py-1 py-1">
               <NuxtLink to=""
-                class=" border-amber-400 border-2 px-3.5 text-[#f90] py-2 rounded-sm text-xl font-bold hover:text-[#fff] hover:bg-[#f90] hover:border-[#f90] cursor-pointer transition-all duration-300">
+                class=" border-amber-400 border-2 px-3.5 text-[16px] md:text-[19px] text-[#f90] py-2 rounded-sm text-xl font-bold hover:text-[#fff] hover:bg-[#f90] hover:border-[#f90] cursor-pointer transition-all duration-300">
                 +225 0701518845</NuxtLink>
             </button>
           </div>
@@ -279,7 +279,7 @@
 
       <!-- Description détaillée -->
       <div v-if="product.description"
-        class="mb-16 bg-white border border-gray-100 shadow-md shadow-gray-100 md:p-8 rounded-sm">
+        class="mb-16 bg-white border border-gray-100 shadow-md p-6 md:px-8 shadow-gray-100 md:p-8 rounded-sm">
         <h2 class="text-2xl font-bold text-gray-900 mb-6">Description</h2>
         <div class="prose max-w-none">
           <div v-html="product.description"></div>
@@ -289,7 +289,7 @@
       <!-- Produits associés -->
       <div v-if="relatedProducts.length > 0" class="mb-16">
         <h2 class="text-2xl font-bold text-gray-900 mb-6">Produits similaires</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-1 md:gap-4">
           <div v-for="relatedProduct in relatedProducts" :key="relatedProduct.id"
             class="border rounded-md bg-white overflow-hidden shadow-sm shadow-slate-100 hover:shadow-md transition-shadow">
             <NuxtLink :to="`/produit/${relatedProduct.slug}`">

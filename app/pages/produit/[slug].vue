@@ -117,7 +117,7 @@
         </div>
 
         <!-- Informations du produit -->
-        <div class="w-3/3 space-y-6 rounded-md p-6 bg-white border border-gray-50 shadow shadow-gray-100 md:p-8">
+        <div class="w-3/3 space-y-6 rounded-md p-3 bg-white border border-gray-50 shadow shadow-gray-100 md:p-8">
           <div>
             <h1 class="text-[18px] font-medium text-gray-700 mb-2">{{ product.name }}</h1>
 
@@ -135,14 +135,14 @@
 
           <!-- Prix -->
           <div class="space-y-2">
-            <div v-if="product.on_sale" class="flex items-center space-x-3">
-              <span class="text-2xl font-bold text-gray-800">
+            <div v-if="product.on_sale" class="flex md:items-center items-end space-x-3">
+              <span class="md:text-2xl text-xl font-bold text-gray-800">
                 {{ formatPrice(product.sale_price) }}
               </span>
-              <span class="text-lg text-gray-500 line-through">
+              <span class="md:text-lg text-md text-gray-500 line-through">
                 {{ formatPrice(product.regular_price) }}
               </span>
-              <span class="bg-red-100 text-red-800 text-sm font-medium px-2 py-1 rounded">
+              <span class="bg-red-100 text-red-800 md:text-sm text-[12px] font-medium px-2 py-1 rounded">
                 -{{ Math.round((1 - product.sale_price / product.regular_price) * 100) }}%
               </span>
             </div>
@@ -161,12 +161,12 @@
           <!-- Stock et disponibilité -->
           <div class="flex items-center space-x-4">
             <span :class="[
-              'px-3 py-1 rounded-full text-sm font-medium',
+              'px-3 py-1 rounded-full md:text-sm text-[12px] font-medium',
               getStockStatusClass(product.stock_status)
             ]">
               {{ getStockStatusText(product.stock_status) }}
             </span>
-            <span v-if="product.sku" class="text-sm text-gray-500">
+            <span v-if="product.sku" class="md:text-sm text-[12px] text-gray-500">
               SKU: {{ product.sku }}
             </span>
           </div>
@@ -215,8 +215,8 @@
           <div class="flex flex-col lg:flex-row md:gap-x-2 items-center justify-between">
             
           <!--Methode de paiement disponoble-->
-          <div class="flex  w-full  md:w-auto flex-col lg:flex-row items-center gap-x-1 bg-sky-50 px-4 py-6  rounded-md">
-            <span class="text-[15px] w-28 font-bold text-sky-800">Vous pouvez payer en par</span>
+          <div class="flex  w-full  md:w-auto flex-col lg:flex-row md:items-center gap-x-1 bg-sky-50 px-4 md:py-6 py-4 rounded-md">
+            <span class="text-[15px] md:w-28 mb-4 md:mb-0 font-bold text-sky-800">Vous pouvez payer en par</span>
             <div class="flex flex-row items-center gap-x-3">
               <ul v-for="methode in logoMethodePaiement" :key="methode.name">
                 <li>

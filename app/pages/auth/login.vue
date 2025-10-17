@@ -1,7 +1,7 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gray-50">
+  <div class="md:min-h-screen flex md:items-center mx-auto my-10 md:my-0 px-3 md:px-0 justify-center bg-gray-50">
     <div class="w-full max-w-md bg-white p-8 rounded shadow">
-      <h1 class="text-2xl font-bold mb-6 text-center">Connexion</h1>
+      <h1 class="text-2xl font-bold md:mb-6 text-center">Connexion</h1>
 
       <div class="mb-4">
         <label class="block font-semibold mb-1">Email</label>

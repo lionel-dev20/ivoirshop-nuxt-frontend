@@ -56,50 +56,44 @@
               </div>
             </div>
 
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+              <div>
+                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
+                  Email *
+                </label>
+                <input
+                  id="email"
+                  v-model="orderForm.email"
+                  type="email"
+                  required
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
 
-
-
-
-            
-          
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div class="mt-4">
-              <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
-                Email *
-              </label>
-              <input
-                id="email"
-                v-model="orderForm.email"
-                type="email"
-                required
-                class="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
+              <div>
+                <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">
+                  Téléphone *
+                </label>
+                <input
+                  id="phone"
+                  v-model="orderForm.phone"
+                  type="tel"
+                  required
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
             </div>
 
-            <div class="mt-4">
-              <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">
-                Téléphone *
-              </label>
-              <input
-                id="phone"
-                v-model="orderForm.phone"
-                type="tel"
-                required
-                class="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-            </div>
-
-            <!-- Les champs d'adresse sont maintenant automatiquement remplis par la sélection de zone de livraison -->
-            <div class="bg-[#ff990013] border border-[#ff990013] rounded-lg p-4 mt-4">
-              <h3 class="font-medium text-[#e98d03] mb-2 flex items-center">
+            <!-- Adresse automatique via zone de livraison -->
+            <div class="bg-orange-50 border border-orange-200 rounded-lg p-4 mt-4">
+              <h3 class="font-medium text-orange-700 mb-2 flex items-center">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
                 Adresse de livraison
               </h3>
-              <div class="text-sm text-[#e98d03]">
+              <div class="text-sm text-orange-700">
                 <p v-if="deliveryStore.hasSelectedDelivery">
                   <span class="font-medium">Ville:</span> {{ deliveryStore.selectedDelivery.city_name }}
                 </p>
@@ -233,11 +227,11 @@
                   Récapitulatif livraison
                 </h3>
                 <div class="text-sm text-blue-800 space-y-1">
-                  <p><span class="font-medium">Ville de facturation:</span> {{ deliveryStore.selectedDelivery.city_name }}</p>
-                  <p><span class="font-medium">Adresse de livraison:</span> {{ deliveryStore.selectedDelivery.commune_name }}</p>
-                  <p><span class="font-medium">Type de produit:</span> {{ getProductTypeLabel(deliveryStore.selectedDelivery.product_type) }}</p>
+                  <p><span class="font-medium">Ville:</span> {{ deliveryStore.selectedDelivery.city_name }}</p>
+                  <p><span class="font-medium">Commune:</span> {{ deliveryStore.selectedDelivery.commune_name }}</p>
+                  <p><span class="font-medium">Type:</span> {{ getProductTypeLabel(deliveryStore.selectedDelivery.product_type) }}</p>
                   <p class="text-base font-semibold text-blue-900 mt-2">
-                    <span class="font-medium">Frais de livraison:</span> {{ deliveryStore.formattedShippingCost }}
+                    <span class="font-medium">Frais:</span> {{ deliveryStore.formattedShippingCost }}
                   </p>
                 </div>
               </div>
@@ -267,9 +261,7 @@
                 :disabled="!couponCode.trim() || deliveryStore.isApplyingCoupon"
                 class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors flex items-center space-x-2"
               >
-                <div v-if="deliveryStore.isApplyingCoupon" class="animate-pulse">
-                  <div class="h-4 w-4 bg-white rounded"></div>
-                </div>
+                <span v-if="deliveryStore.isApplyingCoupon" class="animate-spin">⏳</span>
                 <span>{{ deliveryStore.isApplyingCoupon ? 'Vérification...' : 'Appliquer' }}</span>
               </button>
             </div>
@@ -309,44 +301,19 @@
           <div class="bg-white rounded-lg shadow p-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-4">Méthode de paiement</h2>
             
-            <div class="space-y-3">
-              <label class="flex items-center p-3 border border-gray-200 rounded-md cursor-pointer hover:bg-gray-50">
-                <input
-                  v-model="orderForm.paymentMethod"
-                  type="radio"
-                  value="cod"
-                  class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
-                />
-                <div class="ml-3 flex-1">
-                  <div class="font-medium text-gray-900">Paiement à la livraison</div>
-                  <div class="text-sm text-gray-500">Payez en espèces lors de la réception</div>
-                </div>
-                <div class="ml-auto">
-                  <!-- <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-                  </svg> -->
-                  <p class="text-green-800 font-bold">FCFA</p>
-                </div>
-              </label>
-
-              <!-- <label class="flex items-center p-3 border border-gray-200 rounded-md cursor-not-allowed opacity-50">
-                <input
-                  type="radio"
-                  value="card"
-                  disabled
-                  class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
-                />
-                <div class="ml-3 flex-1">
-                  <div class="font-medium text-gray-900">Carte bancaire</div>
-                  <div class="text-sm text-gray-500">Bientôt disponible</div>
-                </div>
-                <div class="ml-auto">
-                  <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                  </svg>
-                </div>
-              </label> -->
-            </div>
+            <label class="flex items-center p-3 border border-gray-200 rounded-md cursor-pointer hover:bg-gray-50">
+              <input
+                v-model="orderForm.paymentMethod"
+                type="radio"
+                value="cod"
+                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+              />
+              <div class="ml-3 flex-1">
+                <div class="font-medium text-gray-900">Paiement à la livraison</div>
+                <div class="text-sm text-gray-500">Payez en espèces lors de la réception</div>
+              </div>
+              <p class="text-green-800 font-bold">FCFA</p>
+            </label>
           </div>
         </div>
 
@@ -406,11 +373,9 @@
             <button
               type="submit"
               :disabled="isSubmitting || !canSubmit"
-              class="w-full mt-6 bg-[#ff9b02] cursor-pointer hover:bg-[#ff9b02]/80 disabled:bg-gray-400 text-white font-semibold py-3 px-4 rounded-sm transition-colors flex items-center justify-center space-x-2"
+              class="w-full mt-6 bg-orange-500 cursor-pointer hover:bg-orange-600 disabled:bg-gray-400 text-white font-semibold py-3 px-4 rounded-md transition-colors flex items-center justify-center space-x-2"
             >
-              <div v-if="isSubmitting" class="animate-pulse">
-                <div class="h-5 w-5 bg-white rounded"></div>
-              </div>
+              <span v-if="isSubmitting" class="animate-spin">⏳</span>
               <span>{{ isSubmitting ? 'Traitement...' : `Confirmer la commande - ${formatPrice(finalTotal)}` }}</span>
             </button>
 
@@ -454,8 +419,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
-
 const cartStore = useCartStore()
 const deliveryStore = useDeliveryStore()
 
@@ -470,7 +433,7 @@ if (process.client && cartStore.isEmpty) {
   await navigateTo('/categorie')
 }
 
-// État du formulaire simplifié (adresse automatique via zone de livraison)
+// État du formulaire
 const orderForm = ref({
   firstName: '',
   lastName: '',
@@ -490,7 +453,7 @@ const selectedProductType = ref<'light' | 'medium' | 'heavy'>('medium')
 // État pour les coupons
 const couponCode = ref('')
 
-// Types de produits disponibles (tous)
+// Types de produits disponibles
 const allProductTypes = [
   { value: 'light', label: 'Léger', description: 'Moins de 2kg' },
   { value: 'medium', label: 'Moyen', description: '2kg à 10kg' },
@@ -499,7 +462,6 @@ const allProductTypes = [
 
 // Filtrer les types de produits en fonction des produits du panier
 const productTypes = computed(() => {
-  // Récupérer les shipping_class uniques des produits du panier
   const cartShippingClasses = new Set<string>()
   
   cartStore.items.forEach(item => {
@@ -508,12 +470,10 @@ const productTypes = computed(() => {
     }
   })
   
-  // Si aucun shipping_class trouvé, afficher tous les types
   if (cartShippingClasses.size === 0) {
     return allProductTypes
   }
   
-  // Filtrer pour n'afficher que les types configurés dans les produits
   return allProductTypes.filter(type => cartShippingClasses.has(type.value))
 })
 
@@ -521,17 +481,15 @@ const productTypes = computed(() => {
 const finalTotal = computed(() => {
   let total = cartStore.totalPrice
   
-  // Ajouter frais de livraison
   if (deliveryStore.hasSelectedDelivery) {
     total += deliveryStore.selectedDelivery.shipping_cost
   }
   
-  // Soustraire coupon
   if (deliveryStore.hasCoupon) {
     total -= deliveryStore.couponDiscount
   }
   
-  return Math.max(0, total) // Ne peut pas être négatif
+  return Math.max(0, total)
 })
 
 const canSubmit = computed(() => {
@@ -546,8 +504,7 @@ const canSubmit = computed(() => {
 // Fonctions utilitaires
 const formatPrice = (price: string | number) => {
   const numPrice = typeof price === "string" ? parseFloat(price) : price
-
-  return new Intl.NumberFormat("en-US",  {
+  return new Intl.NumberFormat("en-US", {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(numPrice) + " FCFA"
@@ -606,7 +563,6 @@ const removeCoupon = () => {
 
 // Soumission de commande
 const submitOrder = async () => {
-  // Validation des zones de livraison
   if (!deliveryStore.hasSelectedDelivery) {
     alert('Veuillez sélectionner une zone de livraison')
     return
@@ -626,11 +582,11 @@ const submitOrder = async () => {
         last_name: orderForm.value.lastName,
         email: orderForm.value.email,
         phone: orderForm.value.phone,
-        address_1: deliveryStore.selectedDelivery.commune_name, // Commune comme adresse
-        city: deliveryStore.selectedDelivery.city_name, // Ville sélectionnée
-        state: '', // Pas de région pour la Côte d'Ivoire
-        postcode: '', // Pas de code postal
-        country: 'CI' // Côte d'Ivoire par défaut
+        address_1: deliveryStore.selectedDelivery.commune_name,
+        city: deliveryStore.selectedDelivery.city_name,
+        state: '',
+        postcode: '',
+        country: 'CI'
       },
       delivery_info: {
         city_id: deliveryStore.selectedDelivery.city_id,
@@ -651,7 +607,6 @@ const submitOrder = async () => {
     })
 
     if (response.success) {
-      // Prépare les données pour la page de remerciements
       const thankYouData = {
         order_id: (response as any).order_id,
         order_number: (response as any).order_number,
@@ -672,17 +627,14 @@ const submitOrder = async () => {
         payment_method: orderForm.value.paymentMethod
       }
       
-      // Sauvegarde dans sessionStorage
       if (process.client) {
         sessionStorage.setItem('lastOrder', JSON.stringify(thankYouData))
       }
       
-      // Vide le panier et reset les données
       cartStore.clearCart()
       deliveryStore.resetDelivery()
       deliveryStore.removeCoupon()
       
-      // Redirection avec gestion d'erreur
       try {
         await navigateTo('/thank-you', { 
           replace: true,
@@ -715,14 +667,11 @@ const submitOrder = async () => {
 
 // Watcher pour s'assurer que le selectedProductType est toujours valide
 watch(productTypes, (newTypes) => {
-  // Si le type sélectionné n'est plus dans les types disponibles
   const currentTypeAvailable = newTypes.some(type => type.value === selectedProductType.value)
   
   if (!currentTypeAvailable && newTypes.length > 0) {
-    // Sélectionner le premier type disponible
     selectedProductType.value = (newTypes[0]?.value || 'medium') as 'light' | 'medium' | 'heavy'
     
-    // Recalculer la livraison si une commune est sélectionnée
     if (selectedCommuneId.value) {
       onProductTypeChange()
     }
@@ -731,17 +680,14 @@ watch(productTypes, (newTypes) => {
 
 // Initialisation
 onMounted(async () => {
-  // Charge les villes disponibles
   try {
     await deliveryStore.loadCities()
   } catch (error) {
     console.error('Erreur chargement villes:', error)
   }
   
-  // Restaure les données depuis le localStorage
   deliveryStore.loadFromStorage()
   
-  // Synchronise les sélections avec les données restaurées
   if (deliveryStore.selectedDelivery.city_id) {
     selectedCityId.value = deliveryStore.selectedDelivery.city_id
     await deliveryStore.loadCommunes(deliveryStore.selectedDelivery.city_id)
@@ -750,18 +696,15 @@ onMounted(async () => {
       selectedCommuneId.value = deliveryStore.selectedDelivery.commune_id
     }
     
-    // Vérifier que le product_type du store est toujours valide pour les produits actuels
     const storedType = deliveryStore.selectedDelivery.product_type
     const typeIsAvailable = productTypes.value.some(type => type.value === storedType)
     
     if (typeIsAvailable) {
       selectedProductType.value = storedType
     } else if (productTypes.value.length > 0) {
-      // Sélectionner le premier type disponible si le type stocké n'est plus valide
       selectedProductType.value = (productTypes.value[0]?.value || 'medium') as 'light' | 'medium' | 'heavy'
     }
   } else if (productTypes.value.length > 0) {
-    // Si pas de sélection précédente, utiliser le premier type disponible
     selectedProductType.value = (productTypes.value[0]?.value || 'medium') as 'light' | 'medium' | 'heavy'
   }
 })

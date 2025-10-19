@@ -215,7 +215,7 @@
           <div class="flex flex-col lg:flex-row md:gap-x-2 items-center justify-between">
             
           <!--Methode de paiement disponoble-->
-          <div class="flex  w-full  md:w-auto flex-col lg:flex-row md:items-center gap-x-1 bg-sky-50 px-4 md:py-6 py-4 rounded-md">
+          <div class="flex  w-full  md:w-auto flex-col lg:flex-row md:items-center gap-x-1 bg-sky-50 px-4 md:py-9 py-4 rounded-md">
             <span class="text-[15px] md:w-28 mb-4 md:mb-0 font-bold text-sky-800">Vous pouvez payer en par</span>
             <div class="flex flex-row items-center gap-x-3">
               <ul v-for="methode in logoMethodePaiement" :key="methode.name">
@@ -223,7 +223,7 @@
                   <NuxtLink to="">
                     <img :src="methode.logo" :alt="methode.name" class="w-12 h-12 rounded-full shadow-md" loading="lazy"
                       decoding="async" width="48" height="48">
-                    <p class="text-sm text-sky-700 font-bold text-center mt-2">{{ methode.name }}</p>
+                    <!-- <p class="text-sm text-sky-700 font-bold text-center mt-2">{{ methode.name }}</p> -->
 
                   </NuxtLink>
                 </li>
@@ -452,7 +452,7 @@ const logoMethodePaiement = [
   },
   {
     name: 'Momo',
-    logo: '/logo/methodemomo.webp'
+    logo: '/logo/lgomomo.jpg'
   },
   {
     name: 'Wave',

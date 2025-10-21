@@ -3,13 +3,27 @@
   <header class="bg-white shadow-sm border-b sticky top-0 z-30 scroll-smooth">
     <div class="lg:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-0">
       <div class="flex justify-between items-center h-16">
+
+        <!-- Menu mobile toggle -->
+        <button 
+            @click="toggleMobileMenu"
+            class="md:hidden p-2 text-gray-400 hover:text-gray-500 transition-colors"
+          >
+            <svg v-if="!isMobileMenuOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+            <svg v-else class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+
         <!-- Logo -->
         <div class="flex-shrink-0">
           <NuxtLink to="/" class="text-xl font-bold text-gray-900">
             <img
               src="/logo/ivoirshopci-coteivoir.png"
               alt="IvoirShop Logo"
-              class="h-14 w-auto mt-3" />
+              class="h-13 w-auto mt-3 mr-12" />
           </NuxtLink>
         </div>
 
@@ -50,18 +64,7 @@
           <!-- Recherche mobile -->
           <MobileSearch />
 
-          <!-- Menu mobile toggle -->
-          <button 
-            @click="toggleMobileMenu"
-            class="md:hidden p-2 text-gray-400 hover:text-gray-500 transition-colors"
-          >
-            <svg v-if="!isMobileMenuOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-            <svg v-else class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+          
         </div>
       </div>
     </div>

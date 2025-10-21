@@ -1,0 +1,49 @@
+[
+  {
+    "id": 1,
+    "name": "Abidjan",
+    "communes": [
+      {
+        "id": 101,
+        "name": "Cocody",
+        "price_light": 1000,
+        "price_medium": 2000,
+        "price_heavy": 3000
+      },
+      {
+        "id": 102,
+        "name": "Marcory",
+        "price_light": 1000,
+        "price_medium": 2000,
+        "price_heavy": 3000
+      },
+      {
+        "id": 103,
+        "name": "Yopougon",
+        "price_light": 1500,
+        "price_medium": 2500,
+        "price_heavy": 3500
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Bouaké",
+    "communes": [
+      {
+        "id": 201,
+        "name": "Centre",
+        "price_light": 2000,
+        "price_medium": 3000,
+        "price_heavy": 4000
+      },
+      {
+        "id": 202,
+        "name": "Dar Es Salam",
+        "price_light": 2500,
+        "price_medium": 3500,
+        "price_heavy": 4500
+      }
+    ]
+  }
+]

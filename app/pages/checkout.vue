@@ -84,7 +84,6 @@
               </div>
             </div>
 
-            <!-- Adresse automatique via zone de livraison -->
             <div class="bg-orange-50 border border-orange-200 rounded-lg p-4 mt-4">
               <h3 class="font-medium text-orange-700 mb-2 flex items-center">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -94,14 +93,118 @@
                 Adresse de livraison
               </h3>
               <div class="text-sm text-orange-700">
-                <p v-if="deliveryStore.hasSelectedDelivery">
-                  <span class="font-medium">Ville:</span> {{ deliveryStore.selectedDelivery.city_name }}
+                <p v-if="orderForm.city && orderForm.commune">
+                  <span class="font-medium">Ville:</span> {{ orderForm.city }}
                 </p>
-                <p v-if="deliveryStore.hasSelectedDelivery">
-                  <span class="font-medium">Commune:</span> {{ deliveryStore.selectedDelivery.commune_name }}
+                <p v-if="orderForm.city && orderForm.commune">
+                  <span class="font-medium">Commune:</span> {{ orderForm.commune }}
                 </p>
                 <p v-else class="text-blue-600">
-                  Veuillez sélectionner une zone de livraison ci-dessous
+                  Veuillez sélectionner une ville et un quartier ci-dessous
+                </p>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+              <div>
+                <label for="city" class="block text-sm font-medium text-gray-700 mb-1">
+                  Ville *
+                </label>
+                <select
+                  id="city"
+                  v-model="orderForm.city"
+                  @change="onCityChange"
+                  required
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="">Sélectionner une ville</option>
+                  <option v-for="city in cities" :key="city.id" :value="city.name">
+                    {{ city.name }}
+                  </option>
+                </select>
+              </div>
+              <div>
+                <label for="commune" class="block text-sm font-medium text-gray-700 mb-1">
+                  Quartier / Commune *
+                </label>
+                <select
+                  id="commune"
+                  v-model="orderForm.commune"
+                  @change="onCommuneChange"
+                  :disabled="!orderForm.city"
+                  required
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
+                >
+                  <option value="">Sélectionner un quartier</option>
+                  <option v-for="commune in filteredCommunes" :key="commune.id" :value="commune.name">
+                    {{ commune.name }}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Type de produit -->
+            <div v-if="orderForm.commune" class="mt-4">
+              <label class="block text-sm font-medium text-gray-700 mb-3">
+                Type de produit (pour calculer la livraison) *
+              </label>
+              
+              <!-- Message si aucun type disponible -->
+              <div v-if="productTypes.length === 0" class="text-center py-8 bg-gray-50 rounded-lg border border-gray-200">
+                <svg class="mx-auto h-12 w-12 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                </svg>
+                <p class="text-sm text-gray-600">Aucun type de livraison configuré pour ces produits</p>
+              </div>
+              
+              <!-- Affichage des types disponibles -->
+              <div v-else class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <label
+                  v-for="type in productTypes"
+                  :key="type.value"
+                  class="relative flex cursor-pointer rounded-lg border p-4 focus:outline-none transition-colors"
+                  :class="selectedProductType === type.value ? 'border-blue-600 ring-2 ring-blue-600 bg-blue-50' : 'border-gray-300 hover:border-gray-400'"
+                >
+                  <input
+                    v-model="selectedProductType"
+                    :value="type.value"
+                    @change="onProductTypeChange"
+                    type="radio"
+                    name="product-type"
+                    class="sr-only"
+                  />
+                  <div class="flex flex-col">
+                    <span class="block text-sm font-medium text-gray-900">{{ type.label }}</span>
+                    <span class="block text-xs text-gray-500 mb-2">{{ type.description }}</span>
+                    <span v-if="orderForm.commune" class="block text-sm font-semibold text-blue-600">
+                      {{ formatPrice(getPrice(orderForm.city, orderForm.commune, type.value as 'light' | 'medium' | 'heavy')) }}
+                    </span>
+                  </div>
+                </label>
+              </div>
+              
+              <!-- Note informative -->
+              <p class="mt-2 text-xs text-gray-500">
+                <svg class="inline w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                </svg>
+                Les types de livraison affichés correspondent aux produits dans votre panier
+              </p>
+            </div>
+
+            <!-- Récapitulatif livraison -->
+            <div v-if="deliveryStore.hasSelectedDelivery" class="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
+              <h3 class="font-medium text-blue-900 mb-2 flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                </svg>
+                Récapitulatif livraison
+              </h3>
+              <div class="text-sm text-blue-800 space-y-1">
+                <p><span class="font-medium">Ville:</span> {{ orderForm.city }}</p>
+                <p><span class="font-medium">Commune:</span> {{ orderForm.commune }}</p>
+                <p><span class="font-medium">Type:</span> {{ getProductTypeLabel(selectedProductType) }}</p>
+                <p class="text-base font-semibold text-blue-900 mt-2">
+                  <span class="font-medium">Frais:</span> {{ deliveryStore.formattedShippingCost }}
                 </p>
               </div>
             </div>
@@ -117,124 +220,6 @@
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Instructions spéciales, informations complémentaires..."
               ></textarea>
-            </div>
-          </div>
-
-          <!-- Zones de livraison -->
-          <div class="bg-white rounded-lg shadow p-6">
-            <h2 class="text-lg font-semibold text-gray-900 mb-4">Zone de livraison</h2>
-            
-            <div class="space-y-4">
-              <!-- Sélection de la ville -->
-              <div>
-                <label for="deliveryCity" class="block text-sm font-medium text-gray-700 mb-1">
-                  Ville de livraison *
-                </label>
-                <select
-                  id="deliveryCity"
-                  v-model="selectedCityId"
-                  @change="onCityChange"
-                  required
-                  :disabled="deliveryStore.isLoadingCities"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
-                >
-                  <option value="">
-                    {{ deliveryStore.isLoadingCities ? 'Chargement...' : 'Sélectionner une ville' }}
-                  </option>
-                  <option v-for="city in deliveryStore.cities" :key="city.id" :value="city.id">
-                    {{ city.name }}
-                  </option>
-                </select>
-              </div>
-
-              <!-- Sélection de la commune -->
-              <div v-if="selectedCityId">
-                <label for="commune" class="block text-sm font-medium text-gray-700 mb-1">
-                  Commune *
-                </label>
-                <select
-                  id="commune"
-                  v-model="selectedCommuneId"
-                  @change="onCommuneChange"
-                  required
-                  :disabled="deliveryStore.isLoadingCommunes"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
-                >
-                  <option value="">
-                    {{ deliveryStore.isLoadingCommunes ? 'Chargement...' : 'Sélectionner une commune' }}
-                  </option>
-                  <option v-for="commune in deliveryStore.communes" :key="commune.id" :value="commune.id">
-                    {{ commune.name }}
-                  </option>
-                </select>
-              </div>
-
-              <!-- Type de produit -->
-              <div v-if="selectedCommuneId">
-                <label class="block text-sm font-medium text-gray-700 mb-3">
-                  Type de produit (pour calculer la livraison) *
-                </label>
-                
-                <!-- Message si aucun type disponible -->
-                <div v-if="productTypes.length === 0" class="text-center py-8 bg-gray-50 rounded-lg border border-gray-200">
-                  <svg class="mx-auto h-12 w-12 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-                  </svg>
-                  <p class="text-sm text-gray-600">Aucun type de livraison configuré pour ces produits</p>
-                </div>
-                
-                <!-- Affichage des types disponibles -->
-                <div v-else class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <label
-                    v-for="type in productTypes"
-                    :key="type.value"
-                    class="relative flex cursor-pointer rounded-lg border p-4 focus:outline-none transition-colors"
-                    :class="selectedProductType === type.value ? 'border-blue-600 ring-2 ring-blue-600 bg-blue-50' : 'border-gray-300 hover:border-gray-400'"
-                  >
-                    <input
-                      v-model="selectedProductType"
-                      :value="type.value"
-                      @change="onProductTypeChange"
-                      type="radio"
-                      name="product-type"
-                      class="sr-only"
-                    />
-                    <div class="flex flex-col">
-                      <span class="block text-sm font-medium text-gray-900">{{ type.label }}</span>
-                      <span class="block text-xs text-gray-500 mb-2">{{ type.description }}</span>
-                      <span v-if="selectedCommuneId" class="block text-sm font-semibold text-blue-600">
-                        {{ formatPrice(getPrice(type.value)) }}
-                      </span>
-                    </div>
-                  </label>
-                </div>
-                
-                <!-- Note informative -->
-                <p class="mt-2 text-xs text-gray-500">
-                  <svg class="inline w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
-                  </svg>
-                  Les types de livraison affichés correspondent aux produits dans votre panier
-                </p>
-              </div>
-
-              <!-- Récapitulatif livraison -->
-              <div v-if="deliveryStore.hasSelectedDelivery" class="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
-                <h3 class="font-medium text-blue-900 mb-2 flex items-center">
-                  <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                  </svg>
-                  Récapitulatif livraison
-                </h3>
-                <div class="text-sm text-blue-800 space-y-1">
-                  <p><span class="font-medium">Ville:</span> {{ deliveryStore.selectedDelivery.city_name }}</p>
-                  <p><span class="font-medium">Commune:</span> {{ deliveryStore.selectedDelivery.commune_name }}</p>
-                  <p><span class="font-medium">Type:</span> {{ getProductTypeLabel(deliveryStore.selectedDelivery.product_type) }}</p>
-                  <p class="text-base font-semibold text-blue-900 mt-2">
-                    <span class="font-medium">Frais:</span> {{ deliveryStore.formattedShippingCost }}
-                  </p>
-                </div>
-              </div>
             </div>
           </div>
 
@@ -354,7 +339,7 @@
               </div>
               
               <div v-if="deliveryStore.hasSelectedDelivery" class="flex justify-between text-sm text-gray-600">
-                <span>Livraison - {{ deliveryStore.selectedDelivery.commune_name }}</span>
+                <span>Livraison - {{ orderForm.commune }}</span>
                 <span>{{ deliveryStore.formattedShippingCost }}</span>
               </div>
               
@@ -419,6 +404,9 @@
 </template>
 
 <script setup lang="ts">
+import deliveryZones from '~/data/delivery-zones.json'
+// Nuxt 3 automatically imports ref, computed, onMounted, watch
+
 const cartStore = useCartStore()
 const deliveryStore = useDeliveryStore()
 
@@ -440,14 +428,16 @@ const orderForm = ref({
   email: '',
   phone: '',
   notes: '',
-  paymentMethod: 'cod'
+  paymentMethod: 'cod',
+  city: '',
+  commune: ''
 })
 
 const isSubmitting = ref(false)
 
 // États pour les zones de livraison
-const selectedCityId = ref<number | null>(null)
-const selectedCommuneId = ref<number | null>(null)
+const cities = ref(deliveryZones.map(zone => ({ id: zone.id, name: zone.name })))
+const filteredCommunes = ref<{ id: number; name: string, price_light: number, price_medium: number, price_heavy: number }[]>([])
 const selectedProductType = ref<'light' | 'medium' | 'heavy'>('medium')
 
 // État pour les coupons
@@ -498,6 +488,8 @@ const canSubmit = computed(() => {
          orderForm.value.lastName && 
          orderForm.value.email && 
          orderForm.value.phone && 
+         orderForm.value.city && 
+         orderForm.value.commune && 
          !isSubmitting.value
 })
 
@@ -510,8 +502,11 @@ const formatPrice = (price: string | number) => {
   }).format(numPrice) + " FCFA"
 }
 
-const getPrice = (productType: string) => {
-  const commune = deliveryStore.selectedCommune
+const getPrice = (cityName: string, communeName: string, productType: 'light' | 'medium' | 'heavy') => {
+  const city = deliveryZones.find(c => c.name === cityName)
+  if (!city) return 0
+  
+  const commune = city.communes.find(c => c.name === communeName)
   if (!commune) return 0
   
   switch (productType) {
@@ -523,26 +518,41 @@ const getPrice = (productType: string) => {
 }
 
 const getProductTypeLabel = (type: string) => {
-  const productType = productTypes.value.find((t: any) => t.value === type)
+  const productType = allProductTypes.find((t: any) => t.value === type)
   return productType ? productType.label : type
 }
 
 // Actions pour les zones de livraison
-const onCityChange = async () => {
-  if (selectedCityId.value) {
-    await deliveryStore.selectCity(selectedCityId.value)
-    selectedCommuneId.value = null
+const onCityChange = () => {
+  const selectedCity = deliveryZones.find(c => c.name === orderForm.value.city)
+  if (selectedCity) {
+    filteredCommunes.value = selectedCity.communes
+    deliveryStore.selectCityByName(selectedCity.name)
+    orderForm.value.commune = ''
+  } else {
+    filteredCommunes.value = []
+    orderForm.value.commune = ''
+    deliveryStore.selectCityByName('')
   }
 }
 
-const onCommuneChange = async () => {
-  if (selectedCommuneId.value) {
-    await deliveryStore.selectCommune(selectedCommuneId.value)
+const onCommuneChange = () => {
+  const selectedCity = deliveryZones.find(c => c.name === orderForm.value.city)
+  const selectedCommune = selectedCity?.communes.find(c => c.name === orderForm.value.commune)
+
+  if (selectedCity && selectedCommune) {
+    const shippingCost = getPrice(selectedCity.name, selectedCommune.name, selectedProductType.value)
+    deliveryStore.selectCommuneByName(selectedCommune.name, shippingCost)
+  } else {
+    deliveryStore.selectCommuneByName('', 0)
   }
 }
 
 const onProductTypeChange = () => {
+  // This function is now mostly handled by the watcher on selectedProductType
+  // However, we still call deliveryStore.setProductType to update the store's state
   deliveryStore.setProductType(selectedProductType.value)
+  onCommuneChange() // Recalculate shipping based on new product type
 }
 
 // Actions pour les coupons
@@ -582,17 +592,15 @@ const submitOrder = async () => {
         last_name: orderForm.value.lastName,
         email: orderForm.value.email,
         phone: orderForm.value.phone,
-        address_1: deliveryStore.selectedDelivery.commune_name,
-        city: deliveryStore.selectedDelivery.city_name,
+        address_1: orderForm.value.commune, // Commune/Quartier for Address Line 1
+        city: orderForm.value.city, // City for billing city
         state: '',
         postcode: '',
         country: 'CI'
       },
       delivery_info: {
-        city_id: deliveryStore.selectedDelivery.city_id,
-        city_name: deliveryStore.selectedDelivery.city_name,
-        commune_id: deliveryStore.selectedDelivery.commune_id,
-        commune_name: deliveryStore.selectedDelivery.commune_name,
+        city_name: orderForm.value.city, // City for delivery info
+        commune_name: orderForm.value.commune, // Commune/Quartier for delivery info
         product_type: deliveryStore.selectedDelivery.product_type
       },
       coupon: deliveryStore.appliedCoupon ? {
@@ -672,28 +680,25 @@ watch(productTypes, (newTypes) => {
   if (!currentTypeAvailable && newTypes.length > 0) {
     selectedProductType.value = (newTypes[0]?.value || 'medium') as 'light' | 'medium' | 'heavy'
     
-    if (selectedCommuneId.value) {
-      onProductTypeChange()
+    if (orderForm.value.commune) { // Assuming commune is selected when product type changes
+      onCommuneChange()
     }
   }
 }, { immediate: true })
 
 // Initialisation
 onMounted(async () => {
-  try {
-    await deliveryStore.loadCities()
-  } catch (error) {
-    console.error('Erreur chargement villes:', error)
-  }
-  
   deliveryStore.loadFromStorage()
   
-  if (deliveryStore.selectedDelivery.city_id) {
-    selectedCityId.value = deliveryStore.selectedDelivery.city_id
-    await deliveryStore.loadCommunes(deliveryStore.selectedDelivery.city_id)
+  if (deliveryStore.selectedDelivery.city_name) {
+    orderForm.value.city = deliveryStore.selectedDelivery.city_name
+    const selectedCity = deliveryZones.find(c => c.name === orderForm.value.city)
+    if (selectedCity) {
+      filteredCommunes.value = selectedCity.communes
+    }
     
-    if (deliveryStore.selectedDelivery.commune_id) {
-      selectedCommuneId.value = deliveryStore.selectedDelivery.commune_id
+    if (deliveryStore.selectedDelivery.commune_name) {
+      orderForm.value.commune = deliveryStore.selectedDelivery.commune_name
     }
     
     const storedType = deliveryStore.selectedDelivery.product_type
@@ -707,10 +712,22 @@ onMounted(async () => {
   } else if (productTypes.value.length > 0) {
     selectedProductType.value = (productTypes.value[0]?.value || 'medium') as 'light' | 'medium' | 'heavy'
   }
+
+  // Recalculate shipping cost if city and commune are already selected on mount
+  if (orderForm.value.city && orderForm.value.commune) {
+    onCommuneChange()
+  }
 })
 
 // Sauvegarde automatique des sélections
-watch([selectedCityId, selectedCommuneId, selectedProductType], () => {
+watch([orderForm.value.city, orderForm.value.commune, selectedProductType], () => {
   deliveryStore.saveToStorage()
+})
+
+// Watcher pour recalculer les frais de livraison lorsque le type de produit change
+watch(selectedProductType, () => {
+  if (orderForm.value.city && orderForm.value.commune) {
+    onCommuneChange()
+  }
 })
 </script>

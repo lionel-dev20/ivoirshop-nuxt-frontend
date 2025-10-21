@@ -65,7 +65,7 @@ export default defineNuxtConfig({
     head: {
       charset: 'utf-8',
       viewport: 'width=device-width, initial-scale=1',
-      title: 'IvoirShop CI - Votre boutique en ligne',
+      title: 'IvoirShop CI |   Ivoirshop Côte d\'Ivoire Achat vente en ligne de Électroménager - Téléphonie - Électronique - Mode - Beauté',
       link: [
         { rel: 'icon', type: 'image/x-icon', href: '/logo/ivoirshop-icon.ico' }
       ],

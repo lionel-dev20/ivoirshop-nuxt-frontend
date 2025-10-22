@@ -598,6 +598,17 @@ const submitOrder = async () => {
         postcode: '',
         country: 'CI'
       },
+      shipping: {
+        first_name: orderForm.value.firstName,
+        last_name: orderForm.value.lastName,
+        email: orderForm.value.email,
+        phone: orderForm.value.phone,
+        address_1: orderForm.value.commune, // Use commune for address_1
+        city: orderForm.value.city, // Use city for city
+        state: '',
+        postcode: '',
+        country: 'CI'
+      },
       delivery_info: {
         city_name: orderForm.value.city, // City for delivery info
         commune_name: orderForm.value.commune, // Commune/Quartier for delivery info

@@ -34,13 +34,13 @@ export default defineEventHandler(async (event) => {
         phone: body.customer.phone || '',
         notes: body.customer.notes || ''
       },
-      billing: body.billing || {
+      billing: {
         first_name: body.customer.firstName || '',
         last_name: body.customer.lastName || '',
         email: body.customer.email || '',
         phone: body.customer.phone || '',
-        address_1: '',
-        city: '',
+        address_1: body.billing?.address_1 || '',
+        city: body.billing?.city || '',
         state: '',
         postcode: '',
         country: 'CI'
@@ -52,9 +52,9 @@ export default defineEventHandler(async (event) => {
         phone: body.billing?.phone || body.customer.phone || '',
         address_1: body.billing?.address_1 || '',
         city: body.billing?.city || '',
-        state: body.billing?.state || '',
-        postcode: body.billing?.postcode || '',
-        country: body.billing?.country || 'CI'
+        state: '',
+        postcode: '',
+        country: 'CI'
       },
       items: body.items.map((item: any) => ({
         product_id: parseInt(item.id),

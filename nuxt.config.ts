@@ -32,13 +32,11 @@ export default defineNuxtConfig({
 ],
 
    runtimeConfig: {
-  // Variables côté serveur uniquement (privées)
   WORDPRESS_URL: process.env.WORDPRESS_URL,
   WC_STORE_URL: process.env.WC_STORE_URL || process.env.WORDPRESS_URL,
   WOOCOMMERCE_CONSUMER_KEY: process.env.WOOCOMMERCE_CONSUMER_KEY,
   WOOCOMMERCE_CONSUMER_SECRET: process.env.WOOCOMMERCE_CONSUMER_SECRET,
   
-  // Variables accessibles côté client ET serveur
   public: {
     WOOCOMMERCE_API_URL: process.env.WOOCOMMERCE_API_URL || "https://admin.ivoirshop.ci/wp-json/wc/v3",
     WORDPRESS_URL: process.env.WORDPRESS_URL,

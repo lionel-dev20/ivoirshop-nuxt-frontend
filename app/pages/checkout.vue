@@ -730,4 +730,6 @@ watch(selectedProductType, () => {
     onCommuneChange()
   }
 })
+const config = useRuntimeConfig()
+const storeUrl = config.public.wcStoreUrl
 </script>

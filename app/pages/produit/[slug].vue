@@ -209,7 +209,7 @@
               class="w-full bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg cursor-not-allowed">
               Produit indisponible
             </button>
-          </div>
+          </div> 
 
 
           <div class="flex flex-col lg:flex-row md:gap-x-2 items-center justify-between">

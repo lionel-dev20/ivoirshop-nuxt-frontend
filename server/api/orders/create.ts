@@ -45,11 +45,11 @@ export default defineEventHandler(async (event) => {
         postcode: '',
         country: 'CI'
       },
-      shipping: body.billing || {
-        first_name: body.customer.firstName || '',
-        last_name: body.customer.lastName || '',
-        email: body.customer.email || '',
-        phone: body.customer.phone || '',
+      shipping: {
+        first_name: body.billing?.first_name || body.customer.firstName || '',
+        last_name: body.billing?.last_name || body.customer.lastName || '',
+        email: body.billing?.email || body.customer.email || '',
+        phone: body.billing?.phone || body.customer.phone || '',
         address_1: body.billing?.address_1 || '',
         city: body.billing?.city || '',
         state: body.billing?.state || '',

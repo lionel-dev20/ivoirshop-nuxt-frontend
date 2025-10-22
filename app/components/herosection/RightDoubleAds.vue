@@ -1,5 +1,5 @@
 <template>
-        <div class="flex-col h-[450px] w-64 rounded-lg flex items-center justify-between gap-y-4 overflow-hidden">
+        <div class="flex-col w-64 rounded-lg flex items-center justify-between gap-y-4 overflow-hidden">
           <div class="bg-white py-5 border-1 border-gray-100 shadow-md shadow-gray-100 w-full h-full rounded-md flex flex-col">
            <div  v-for="(item, index) in avantsliste" :key="index" class="flex justify-start items-center gap-x-2">
             <NuxtLink to="/" class="object-cover h-full w-full rounded-md flex justify-start items-center gap-x-3 py-2 px-5">
@@ -17,7 +17,7 @@
               </NuxtLink>
            </div>
           </div>
-          <div class="h-full  w-full rounded-md flex items-center justify-center">
+          <div class="h-full md:mt-3 w-full rounded-md flex items-center justify-center">
             <NuxtLink to="/" class="object-cover h-full w-full rounded-md">
             <img
               src="https://web.archive.org/web/20240216010846im_/https://www.ivoirshop.ci/wp-content/uploads/2023/10/IVS_ET_woofer-LEADDER.gif"

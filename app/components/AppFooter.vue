@@ -46,7 +46,7 @@
         </div>
 
         <!-- Liens rapides -->
-        <div>
+        <div class="hidden md:block">
           <h3 class="text-lg font-semibold mb-6">Liens rapides</h3>
           <ul class="space-y-3">
             <li>
@@ -78,7 +78,7 @@
         </div>
 
         <!-- Catégories populaires -->
-        <div>
+        <div class="hidden md:block">
           <h3 class="text-lg font-semibold mb-6">Catégories</h3>
           <ul class="space-y-3">
             <li>
@@ -110,7 +110,7 @@
         </div>
 
         <!-- Contact et informations -->
-        <div>
+        <div class="hidden md:block">
           <h3 class="text-lg font-semibold mb-6">Contact</h3>
           <div class="space-y-4">
             <div class="flex items-start space-x-3">
@@ -203,6 +203,9 @@ const currentYear = new Date().getFullYear()
   transform: scale(1.03);
 }
 </style>
+
+
+
 
 
 

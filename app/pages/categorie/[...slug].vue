@@ -12,7 +12,9 @@
       <div class="flex">
         <div class="text-red-400">
           <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+            <path fill-rule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+              clip-rule="evenodd" />
           </svg>
         </div>
         <div class="ml-3">
@@ -20,10 +22,7 @@
             Erreur de chargement
           </h3>
           <p class="mt-1 text-sm text-red-700">{{ error }}</p>
-          <button 
-            @click="refreshData" 
-            class="mt-2 text-sm bg-red-100 hover:bg-red-200 text-red-800 px-3 py-1 rounded"
-          >
+          <button @click="refreshData" class="mt-2 text-sm bg-red-100 hover:bg-red-200 text-red-800 px-3 py-1 rounded">
             Réessayer
           </button>
         </div>
@@ -41,21 +40,17 @@
       <div class="flex flex-col lg:flex-row gap-1 md:gap-6">
         <!-- Colonne latérale - Filtres -->
         <div class="lg:w-1/4">
-          <div class="sticky top-6">
-            <ProductFilters
-              :products="allProducts"
-              :attributes="categoryAttributes"
-              :brands="categoryBrands"
-              @filter="handleFilter"
-              @clear="handleClearFilters"
-            />
+          <div class="sticky top-6 hidden md:block">
+            <ProductFilters :products="allProducts" :attributes="categoryAttributes" :brands="categoryBrands"
+              @filter="handleFilter" @clear="handleClearFilters" />
           </div>
         </div>
 
         <!-- Colonne principale - Produits -->
         <div class="lg:w-full">
           <!-- En-tête avec compteur et tri -->
-          <div class="bg-white border border-gray-100 shadow-md shadow-gray-50 rounded-md p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+          <div
+            class="bg-white border border-gray-100 shadow-md shadow-gray-50 rounded-md p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
             <div class="flex items-center space-x-4">
               <h2 class="text-lg font-semibold text-gray-900">
                 {{ filteredProducts.length }} produit{{ filteredProducts.length > 1 ? 's' : '' }}
@@ -64,14 +59,11 @@
                 ({{ allProducts.length }} au total)
               </span>
             </div>
-            
+
             <!-- Tri -->
             <div class="mt-4 sm:mt-0">
-              <select
-                v-model="sortBy"
-                @change="handleSort"
-                class="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
+              <select v-model="sortBy" @change="handleSort"
+                class="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                 <option value="default">Trier par défaut</option>
                 <option value="price-asc">Prix croissant</option>
                 <option value="price-desc">Prix décroissant</option>
@@ -84,36 +76,33 @@
           </div>
 
           <!-- Liste des produits -->
-          <div v-if="filteredProducts.length" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-2 gap-1">
-            <ProductCard
-              v-for="product in filteredProducts"
-              :key="product.id"
-              :product="product"
-              :show-add-to-cart="true"
-            />
+          <div v-if="filteredProducts.length"
+            class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-2 gap-1">
+            <ProductCard v-for="product in filteredProducts" :key="product.id" :product="product"
+              :show-add-to-cart="true" />
           </div>
-          
+
           <!-- Aucun produit filtré -->
           <div v-else-if="hasActiveFilters" class="text-center py-12">
             <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.29-1.009-5.824-2.709M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.29-1.009-5.824-2.709M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
             <h3 class="mt-2 text-sm font-medium text-gray-900">Aucun produit trouvé</h3>
             <p class="mt-1 text-sm text-gray-500">
               Aucun produit ne correspond à vos critères de filtrage.
             </p>
-            <button
-              @click="handleClearFilters"
-              class="mt-4 px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition-colors"
-            >
+            <button @click="handleClearFilters"
+              class="mt-4 px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition-colors">
               Effacer les filtres
             </button>
           </div>
-          
+
           <!-- Aucun produit -->
           <div v-else class="text-center py-12">
             <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
             </svg>
             <h3 class="mt-2 text-sm font-medium text-gray-900">Aucun produit</h3>
             <p class="mt-1 text-sm text-gray-500">
@@ -122,6 +111,34 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <div class="md:hidden sticky flex items-center justify-between shadow z-30 bottom-0 mt-4 bg-white py-2 px-3.5">
+      <div class="">
+        <button
+          class="inline-block rounded bg-primary px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-primary-3 transition duration-150 ease-in-out hover:bg-primary-accent-300 hover:shadow-primary-2 focus:bg-primary-accent-300 focus:shadow-primary-2 focus:outline-none focus:ring-0 active:bg-primary-600 active:shadow-primary-2 dark:shadow-black/30 dark:hover:shadow-dark-strong dark:focus:shadow-dark-strong dark:active:shadow-dark-strong"
+          type="button" data-twe-collapse-init data-twe-ripple-init data-twe-ripple-color="light"
+          data-twe-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+          Voir les filtres
+        </button>
+
+      </div>
+
+
+      <button @click="toggleMobileMenu" class="md:hidden p-2 text-gray-400 hover:text-gray-500 transition-colors">
+        <svg v-if="!isMobileMenuOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+        <svg v-else class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+
+      <!-- <div class="md:hidden">
+            <ProductFilters :products="allProducts" :attributes="categoryAttributes" :brands="categoryBrands"
+              @filter="handleFilter" @clear="handleClearFilters" />
+          </div> -->
+
     </div>
   </div>
 </template>
@@ -170,7 +187,7 @@ const sortBy = ref('default')
 // Produits filtrés et triés
 const filteredProducts = computed(() => {
   let filtered = [...allProducts.value]
-  
+
   // Filtrage par prix
   if (currentFilters.value.priceMin !== null) {
     filtered = filtered.filter(product => {
@@ -178,14 +195,14 @@ const filteredProducts = computed(() => {
       return price >= currentFilters.value.priceMin!
     })
   }
-  
+
   if (currentFilters.value.priceMax !== null) {
     filtered = filtered.filter(product => {
       const price = product.sale_price || product.regular_price || product.price
       return price <= currentFilters.value.priceMax!
     })
   }
-  
+
   // Filtrage par note
   if (currentFilters.value.rating !== null) {
     filtered = filtered.filter(product => {
@@ -193,17 +210,17 @@ const filteredProducts = computed(() => {
       return rating >= currentFilters.value.rating!
     })
   }
-  
+
   // Filtrage par stock
   if (currentFilters.value.inStock) {
     filtered = filtered.filter(product => product.stock_status === 'instock')
   }
-  
+
   // Filtrage par promotion
   if (currentFilters.value.onSale) {
     filtered = filtered.filter(product => product.sale_price && product.sale_price > 0)
   }
-  
+
   // Filtrage par attributs
   Object.entries(currentFilters.value.attributes).forEach(([attrName, selectedValues]) => {
     if (selectedValues.length > 0) {
@@ -215,51 +232,51 @@ const filteredProducts = computed(() => {
             return selectedValues.some(value => attr.options.includes(value))
           }
         }
-        
+
         // Vérifier les meta_data
         if (product.meta_data) {
-          const meta = product.meta_data.find((m: any) => 
+          const meta = product.meta_data.find((m: any) =>
             m.key === `pa_${attrName}` || m.key === `attribute_${attrName}`
           )
           if (meta && meta.value) {
             return selectedValues.includes(meta.value)
           }
         }
-        
+
         return false
       })
     }
   })
-  
+
   // Filtrage par marques
   if (currentFilters.value.brands && currentFilters.value.brands.length > 0) {
     filtered = filtered.filter(product => {
       // Vérifier le tableau brands
       if (product.brands && Array.isArray(product.brands)) {
-        return product.brands.some((brand: any) => 
+        return product.brands.some((brand: any) =>
           currentFilters.value.brands.includes(brand.name)
         )
       }
-      
+
       // Vérifier l'attribut brand dans attributes
       if (product.attributes) {
-        const brandAttr = product.attributes.find((a: any) => 
-          a.name === 'brand' || 
+        const brandAttr = product.attributes.find((a: any) =>
+          a.name === 'brand' ||
           a.name === 'Marque' ||
           a.slug === 'pa_brand' ||
           a.slug === 'pa_marque'
         )
         if (brandAttr && brandAttr.options) {
-          return brandAttr.options.some((option: string) => 
+          return brandAttr.options.some((option: string) =>
             currentFilters.value.brands.includes(option)
           )
         }
       }
-      
+
       return false
     })
   }
-  
+
   // Tri
   switch (sortBy.value) {
     case 'price-asc':
@@ -289,19 +306,19 @@ const filteredProducts = computed(() => {
       filtered.sort((a, b) => new Date(b.date_created).getTime() - new Date(a.date_created).getTime())
       break
   }
-  
+
   return filtered
 })
 
 // Vérifier s'il y a des filtres actifs
 const hasActiveFilters = computed(() => {
   return currentFilters.value.priceMin !== null ||
-         currentFilters.value.priceMax !== null ||
-         currentFilters.value.rating !== null ||
-         currentFilters.value.inStock ||
-         currentFilters.value.onSale ||
-         currentFilters.value.brands.length > 0 ||
-         Object.values(currentFilters.value.attributes).some(values => values.length > 0)
+    currentFilters.value.priceMax !== null ||
+    currentFilters.value.rating !== null ||
+    currentFilters.value.inStock ||
+    currentFilters.value.onSale ||
+    currentFilters.value.brands.length > 0 ||
+    Object.values(currentFilters.value.attributes).some(values => values.length > 0)
 })
 
 // Fonction pour recharger manuellement les données
@@ -340,10 +357,10 @@ useSeoMeta({
   ogTitle: () => category.value?.name,
   ogDescription: () => category.value?.description?.replace(/<[^>]*>/g, '')
 })
+
 </script>
 
 <style>
-
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;

@@ -32,17 +32,31 @@ export default defineNuxtConfig({
   ], '@nuxt/fonts'
 ],
 
+  // runtimeConfig: {
+  //    public: {
+  //     WOOCOMMERCE_API_URL: process.env.WOOCOMMERCE_API_URL || "https://admin.ivoirshop.ci/wp-json/wc/v3",
+  //     WORDPRESS_URL: process.env.WORDPRESS_URL
+  //   },
+  //   WORDPRESS_URL: process.env.WORDPRESS_URL, // accessible côté serveur
+  //   WC_STORE_URL: process.env.WC_STORE_URL || process.env.WORDPRESS_URL,
+  //   WOOCOMMERCE_CONSUMER_KEY: process.env.WOOCOMMERCE_CONSUMER_KEY,
+  //   WOOCOMMERCE_CONSUMER_SECRET: process.env.WOOCOMMERCE_CONSUMER_SECRET,
+  //   // NODE_TLS_REJECT_UNAUTHORIZED: process.env.NODE_TLS_REJECT_UNAUTHORIZED, // ⚠️ Désactivé pour la sécurité
+  // },
   runtimeConfig: {
-     public: {
-      WOOCOMMERCE_API_URL: process.env.WOOCOMMERCE_API_URL || "https://admin.ivoirshop.ci/wp-json/wc/v3",
-      WORDPRESS_URL: process.env.WORDPRESS_URL
-    },
-    WORDPRESS_URL: process.env.WORDPRESS_URL, // accessible côté serveur
-    WC_STORE_URL: process.env.WC_STORE_URL || process.env.WORDPRESS_URL,
-    WOOCOMMERCE_CONSUMER_KEY: process.env.WOOCOMMERCE_CONSUMER_KEY,
-    WOOCOMMERCE_CONSUMER_SECRET: process.env.WOOCOMMERCE_CONSUMER_SECRET,
-    // NODE_TLS_REJECT_UNAUTHORIZED: process.env.NODE_TLS_REJECT_UNAUTHORIZED, // ⚠️ Désactivé pour la sécurité
+  // Variables côté serveur uniquement (privées)
+  WORDPRESS_URL: process.env.WORDPRESS_URL,
+  WC_STORE_URL: process.env.WC_STORE_URL || process.env.WORDPRESS_URL,
+  WOOCOMMERCE_CONSUMER_KEY: process.env.WOOCOMMERCE_CONSUMER_KEY,
+  WOOCOMMERCE_CONSUMER_SECRET: process.env.WOOCOMMERCE_CONSUMER_SECRET,
+  
+  // Variables accessibles côté client ET serveur
+  public: {
+    WOOCOMMERCE_API_URL: process.env.WOOCOMMERCE_API_URL || "https://admin.ivoirshop.ci/wp-json/wc/v3",
+    WORDPRESS_URL: process.env.WORDPRESS_URL,
+    WC_STORE_URL: process.env.WC_STORE_URL || process.env.WORDPRESS_URL, // ✅ Ajoutez cette ligne
   },
+},
    ssr: true,
 
   // Optimisations pour la production

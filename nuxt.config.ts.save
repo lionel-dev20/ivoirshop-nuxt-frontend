@@ -76,4 +76,40 @@ export default defineNuxtConfig({
     }
   }
 })
+=======
+// https://nuxt.com/docs/api/configuration/nuxt-config
+import tailwindcss from '@tailwindcss/vite'
 
+import { defineNuxtConfig } from 'nuxt/config'
+export default defineNuxtConfig({
+  compatibilityDate: '2025-07-15',
+  devtools: { enabled: false }, // Désactivé en production
+  css: ['~/assets/css/tailwind.css'],
+
+  vite: {
+    plugins: [
+      tailwindcss(),
+    ],
+    esbuild: {
+      drop: process.env.NODE_ENV === 'production' ? ['console', 'debugger'] : [],
+    },
+  },
+
+  modules: ['@pinia/nuxt', [
+    'shadcn-nuxt',
+    {
+      /**
+       * Prefix for all the imported component
+       */
+      prefix: '',
+      /**
+       * Directory that the component lives in.
+       * @default "./shadcn/ui"
+       */
+      componentDir: './shadcn/ui'
+    },
+  ], '@nuxt/fonts'
+],
+
+  runtimeConfig: {
+ 

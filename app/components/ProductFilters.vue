@@ -1,6 +1,6 @@
 <!-- components/ProductFilters.vue -->
 <template>
-  <div class=" md:block hidden bg-white rounded-md shadow-gray-50 shadow-sm border border-gray-100 p-5">
+  <div class="bg-white rounded-md shadow-gray-50 shadow-sm border border-gray-100 p-5">
     <h3 class="text-lg font-semibold text-gray-900 mb-4">Filtres</h3>
     
     <!-- Filtre par prix -->

@@ -40,7 +40,7 @@
       <div class="flex flex-col lg:flex-row gap-1 md:gap-6">
         <!-- Colonne latérale - Filtres -->
         <div class="lg:w-1/4">
-          <div class="sticky top-6">
+          <div class="sticky top-6 hidden md:block">
             <ProductFilters :products="allProducts" :attributes="categoryAttributes" :brands="categoryBrands"
               @filter="handleFilter" @clear="handleClearFilters" />
           </div>
@@ -122,11 +122,6 @@
           Voir les filtres
         </button>
 
-        <div class="!visible hidden text-center" id="collapseExample" data-twe-collapse-item>
-          Some placeholder content for the collapse component. This panel is
-          hidden by default but revealed when the user activates the relevant
-          trigger.
-        </div>
       </div>
 
 
@@ -139,6 +134,10 @@
         </svg>
       </button>
 
+      <!-- <div class="md:hidden">
+            <ProductFilters :products="allProducts" :attributes="categoryAttributes" :brands="categoryBrands"
+              @filter="handleFilter" @clear="handleClearFilters" />
+          </div> -->
 
     </div>
   </div>

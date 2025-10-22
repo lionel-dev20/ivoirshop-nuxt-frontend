@@ -1,6 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import tailwindcss from '@tailwindcss/vite'
-
 import { defineNuxtConfig } from 'nuxt/config'
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
@@ -32,18 +31,7 @@ export default defineNuxtConfig({
   ], '@nuxt/fonts'
 ],
 
-  // runtimeConfig: {
-  //    public: {
-  //     WOOCOMMERCE_API_URL: process.env.WOOCOMMERCE_API_URL || "https://admin.ivoirshop.ci/wp-json/wc/v3",
-  //     WORDPRESS_URL: process.env.WORDPRESS_URL
-  //   },
-  //   WORDPRESS_URL: process.env.WORDPRESS_URL, // accessible côté serveur
-  //   WC_STORE_URL: process.env.WC_STORE_URL || process.env.WORDPRESS_URL,
-  //   WOOCOMMERCE_CONSUMER_KEY: process.env.WOOCOMMERCE_CONSUMER_KEY,
-  //   WOOCOMMERCE_CONSUMER_SECRET: process.env.WOOCOMMERCE_CONSUMER_SECRET,
-  //   // NODE_TLS_REJECT_UNAUTHORIZED: process.env.NODE_TLS_REJECT_UNAUTHORIZED, // ⚠️ Désactivé pour la sécurité
-  // },
-  runtimeConfig: {
+   runtimeConfig: {
   // Variables côté serveur uniquement (privées)
   WORDPRESS_URL: process.env.WORDPRESS_URL,
   WC_STORE_URL: process.env.WC_STORE_URL || process.env.WORDPRESS_URL,
@@ -80,7 +68,7 @@ export default defineNuxtConfig({
     head: {
       charset: 'utf-8',
       viewport: 'width=device-width, initial-scale=1',
-      title: 'IvoirShop CI |   Ivoirshop Côte d\'Ivoire Achat vente en ligne de Électroménager - Téléphonie - Électronique - Mode - Beauté',
+      title: 'IvoirShop CI - Votre boutique en ligne',
       link: [
         { rel: 'icon', type: 'image/x-icon', href: '/logo/ivoirshop-icon.ico' }
       ],

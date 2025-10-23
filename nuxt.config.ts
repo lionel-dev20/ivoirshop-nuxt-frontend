@@ -66,12 +66,12 @@ export default defineNuxtConfig({
     head: {
       charset: 'utf-8',
       viewport: 'width=device-width, initial-scale=1',
-      title: 'IvoirShop CI - Votre boutique en ligne',
+      title: 'IvoirShop.ci | Boutique en ligne Côte d’Ivoire – Téléphones, Électroménager, Mode & Livraison Rapidee',
       link: [
         { rel: 'icon', type: 'image/x-icon', href: '/logo/ivoirshop-icon.ico' }
       ],
       meta: [
-        { name: 'description', content: 'Découvrez notre large gamme de produits électroniques, électroménager et bien plus sur IvoirShop CI' },
+        { name: 'description', content: 'Achetez en ligne sur IvoirShop.ci : téléphones, électroménager, TV, mode et beauté. Meilleurs prix, livraison rapide et paiement sécurisé en Côte d’Ivoire.' },
         { name: 'keywords', content: 'boutique en ligne, Côte dIvoire, électronique, électroménager, smartphones, TV' }
       ]
     }

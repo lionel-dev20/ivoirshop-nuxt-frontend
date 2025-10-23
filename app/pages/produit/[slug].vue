@@ -215,9 +215,9 @@
           <div class="flex flex-col lg:flex-row md:gap-x-2 items-center justify-between">
             
           <!--Methode de paiement disponoble-->
-          <div class="flex  w-full  md:w-auto flex-col lg:flex-row md:items-center gap-x-1 bg-sky-50 px-4 md:py-9 py-4 rounded-md">
-            <span class="text-[15px] md:w-28 mb-4 md:mb-0 font-bold text-sky-800">Vous pouvez payer en par</span>
-            <div class="flex flex-row items-center gap-x-3">
+          <div class=" md:w-full flex-col lg:flex-row md:items-center gap-x-1 bg-sky-50 px-4 md:py-4.5 py-4 rounded-md">
+            <span class="text-[15px] md:text-md mb-4 md:mb-0 font-bold text-sky-800">Paiement sécurisé, simple et rapide</span>
+            <div class="flex flex-row items-center gap-x-3 md:mt-4">
               <ul v-for="methode in logoMethodePaiement" :key="methode.name">
                 <li>
                   <NuxtLink to="">
@@ -232,7 +232,7 @@
           </div>
 
           <!--besoin d'aide-->
-          <div class="flex w-full md:w-auto gap-x-2.5 mt-3 md:mt-0  items-center bg-slate-50 p-4 rounded-sm">
+          <div class="flex w-full md:w-full gap-x-2.5 mt-3 md:mt-0  items-center bg-slate-50 p-4 rounded-sm">
             <img src="/logo/call.png" alt="Besoin d'aide" class="w-20 h-20 rounded-full shadow-md " loading="lazy" decoding="async" 
               height="46">
             <div>  

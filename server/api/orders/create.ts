@@ -46,15 +46,16 @@ export default defineEventHandler(async (event) => {
         country: 'CI'
       },
       shipping: {
-        first_name: body.billing?.first_name || body.customer.firstName || '',
-        last_name: body.billing?.last_name || body.customer.lastName || '',
-        email: body.billing?.email || body.customer.email || '',
-        phone: body.billing?.phone || body.customer.phone || '',
-        address_1: body.billing?.address_1 || '',
-        city: body.billing?.city || '',
+        first_name: body.shipping?.first_name || body.customer.firstName || '',
+        last_name: body.shipping?.last_name || body.customer.lastName || '',
+        email: body.shipping?.email || body.customer.email || '',
+        phone: body.shipping?.phone || body.customer.phone || '',
+        address_1: body.shipping?.address_1 || '',
+        city: body.shipping?.city || '',
         state: '',
         postcode: '',
-        country: 'CI'
+        country: 'CI',
+        address_2: body.shipping?.address_2 || '', // Correctly map address_2
       },
       items: body.items.map((item: any) => ({
         product_id: parseInt(item.id),

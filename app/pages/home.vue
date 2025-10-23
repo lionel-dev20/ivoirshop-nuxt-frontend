@@ -1,6 +1,6 @@
 <template>
     <div class="max-w-[1440px] mx-auto my-4">
-      <div class="flex gap-x-2 items-center max-h-[480px]">
+      <div class="flex gap-x-1.5 items-center max-h-[480px]">
         <MegamenuMegaMenuHorizontalColumns />
         <HerosectionMyCarousel />
         <RightDoubleAds class="hidden md:block" />
@@ -48,6 +48,8 @@
        :grid-columns="5"
        :products-per-page="20"
      />
+     <div class="md:h-8 h-4"></div>
+     <CollapseSeoText />
   
       <!-- Blocs de catégories -->
       <!-- <CategoryBlocks />

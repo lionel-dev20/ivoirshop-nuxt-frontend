@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full px-1.5 px-0 md:max-w-[62%] mx-auto shadow-sm shadow-gray-100 md:border-1 border-0 border-gray-100">
+  <div class="w-full  px-0 md:max-w-[62%] mx-auto shadow-sm shadow-gray-100 md:border-1 border-0 border-gray-100">
     <Swiper
       :modules="[Navigation, Pagination, Autoplay]"
       :slides-per-view="1"

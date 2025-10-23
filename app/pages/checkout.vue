@@ -209,6 +209,20 @@
               </div>
             </div>
 
+            <div v-if="orderForm.commune" class="mt-4">
+              <label for="deliveryAddressDetails" class="block text-sm font-medium text-gray-700 mb-1">
+                Où souhaitez-vous être livré exactement ? (Rue, numéro, indications spécifiques...) *
+              </label>
+              <textarea
+                id="deliveryAddressDetails"
+                v-model="orderForm.deliveryAddressDetails"
+                rows="3"
+                required
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Ex: Rue des Jardins, Immeuble Alpha, 2ème étage, porte B. Près du supermarché."
+              ></textarea>
+            </div>
+
             <div class="mt-4">
               <label for="notes" class="block text-sm font-medium text-gray-700 mb-1">
                 Notes de commande (optionnel)
@@ -430,7 +444,8 @@ const orderForm = ref({
   notes: '',
   paymentMethod: 'cod',
   city: '',
-  commune: ''
+  commune: '',
+  deliveryAddressDetails: ''
 })
 
 const isSubmitting = ref(false)
@@ -607,7 +622,8 @@ const submitOrder = async () => {
         city: orderForm.value.city, // Use city for city
         state: '',
         postcode: '',
-        country: 'CI'
+        country: 'CI',
+        address_2: orderForm.value.deliveryAddressDetails // Add detailed delivery address to address_2
       },
       delivery_info: {
         city_name: orderForm.value.city, // City for delivery info

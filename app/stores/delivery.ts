@@ -58,43 +58,31 @@ export const useDeliveryStore = defineStore('delivery', {
     async applyCoupon(code: string, cartTotal: number) {
       this.isApplyingCoupon = true
       try {
-        const config = useRuntimeConfig()
-        const response = await $fetch(`${config.public.woocommerceUrl}/wp-json/wc/v3/coupons`, {
-          params: {
-            code: code,
-            consumer_key: config.public.woocommerceKey,
-            consumer_secret: config.public.woocommerceSecret
+        const response = await $fetch('/api/coupons/apply', {
+          method: 'POST',
+          body: {
+            coupon_code: code,
+            cart_total: cartTotal
           }
         })
         
-        if (response && (response as any).length > 0) {
-          const coupon = (response as any)[0]
-          
-          // Calculer la réduction
-          let discount = 0
-          if (coupon.discount_type === 'percent') {
-            discount = (cartTotal * parseFloat(coupon.amount)) / 100
-          } else if (coupon.discount_type === 'fixed_cart') {
-            discount = parseFloat(coupon.amount)
-          }
+        if ((response as any).success) {
+          const coupon = (response as any).coupon
           
           this.appliedCoupon = {
             code: coupon.code,
-            discount: discount,
+            discount: coupon.discount,
             type: coupon.discount_type,
             amount: coupon.amount,
             description: coupon.description,
-            formatted_discount: new Intl.NumberFormat('en-US', {
-              minimumFractionDigits: 0,
-              maximumFractionDigits: 0,
-            }).format(discount) + ' FCFA'
+            formatted_discount: coupon.formatted_discount
           }
         } else {
-          throw new Error('Code coupon invalide')
+          throw new Error((response as any).message || 'Code coupon invalide')
         }
       } catch (error: any) {
         console.error('Erreur application coupon:', error)
-        throw new Error(error.message || 'Code coupon invalide')
+        throw new Error(error.statusMessage || error.message || 'Code coupon invalide')
       } finally {
         this.isApplyingCoupon = false
       }

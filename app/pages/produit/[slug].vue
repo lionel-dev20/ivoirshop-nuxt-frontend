@@ -428,8 +428,48 @@ const addToCart = () => {
   if (!product.value) return
 
   const cartStore = useCartStore()
-  cartStore.addItem(product.value, quantity.value)
+  
+  // Préparer les données du produit pour le panier, en incluant l'image correctement formatée
+  const cartProduct = {
+    ...product.value,
+    image: getProductImageData(product.value)
+  }
+
+  cartStore.addItem(cartProduct, quantity.value)
   cartStore.openCart()
+}
+
+// Récupérer les données d'image pour le panier
+const getProductImageData = (product: any) => {
+  // Priorité 1: L'image actuellement sélectionnée sur la page produit
+  if (selectedImage.value) {
+    return {
+      src: selectedImage.value.src,
+      alt: selectedImage.value.alt || product.name
+    }
+  }
+  
+  // Priorité 2: La première image du tableau d'images du produit
+  if (product.images && product.images.length > 0) {
+    return {
+      src: product.images[0]?.src || '/images/placeholder-product.jpg',
+      alt: product.images[0]?.alt || product.name
+    }
+  }
+  
+  // Priorité 3: Le champ thumbnail du produit (s'il existe)
+  if (product.thumbnail) {
+    return {
+      src: product.thumbnail,
+      alt: product.name
+    }
+  }
+  
+  // Fallback: Image de remplacement
+  return {
+    src: '/images/placeholder-product.jpg',
+    alt: product.name
+  }
 }
 
 const openLightbox = () => {

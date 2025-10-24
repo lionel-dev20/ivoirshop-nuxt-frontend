@@ -43,7 +43,9 @@ export default defineEventHandler(async (event) => {
     console.error(`Erreur récupération commandes pour user ${userId}:`, {
       message: err.message,
       status: err.response?.status,
-      data: err.response?.data,
+      data: err.response?.data, // Loguer les données de la réponse WordPress
+      config: err.config, // Loguer la configuration de la requête Axios
+      url: err.config?.url // Loguer l'URL exacte appelée
     });
 
     throw createError({

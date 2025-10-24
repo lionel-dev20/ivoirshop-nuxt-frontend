@@ -62,12 +62,12 @@
                       <div class="ml-4 flex-1 flex flex-col">
                         <div>
                           <div class="flex justify-between text-base font-medium text-gray-900">
-                            <h3>
+                            <h3 class="text-[12px] line-clamp-2 md:text-[14px] pb-4 md:p-0">
                               <NuxtLink :to="`/produit/${item.slug}`" @click="cartStore.closeCart()">
                                 {{ item.name }}
                               </NuxtLink>
                             </h3>
-                            <p class="ml-4">{{ cartStore.formatPrice(item.sale_price || item.price) }}</p>
+                            <p class="ml-4 text-[12px] md:text-[15px]">{{ cartStore.formatPrice(item.sale_price || item.price) }}</p>
                           </div>
                           <p v-if="item.sku" class="mt-1 text-sm text-gray-500">SKU: {{ item.sku }}</p>
                         </div>

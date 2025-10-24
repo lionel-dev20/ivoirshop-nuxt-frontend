@@ -203,7 +203,7 @@
                   d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13l-1.5 6m0 0h9M17 21v-2a2 2 0 00-2-2H9a2 2 0 00-2 2v2">
                 </path>
               </svg>
-              <span>Ajouter au panier</span>
+              <span class="cursor-pointer">Ajouter au panier</span>
             </button>
             <button v-else disabled
               class="w-full bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg cursor-not-allowed">

@@ -48,7 +48,8 @@
        :grid-columns="5"
        :products-per-page="20"
      />
-     <div class="md:h-8 h-4"></div>
+     <div class="h-8"></div>
+
      <CollapseSeoText />
   
       <!-- Blocs de catégories -->

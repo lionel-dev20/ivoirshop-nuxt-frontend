@@ -138,7 +138,7 @@
     </div>
 
     <!-- État de chargement initial vide -->
-    <div v-else class="initial-empty-state">
+    <!-- <div v-else class="initial-empty-state">
       <div class="empty-content">
         <svg class="w-16 h-16 empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -152,7 +152,7 @@
           Retour à l'accueil
         </NuxtLink>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -481,7 +481,7 @@ if (categoryData.value) {
 
 
 .category-display {
-  @apply min-h-screen;
+  @apply min-h-auto;
 }
 
 /* États de chargement */

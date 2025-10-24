@@ -1,5 +1,5 @@
 <template>
-    <div class="max-w-full mx-auto md:p-6 p-4">
+    <div class="max-w-full mx-auto -md:mt-12">
       <div class="bg-white rounded-lg shadow-md p-6">
         <h2 class="text-2xl font-bold text-gray-800 mb-4">
             🛒 IvoirShop.ci – Le meilleur du shopping en ligne en Côte d’Ivoire 🇨🇮

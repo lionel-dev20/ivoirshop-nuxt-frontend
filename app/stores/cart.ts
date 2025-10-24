@@ -82,10 +82,7 @@ export const useCartStore = defineStore('cart', {
           regular_price: product.regular_price,
           sale_price: product.sale_price,
           quantity,
-          image: product.images?.[0] ? {
-            src: product.images[0].src,
-            alt: product.images[0].alt || product.name
-          } : undefined,
+          image: product.image, // Utiliser directement l'objet image préparé par ProductCard
           stock_status: product.stock_status,
           sku: product.sku,
           shipping_class: shippingClass,

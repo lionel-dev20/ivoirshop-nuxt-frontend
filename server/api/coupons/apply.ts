@@ -27,20 +27,24 @@ export default defineEventHandler(async (event) => {
       }
     }
 
-    // Récupération du coupon via l'API WooCommerce
-    const { data: coupons } = await axios.get(
+    // Récupération du coupon via l'API WordPress (endpoint personnalisé)
+    const response = await axios.get(
       `${process.env.WC_STORE_URL}/wp-json/custom/v1/coupons/${body.coupon_code}`,
       axiosConfig
     )
+    const coupons = response.data
 
-    if (!coupons || coupons.length === 0) {
+    // L'API personnalisée retourne directement l'objet coupon s'il est trouvé, ou un WP_Error en cas d'échec.
+    // Si l'endpoint a renvoyé une erreur (ex: coupon non trouvé), coupons sera un objet avec `code` et `message`.
+    if (!coupons || (coupons.code && coupons.message)) {
       throw createError({
-        statusCode: 404,
-        statusMessage: 'Code coupon invalide ou expiré'
+        statusCode: response.status === 404 ? 404 : 400, // Propager le statut si c'est un 404
+        statusMessage: coupons.message || 'Code coupon invalide ou expiré (API WP)'
       })
     }
 
-    const coupon = coupons[0]
+    // Si l'API retourne un objet directement, c'est le coupon.
+    const coupon = coupons
 
     // Calcul de la réduction
     let discount = 0

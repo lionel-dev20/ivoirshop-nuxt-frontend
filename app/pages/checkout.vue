@@ -420,9 +420,11 @@
 <script setup lang="ts">
 import deliveryZones from '~/data/delivery-zones.json'
 // Nuxt 3 automatically imports ref, computed, onMounted, watch
+import { useAuth } from '~/composables/useAuth'
 
 const cartStore = useCartStore()
 const deliveryStore = useDeliveryStore()
+const { user: authUser } = useAuth() // Récupérer l'utilisateur connecté
 
 // SEO
 useSeoMeta({
@@ -437,9 +439,9 @@ if (process.client && cartStore.isEmpty) {
 
 // État du formulaire
 const orderForm = ref({
-  firstName: '',
-  lastName: '',
-  email: '',
+  firstName: authUser.value?.first_name || '',
+  lastName: authUser.value?.last_name || '',
+  email: authUser.value?.email || '',
   phone: '',
   notes: '',
   paymentMethod: 'cod',
@@ -598,6 +600,7 @@ const submitOrder = async () => {
   try {
     const orderData = {
       customer: orderForm.value,
+      customer_id: authUser.value?.id || 0, // Ajouter l'ID de l'utilisateur connecté
       items: cartStore.items,
       total: finalTotal.value,
       shipping_cost: deliveryStore.selectedDelivery.shipping_cost,
@@ -659,7 +662,8 @@ const submitOrder = async () => {
         shipping_cost: deliveryStore.selectedDelivery.shipping_cost,
         delivery_info: deliveryStore.selectedDelivery,
         coupon: deliveryStore.appliedCoupon,
-        payment_method: orderForm.value.paymentMethod
+        payment_method: orderForm.value.paymentMethod,
+        customer_id: authUser.value?.id || 0, // Ajouter l'ID client au thankYouData
       }
       
       if (process.client) {

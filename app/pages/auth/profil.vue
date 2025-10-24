@@ -67,14 +67,29 @@
             <th class="border px-4 py-2">Date</th>
             <th class="border px-4 py-2">Total</th>
             <th class="border px-4 py-2">Statut</th>
+            <th class="border px-4 py-2">Détails</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="order in orders" :key="order.id">
             <td class="border px-4 py-2">{{ order.id }}</td>
             <td class="border px-4 py-2">{{ formatDate(order.date_created) }}</td>
-            <td class="border px-4 py-2">{{ order.total }} FCFA</td>
+            <td class="border px-4 py-2">{{ order.total }} {{ order.currency }}</td>
             <td class="border px-4 py-2">{{ order.status }}</td>
+            <td class="border px-4 py-2">
+              <details>
+                <summary class="cursor-pointer text-blue-600 hover:text-blue-800">Voir</summary>
+                <ul class="mt-2 space-y-1">
+                  <li v-for="item in order.items" :key="item.product_id" class="flex items-center space-x-2">
+                    <img v-if="item.image" :src="item.image" :alt="item.name" class="w-10 h-10 object-cover rounded"/>
+                    <div class="flex-1">
+                      <p class="text-sm font-medium">{{ item.name }} (x{{ item.quantity }})</p>
+                      <p class="text-xs text-gray-500">{{ item.total }} {{ order.currency }}</p>
+                    </div>
+                  </li>
+                </ul>
+              </details>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -99,87 +114,85 @@ interface User {
   email: string
 }
 
+interface OrderItem {
+  product_id: number;
+  name: string;
+  quantity: number;
+  total: string;
+  image: string | null;
+}
 interface Order {
-  id: number
-  status: string
-  total: string
-  date_created: string
+  id: number;
+  status: string;
+  date_created: string;
+  total: string;
+  currency: string;
+  payment_method_title: string;
+  shipping_total: string;
+  discount_total: string;
+  customer_note: string;
+  items: OrderItem[];
 }
 
 const { user: authUser, logout: authLogout, fetchUser } = useAuth()
 
-const user = ref<User | null>(null)
+const user = ref<User | null>(null) // Utilisez l'interface User définie en haut
 const orders = ref<Order[]>([])
 const loading = ref(true)
 
 const firstName = ref('')
 const lastName = ref('')
 const email = ref('')
+const activeTab = ref('profile') // Nouvelle ref pour gérer l'onglet actif (profil ou commandes)
 
 onMounted(async () => {
-  // Vérifier si l'utilisateur est connecté
-  await fetchUser()
+  await fetchUser() // Toujours récupérer l'utilisateur pour s'assurer qu'il est à jour
   
-  if (!authUser.value) {
+  if (!authUser.value || !authUser.value.id) {
     await navigateTo('/auth/login')
     return
   }
 
-  // Charger les données du profil
   await loadProfileData()
 })
 
 const loadProfileData = async () => {
+  loading.value = true
   try {
-    // Récupérer les données WooCommerce du profil
-    const response = await $fetch('/api/woocommerce/me', {
-      credentials: 'include'
-    })
-    
-    if (response.data && !response.error) {
-      user.value = response.data
-      firstName.value = response.data.first_name || ''
-      lastName.value = response.data.last_name || ''
-      email.value = response.data.email || ''
-    } else if (response.error) {
-      console.error('Erreur profil:', response.error)
-      // Utiliser les données de base depuis authUser
-      if (authUser.value) {
-        user.value = authUser.value as User
-        firstName.value = authUser.value.first_name || ''
-        lastName.value = authUser.value.last_name || ''
-        email.value = authUser.value.email || ''
-      }
-    }
-
-    // Récupérer les commandes
-    const ordersResponse = await $fetch('/api/woocommerce/my-orders', {
-      credentials: 'include'
-    })
-    
-    if (ordersResponse.data && !ordersResponse.error) {
-      orders.value = ordersResponse.data
-    } else if (ordersResponse.error) {
-      console.error('Erreur commandes:', ordersResponse.error)
-      orders.value = []
-    }
-  } catch (err) {
-    console.error('Erreur chargement profil :', err)
-    // Utiliser les données de base depuis authUser en cas d'erreur
+    // Mettre à jour les refs locaux avec les données d'authUser
     if (authUser.value) {
       user.value = authUser.value as User
       firstName.value = authUser.value.first_name || ''
       lastName.value = authUser.value.last_name || ''
       email.value = authUser.value.email || ''
     }
+
+    // Récupérer les commandes de l'utilisateur via le nouvel endpoint Nuxt API
+    if (user.value?.id) {
+      const ordersResponse = await $fetch<Order[]>(`/api/orders/user/${user.value.id}`)
+      orders.value = ordersResponse
+    } else {
+      orders.value = []
+    }
+  } catch (err: any) {
+    console.error('Erreur chargement profil ou commandes :', err)
+    // Gérer l'erreur d'API
+    alert(err.statusMessage || err.message || 'Erreur lors du chargement du profil ou des commandes.')
+    orders.value = []
   } finally {
     loading.value = false
   }
 }
 
 const updateProfile = async () => {
+  loading.value = true // Activer le chargement pour le bouton
   try {
-    const response = await $fetch('/api/woocommerce/update-user', {
+    if (!user.value?.id) {
+      alert("ID utilisateur manquant. Impossible de mettre à jour le profil.")
+      return
+    }
+
+    const response = await $fetch(`/api/auth/update-user/${user.value.id}`, {
       method: 'PUT',
       body: {
         first_name: firstName.value,
@@ -189,17 +202,18 @@ const updateProfile = async () => {
       credentials: 'include'
     })
     
-    if (response.data && !response.error) {
-      user.value = response.data
-      // Mettre à jour aussi l'utilisateur dans le composable
+    if (response.success) {
+      // Ré-fetch l'utilisateur pour mettre à jour l'état global et local
       await fetchUser()
       alert('Profil mis à jour avec succès !')
     } else {
-      alert(response.error || "Impossible de mettre à jour le profil.")
+      alert(response.message || "Impossible de mettre à jour le profil.")
     }
   } catch (err: any) {
     console.error('Erreur mise à jour :', err)
-    alert(err?.data?.error || "Impossible de mettre à jour le profil.")
+    alert(err.statusMessage || err.message || "Impossible de mettre à jour le profil.")
+  } finally {
+    loading.value = false // Désactiver le chargement
   }
 }
 
@@ -207,7 +221,29 @@ const logout = async () => {
   await authLogout()
 }
 
-const formatDate = (date: string) => {
-  return new Date(date).toLocaleDateString()
+const formatDate = (dateString: string) => {
+  return new Date(dateString).toLocaleDateString('fr-FR', { 
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric' 
+  })
 }
+
+// Exposer explicitement au template (peut aider certains linters)
+// Bien que script setup le fasse automatiquement, cette étape est ajoutée pour la robustesse
+// et pour s'assurer que toutes les variables sont reconnues.
+// On n'a pas besoin de faire ça normalement avec Nuxt 3 et script setup.
+// Cependant, si les erreurs de linter persistent, cela peut être un workaround.
+defineExpose({
+  user,
+  orders,
+  loading,
+  firstName,
+  lastName,
+  email,
+  activeTab,
+  updateProfile,
+  logout,
+  formatDate
+})
 </script>

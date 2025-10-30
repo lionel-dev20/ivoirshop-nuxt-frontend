@@ -215,7 +215,7 @@
           <div class="flex flex-col lg:flex-row md:gap-x-2 items-center justify-between">
             
           <!--Methode de paiement disponoble-->
-          <div class=" md:w-full flex-col lg:flex-row md:items-center gap-x-1 bg-sky-50 px-4 md:py-4.5 py-4 rounded-md">
+          <div class="w-full md:w-full flex-col lg:flex-row md:items-center gap-x-1 bg-sky-50 px-4 md:py-4.5 py-4 rounded-md">
             <span class="text-[15px] md:text-md mb-4 md:mb-0 font-bold text-sky-800 text-center md:text-left">Paiement sécurisé, simple et rapide</span>
             <div class="flex flex-row items-center gap-x-3 md:mt-4">
               <ul v-for="methode in logoMethodePaiement" :key="methode.name">

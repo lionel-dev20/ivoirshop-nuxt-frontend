@@ -1,6 +1,6 @@
 <template>
   <div v-if="isVisible" class="countdown-display">
-    <div class="countdown-header bg-orange-ivoirshop px-2 py-1.5 lg:px-5 lg:py-2 p-2 rounded-sm shadow shadow-orange-100 flex justify-between items-center text-white">
+    <div class="countdown-header bg-red-500  px-2 py-1.5 lg:px-5 lg:py-2 p-2 rounded-sm shadow shadow-orange-100 flex justify-between items-center text-white">
       <h2 class="text-md lg:text-lg font-bold flex items-center gap-2">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -321,7 +321,7 @@ watch(() => props.categorySlug, () => {
 .countdown-header {
   @apply mb-3;
   /* Utilisation de la couleur personnalisée */
-  background-color: #f77f00; /* Orange Ivoirshop */
+  background-color: #cc6a01; /* Orange Ivoirshop */
 }
 
 .error-container {

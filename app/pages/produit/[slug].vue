@@ -184,15 +184,15 @@
           </div>
 
           <!-- Actions -->
-          <div class="flex space-x-4 space-y-4 pt-6 border-t">
+          <div class="flex space-x-2 md:space-x-4 space-y-4 pt-6 border-t">
             <div class="flex items-center space-x-4">
               <div class="flex items-center">
-                <label for="quantity" class="block text-sm font-medium text-gray-700 mr-2">
+                <label for="quantity" class="block text-[12px] md:text-sm font-medium text-gray-700 mr-2">
                   Quantité:
                 </label>
                 <input id="quantity" v-model.number="quantity" type="number" min="1"
                   :max="product.stock_quantity || 999"
-                  class="w-20 text-center px-3 py-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                  class="md:w-20 w-10 text-center px-1 md:px-3 py-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
               </div>
             </div>
 
@@ -216,12 +216,12 @@
             
           <!--Methode de paiement disponoble-->
           <div class=" md:w-full flex-col lg:flex-row md:items-center gap-x-1 bg-sky-50 px-4 md:py-4.5 py-4 rounded-md">
-            <span class="text-[15px] md:text-md mb-4 md:mb-0 font-bold text-sky-800">Paiement sécurisé, simple et rapide</span>
+            <span class="text-[15px] md:text-md mb-4 md:mb-0 font-bold text-sky-800 text-center md:text-left">Paiement sécurisé, simple et rapide</span>
             <div class="flex flex-row items-center gap-x-3 md:mt-4">
               <ul v-for="methode in logoMethodePaiement" :key="methode.name">
                 <li>
                   <NuxtLink to="">
-                    <img :src="methode.logo" :alt="methode.name" class="w-12 h-12 rounded-full shadow-md" loading="lazy"
+                    <img :src="methode.logo" :alt="methode.name" class="w-12 h-12 rounded-full shadow-md mt-4 md:mt-0" loading="lazy"
                       decoding="async" width="48" height="48">
                     <!-- <p class="text-sm text-sky-700 font-bold text-center mt-2">{{ methode.name }}</p> -->
 
@@ -240,7 +240,7 @@
             <p>Cliquez et appeler</p>
             <button class="mt-4 md:py-1 py-1">
               <NuxtLink to=""
-                class=" border-amber-400 border-2 px-3.5 text-[16px] md:text-[19px] text-[#f90] py-2 rounded-sm text-xl font-bold hover:text-[#fff] hover:bg-[#f90] hover:border-[#f90] cursor-pointer transition-all duration-300">
+                class=" border-amber-400 border-2 px-3 text-[16px] md:text-[19px] text-[#f90] py-2 rounded-sm text-xl font-bold hover:text-[#fff] hover:bg-[#f90] hover:border-[#f90] cursor-pointer transition-all duration-300">
                 +225 0701518845</NuxtLink>
             </button>
           </div>

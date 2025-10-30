@@ -1,0 +1,10 @@
+[
+  {
+    "id": "flash-sale-smartphones",
+    "title": "À ne pas manquer",
+    "categorySlug": "plaque-a-gaz",
+    "endTime": "2025-11-01T10:00:00Z",
+    "gridColumns": 5,
+    "productsPerPage": 10
+  }
+]

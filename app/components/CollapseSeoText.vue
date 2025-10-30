@@ -31,9 +31,7 @@
             <div class="contentSEO">
       <mainSEO class="mainSEO">
 
-        <section id="intro">
-          <p>Bienvenue sur <strong>IvoirShop.ci</strong>, votre plateforme ivoirienne de référence pour le shopping en ligne. Retrouvez en un clic vos produits préférés à prix imbattables, avec livraison rapide partout en Côte d’Ivoire et un service client disponible 7j/7.</p>
-        </section>
+      
 
         <section id="electromenager">
           <h2>🏠 Électroménager de qualité à petit prix</h2>

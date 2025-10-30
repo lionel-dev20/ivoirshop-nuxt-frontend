@@ -9,6 +9,23 @@
       <ListPartner />
       <div class="md:h-8 h-4"></div>      <!-- <div class="h-8"></div> -->
      
+      <!-- Carrousels de produits et compte à rebours -->
+      <div v-for="countdown in countdowns" :key="countdown.id">
+        <Countdowns
+          :countdown-id="countdown.id"
+          :title="countdown.title"
+          :category-slug="countdown.categorySlug"
+          :end-time="countdown.endTime"
+          :grid-columns="countdown.gridColumns"
+          :products-per-page="countdown.productsPerPage"
+          @add-to-cart="handleAddToCart"
+          @product-click="handleProductClick"
+          @quick-view="handleQuickView"
+          @wishlist-toggle="handleWishlistToggle"
+        />
+        <div class="md:h-8 h-4"></div>
+      </div>
+
       <!-- Carousel de produits -->
       <ProductCarousel 
         title="Nouveautés"
@@ -85,7 +102,9 @@
   import ListPartner from '~/components/partenaires/ListPartner.vue';
   import CategoryBlocks from '~/components/CategoryBlocks.vue';
   import ProductCarousel from '~/components/ProductCarousel.vue';
-  
+  import Countdowns from '~/components/collectionHomepage/Countdowns.vue'; // Import the new component
+  import countdownsData from '~/data/countdowns.json'; // Import the countdowns data
+
   const newProducts = [
     {
       id: 1,
@@ -133,7 +152,9 @@
   const handleWishlistToggle = (product) => {
     // Ajouter/retirer des favoris
   }
-  
+
+  // Expose countdownsData to the template
+  const countdowns = ref(countdownsData);
   </script>
   
   <style scoped></style>

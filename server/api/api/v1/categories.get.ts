@@ -37,6 +37,7 @@ export default defineEventHandler(async () => {
       )
 
       console.log(`${categoriesList.length} catégories trouvées via endpoint personnalisé`)
+      console.log('Categories from custom endpoint:', categoriesList.map(cat => ({ id: cat.id, slug: cat.slug, name: cat.name })));
       return categoriesList
       
     } catch (customError: any) {
@@ -71,6 +72,7 @@ export default defineEventHandler(async () => {
         }))
 
         console.log(`${formattedCategories.length} catégories trouvées via WooCommerce standard`)
+        console.log('Categories from WooCommerce standard:', formattedCategories.map(cat => ({ id: cat.id, slug: cat.slug, name: cat.name })));
         return formattedCategories
         
       } catch (wcError: any) {

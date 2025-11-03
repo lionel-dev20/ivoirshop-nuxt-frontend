@@ -15,6 +15,7 @@
                 Nos partenaires</h2>
             <div class="grid grid-cols-4 md:grid-cols-4 lg:grid-cols-5 md:gap-2 gap-1">
                 <NuxtLink to="/" v-for="(item, index) in listParnerImg" :key="index"
+                    :class="{'hidden': index >= listParnerImg.length - 3 && screenWidth < 768}"
                     class="object-cover h-full w-full rounded-md flex justify-start items-center gap-x-0.5 md:gap-x-2 md:py-5 py-2 px-2.5 md:px-6 bg-white border-1 border-gray-100 shadow-md shadow-gray-100 hover:scale-103 transition-transform duration-200">
                     <img :src="item.image" :alt="item.title" loading="lazy"
                         class="object-cover h-12 w-auto md:w-auto md:h-13 block items-center justify-center rounded-md shadow-gray-100" />
@@ -103,6 +104,23 @@ const listParnerImg = [
         title: 'Partenaires IvoirShop force'
     },
 ]
+
+const screenWidth = ref(0);
+
+const isLargeScreen = computed(() => screenWidth.value >= 768);
+
+onMounted(() => {
+  screenWidth.value = window.innerWidth;
+  window.addEventListener('resize', () => {
+    screenWidth.value = window.innerWidth;
+  });
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', () => {
+    screenWidth.value = window.innerWidth;
+  });
+});
 </script>
 
 <style scoped></style>

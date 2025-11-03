@@ -10,7 +10,7 @@
         :to="item.link"
         class="flex flex-col items-center justify-center p-2 md:p-1 text-center border-r border-b border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer"
       >
-        <img :src="item.image" :alt="item.name" class="w-12 h-12 md:w-16 md:h-16 object-contain mb-2" />
+        <img :src="item.image" :alt="item.name" class="w-auto h-24 md:w-16 md:h-16 object-contain mb-2" width="24" height="24" />
         <span class="text-xs md:text-sm font-medium text-gray-700">{{ item.name }}</span>
       </NuxtLink>
     </div>

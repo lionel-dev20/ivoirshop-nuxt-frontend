@@ -40,7 +40,7 @@
       <!-- Barre de progression pour le compte à rebours -->
       <div v-if="showCountdownInfo" class="mt-2 text-sm text-gray-600">
         <div class="flex justify-between items-center mb-1">
-          <span>Rest {{ countdownRemaining }}/{{ countdownTotal }}</span>
+          <span>Reste {{ countdownRemaining }}/{{ countdownTotal }}</span>
         </div>
         <div class="w-full bg-gray-200 rounded-full h-2.5">
           <div

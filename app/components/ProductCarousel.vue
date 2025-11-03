@@ -2,15 +2,15 @@
 <template>
   <div class="product-carousel-container ">
     <!-- Header du carousel -->
-    <div class="carousel-header bg-white px-2 py-1.5 lg:px-6 lg:py-3 p-2 border border-gray-100 rounded-sm shadow shadow-gray-100">
-      <h2 class="carousel-title">{{ title }}</h2>
+    <div class="carousel-header " :class="headerBackgroundColor + ' px-2 py-1.5 lg:px-6 lg:py-3 p-2 border border-gray-100 rounded-sm shadow shadow-gray-100'">
+      <h2 class="carousel-title" :class="headerColor">{{ title }}</h2>
       <div class="carousel-navigation">
         <button 
           @click="slidePrev" 
-          :class="`nav-button nav-button-prev-${uniqueId}`"
+          :class="`nav-button nav-button-prev-${uniqueId} `"
           :disabled="swiper?.isBeginning"
         >
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-5 h-5" :class="navigationColor" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
           </svg>
         </button>
@@ -19,7 +19,7 @@
           :class="`nav-button nav-button-next-${uniqueId}`"
           :disabled="swiper?.isEnd"
         >
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-5 h-5" :class="navigationColor" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
           </svg>
         </button>
@@ -107,6 +107,9 @@ interface Props {
   autoplayDelay?: number
   showPagination?: boolean
   showNavigation?: boolean
+  headerBackgroundColor?: string // Nouvelle prop
+  navigationColor?: string // Nouvelle prop
+  headerColor?: string // Nouvelle prop
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -115,7 +118,10 @@ const props = withDefaults(defineProps<Props>(), {
   autoplay: false,
   autoplayDelay: 3000,
   showPagination: true,
-  showNavigation: true
+  showNavigation: true,
+  headerBackgroundColor: 'bg-white', // Valeur par défaut
+  navigationColor: 'text-gray-900', // Valeur par défaut
+  headerColor: 'text-gray-900' // Valeur par défaut
 })
 
 // Emits
@@ -402,7 +408,7 @@ watch(() => props.categorySlug, () => {
 }
 
 .carousel-title {
-  @apply md:text-2xl text-lg font-bold text-gray-900 mb-0;
+  @apply md:text-2xl text-lg font-bold mb-0;
 }
 
 .carousel-navigation {

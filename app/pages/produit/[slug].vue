@@ -196,57 +196,79 @@
               </div>
             </div>
 
-            <button v-if="product.in_stock" @click="addToCart"
-              class="w-full h-13 cursor-pointer bg-[#ff9900] hover:bg-[#ff9900]/80 text-white font-semibold py-3 px-4 rounded-[4px] transition-colors flex items-center justify-center space-x-2">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13l-1.5 6m0 0h9M17 21v-2a2 2 0 00-2-2H9a2 2 0 00-2 2v2">
-                </path>
-              </svg>
-              <span class="cursor-pointer">Ajouter au panier</span>
-            </button>
-            <button v-else disabled
-              class="w-full bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg cursor-not-allowed">
-              Produit indisponible
-            </button>
-          </div> 
 
-
-          <div class="flex flex-col lg:flex-row md:gap-x-2 items-center justify-between">
-            
-          <!--Methode de paiement disponoble-->
-          <div class="w-full md:w-full flex-col lg:flex-row md:items-center gap-x-1 bg-sky-50 px-4 md:py-4.5 py-4 rounded-md">
-            <span class="text-[15px] md:text-md mb-4 md:mb-0 font-bold text-sky-800 text-center md:text-left">Paiement sécurisé, simple et rapide</span>
-            <div class="flex flex-row items-center gap-x-3 md:mt-4">
-              <ul v-for="methode in logoMethodePaiement" :key="methode.name">
-                <li>
-                  <NuxtLink to="">
-                    <img :src="methode.logo" :alt="methode.name" class="w-12 h-12 rounded-full shadow-md mt-4 md:mt-0" loading="lazy"
-                      decoding="async" width="48" height="48">
-                    <!-- <p class="text-sm text-sky-700 font-bold text-center mt-2">{{ methode.name }}</p> -->
-
-                  </NuxtLink>
-                </li>
-              </ul>
+            <div class="w-full flex items-center md:-mt-4 justify-between gap-x-2.5">
+              <!-- ajouter au panier  -->
+              <div class="w-full">
+                <button v-if="product.in_stock" @click="addToCart"
+                  class="w-full h-13 cursor-pointer bg-[#f19100] hover:bg-[#ff9900]/80 text-white font-semibold py-3 px-4 rounded-[4px] transition-colors flex items-center justify-center space-x-2">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13l-1.5 6m0 0h9M17 21v-2a2 2 0 00-2-2H9a2 2 0 00-2 2v2">
+                    </path>
+                  </svg>
+                  <span class="cursor-pointer">Achetez maintenant</span>
+                </button>
+                <button v-else disabled
+                  class="w-full bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg cursor-not-allowed">
+                  Produit indisponible
+                </button>
+              </div>
+               <h4 class="text-md md:text-lg font-bold">Ou</h4>
+              <!-- commander par whatsapp -->
+              <button @click="orderViaWhatsapp"
+                class="hidden md:flex w-full h-13 cursor-pointer bg-[#1aaa0f] hover:bg-[#138c0ade] text-white font-semibold md:py-3 md:px-2 rounded-[4px] transition-colors items-center justify-center space-x-2">
+                <img src="/logo/whatsapp-order.png" class="w-7 h-7" width="24" height="24"/>
+                <span>Commander par WhatsApp</span>
+              </button>
             </div>
           </div>
 
-          <!--besoin d'aide-->
-          <div class="flex w-full md:w-full gap-x-2.5 mt-3 md:mt-0  items-center bg-slate-50 p-4 rounded-sm">
-            <img src="/logo/call.png" alt="Besoin d'aide" class="w-20 h-20 rounded-full shadow-md " loading="lazy" decoding="async" 
-              height="46">
-            <div>  
-            <span class="text-[13px] font-bold text-gray-900">Besoin d'aide pour Acheter ?</span>
-            <p>Cliquez et appeler</p>
-            <button class="mt-4 md:py-1 py-1">
-              <NuxtLink to=""
-                class=" border-amber-400 border-2 px-3 text-[16px] md:text-[19px] text-[#f90] py-2 rounded-sm text-xl font-bold hover:text-[#fff] hover:bg-[#f90] hover:border-[#f90] cursor-pointer transition-all duration-300">
-                +225 0701518845</NuxtLink>
-            </button>
-          </div>
-          </div>
 
-        </div>
+          <button @click="orderViaWhatsapp"
+                class="md:hidden w-full mt-2 h-13 cursor-pointer bg-[#128c0a] hover:bg-[#138c0ade] text-white font-semibold py-2.5 px-4 rounded-[4px] transition-colors flex items-center justify-center space-x-2">
+                <img src="/logo/whatsapp-order.png" class="w-7 h-7" width="24" height="24"/>
+                <span>Commander par WhatsApp</span>
+              </button>
+
+
+          <div class="flex flex-col lg:flex-row md:gap-x-2 items-center justify-between">
+
+            <!--Methode de paiement disponoble-->
+            <div
+              class="w-full md:w-full flex-col lg:flex-row md:items-center gap-x-1 bg-sky-50 px-4 md:py-4.5 py-4 rounded-md">
+              <span class="text-[15px] md:text-md mb-4 md:mb-0 font-bold text-sky-800 text-center md:text-left">Paiement
+                sécurisé, simple et rapide</span>
+              <div class="flex flex-row items-center gap-x-3 md:mt-4">
+                <ul v-for="methode in logoMethodePaiement" :key="methode.name">
+                  <li>
+                    <NuxtLink to="">
+                      <img :src="methode.logo" :alt="methode.name" class="w-12 h-12 rounded-full shadow-md mt-4 md:mt-0"
+                        loading="lazy" decoding="async" width="48" height="48">
+                      <!-- <p class="text-sm text-sky-700 font-bold text-center mt-2">{{ methode.name }}</p> -->
+
+                    </NuxtLink>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <!--besoin d'aide-->
+            <div class="flex w-full md:w-full gap-x-2.5 mt-3 md:mt-0  items-center bg-slate-50 p-4 rounded-sm">
+              <img src="/logo/call.png" alt="Besoin d'aide" class="w-20 h-20 rounded-full shadow-md " loading="lazy"
+                decoding="async" height="46">
+              <div>
+                <span class="text-[13px] font-bold text-gray-900">Besoin d'aide pour Acheter ?</span>
+                <p>Cliquez et appeler</p>
+                <button class="mt-4 md:py-1 py-1">
+                  <NuxtLink to=""
+                    class=" border-amber-400 border-2 px-3 text-[16px] md:text-[19px] text-[#f90] py-2 rounded-sm text-xl font-bold hover:text-[#fff] hover:bg-[#f90] hover:border-[#f90] cursor-pointer transition-all duration-300">
+                    +225 0701518845</NuxtLink>
+                </button>
+              </div>
+            </div>
+
+          </div>
 
           <!-- Informations additionnelles -->
           <div class="text-sm text-gray-600   space-y-1 pt-4 border-t">
@@ -428,7 +450,7 @@ const addToCart = () => {
   if (!product.value) return
 
   const cartStore = useCartStore()
-  
+
   // Préparer les données du produit pour le panier, en incluant l'image correctement formatée
   const cartProduct = {
     ...product.value,
@@ -439,6 +461,19 @@ const addToCart = () => {
   cartStore.openCart()
 }
 
+const orderViaWhatsapp = () => {
+  if (!product.value) return;
+
+  const phoneNumber = '22547655690'; // Numéro WhatsApp
+  const productName = product.value.name;
+  const productPrice = product.value.on_sale ? formatPrice(product.value.sale_price) : formatPrice(product.value.price);
+  const productLink = window.location.href;
+
+  const message = `Bonjour, je souhaite commander le produit suivant :%0A%0A*Nom du produit:* ${productName}%0A*Prix:* ${productPrice}%0A*Lien du produit:* ${productLink}%0A%0AMerci.`;
+
+  window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
+};
+
 // Récupérer les données d'image pour le panier
 const getProductImageData = (product: any) => {
   // Priorité 1: L'image actuellement sélectionnée sur la page produit
@@ -448,7 +483,7 @@ const getProductImageData = (product: any) => {
       alt: selectedImage.value.alt || product.name
     }
   }
-  
+
   // Priorité 2: La première image du tableau d'images du produit
   if (product.images && product.images.length > 0) {
     return {
@@ -456,7 +491,7 @@ const getProductImageData = (product: any) => {
       alt: product.images[0]?.alt || product.name
     }
   }
-  
+
   // Priorité 3: Le champ thumbnail du produit (s'il existe)
   if (product.thumbnail) {
     return {
@@ -464,7 +499,7 @@ const getProductImageData = (product: any) => {
       alt: product.name
     }
   }
-  
+
   // Fallback: Image de remplacement
   return {
     src: '/images/placeholder-product.jpg',

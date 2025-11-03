@@ -5,9 +5,9 @@
         <HerosectionMyCarousel />
         <RightDoubleAds class="hidden md:block" />
       </div>
-      <div class="md:h-8 h-4"></div>
+      <div class="md:h-4 h-4"></div>
       <ListPartner />
-      <div class="md:h-8 h-4"></div>      <!-- <div class="h-8"></div> -->
+      <div class="md:h-6 h-4"></div>      <!-- <div class="h-8"></div> -->
      
       <!-- Carrousels de produits et compte à rebours -->
       <div v-for="countdown in countdowns" :key="countdown.id">
@@ -23,8 +23,27 @@
           @quick-view="handleQuickView"
           @wishlist-toggle="handleWishlistToggle"
         />
-        <div class="md:h-8 h-4"></div>
+        <div class="md:h-4 h-4"></div>
       </div>
+      <AcheterEnLigne />
+      <div class="md:h-4 h-4"></div>
+      <ProductCarousel 
+        title="Illux | Partenaire officiel"
+         category-slug="plaque-a-gaz"
+        :max-products="20"
+        :autoplay="true"
+        :autoplay-delay="300"
+        :show-pagination="true"
+        :show-navigation="true"
+        header-background-color="bg-red-500"
+        header-color="text-white"
+        navigation-color="text-black"
+        @add-to-cart="handleAddToCart"
+        @product-click="handleProductClick"
+        @quick-view="handleQuickView"
+        @wishlist-toggle="handleWishlistToggle"
+      />
+      <div class="md:h-4 h-4"></div>
 
       <!-- Carousel de produits -->
       <ProductCarousel 
@@ -40,8 +59,10 @@
         @quick-view="handleQuickView"
         @wishlist-toggle="handleWishlistToggle"
       />
+      <div class="md:h-4 h-4"></div>
   
-      <div class="md:h-8 h-4"></div>
+  
+      <div class="md:h-4 h-4"></div>
       <CollectionHomepageDoubleBanner />
      <div class="h-8"></div>
       <!-- Carousel de promotions -->
@@ -157,4 +178,6 @@
   const countdowns = ref(countdownsData);
   </script>
   
-  <style scoped></style>
+  <style scoped>
+
+</style>

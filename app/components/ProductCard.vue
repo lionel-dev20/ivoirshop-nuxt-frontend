@@ -37,6 +37,19 @@
         {{ product.name }}
       </NuxtLink>
 
+      <!-- Barre de progression pour le compte à rebours -->
+      <div v-if="showCountdownInfo" class="mt-2 text-sm text-gray-600">
+        <div class="flex justify-between items-center mb-1">
+          <span>Rest {{ countdownRemaining }}/{{ countdownTotal }}</span>
+        </div>
+        <div class="w-full bg-gray-200 rounded-full h-2.5">
+          <div
+            class="bg-orange-500 h-2.5 rounded-full"
+            :style="{ width: (countdownRemaining / countdownTotal) * 100 + '%' }"
+          ></div>
+        </div>
+      </div>
+
       <!-- Prix -->
       <div class="mt-2 flex-col flex items-start">
         <span class="text-gray-800 text-lg font-semibold">{{ formatPrice(product.salePrice || product.sale_price) }}</span>
@@ -99,13 +112,22 @@ interface Product {
   on_sale?: boolean
   stock_status?: string
   sku?: string
+  showCountdownInfo?: boolean
+  countdownRemaining?: number
+  countdownTotal?: number
 }
 
 const props = withDefaults(defineProps<{
   product: Product
   showAddToCart?: boolean
+  showCountdownInfo?: boolean
+  countdownRemaining?: number
+  countdownTotal?: number
 }>(), {
-  showAddToCart: false
+  showAddToCart: false,
+  showCountdownInfo: false,
+  countdownRemaining: 0,
+  countdownTotal: 0
 })
 
 const emit = defineEmits<{

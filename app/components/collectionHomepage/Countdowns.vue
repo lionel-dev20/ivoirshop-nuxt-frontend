@@ -49,6 +49,9 @@
           :product="product"
           :show-category="false"
           :card-style="cardStyle"
+          :show-countdown-info="true"
+          :countdown-remaining="product.countdownRemaining"
+          :countdown-total="product.countdownTotal"
           @add-to-cart="handleAddToCart"
           @product-click="handleProductClick"
           @quick-view="handleQuickView"
@@ -151,6 +154,13 @@ const remainingTime = ref(0)
 const countdownInterval = ref(null)
 const currentPage = ref(1)
 
+// Fonction pour obtenir une quantité aléatoire pour le compte à rebours
+const getRandomQuantity = () => {
+  const total = Math.floor(Math.random() * (20 - 10 + 1)) + 10; // Entre 10 et 20
+  const remaining = Math.floor(Math.random() * total) + 1; // Entre 1 et total
+  return { remaining, total };
+};
+
 // --- Countdown Logic ---
 const calculateRemainingTime = () => {
   const now = new Date().getTime()
@@ -216,6 +226,16 @@ const refreshProducts = () => {
   fetchProducts()
 }
 
+const productsWithRandomQuantities = computed(() => {
+  return productsData.value.map(product => {
+    if (product.countdownRemaining === undefined || product.countdownTotal === undefined) {
+      const { remaining, total } = getRandomQuantity();
+      return { ...product, countdownRemaining: remaining, countdownTotal: total };
+    }
+    return product;
+  });
+});
+
 // --- Pagination Logic ---
 const totalPages = computed(() => {
   return Math.ceil(productsData.value.length / props.productsPerPage)
@@ -224,7 +244,7 @@ const totalPages = computed(() => {
 const paginatedProducts = computed(() => {
   const start = (currentPage.value - 1) * props.productsPerPage
   const end = start + props.productsPerPage
-  return productsData.value.slice(start, end)
+  return productsWithRandomQuantities.value.slice(start, end)
 })
 
 const startIndex = computed(() => {

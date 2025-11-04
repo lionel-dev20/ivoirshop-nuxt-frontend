@@ -39,74 +39,76 @@
         </div>
       </div>
 
-
-      <!-- Filtres et tri -->
-      
-
-      <!-- Grille de produits -->
-      <div v-if="filteredProducts.length > 0" class="products-section">
-        <div class="products-grid" :class="`grid-${gridColumns}`">
-          <ProductCard
-            v-for="product in paginatedProducts"
-            :key="product.id"
-            :product="product"
-            :show-category="false"
-            :card-style="cardStyle"
-            @add-to-cart="handleAddToCart"
-            @product-click="handleProductClick"
-            @quick-view="handleQuickView"
-            @wishlist-toggle="handleWishlistToggle"
-          />
+      <div class="flex flex-col md:flex-row gap-4 mt-4">
+        <!-- Banner Image (visible on desktop left, on mobile above products) -->
+        <div v-if="bannerImageUrl" class="md:w-1/4 w-full h-48 md:h-auto overflow-hidden rounded-md">
+          <img :src="bannerImageUrl" alt="Promotion Banner" class="w-full h-full object-cover">
         </div>
-        
-        <!-- Pagination -->
-        <div v-if="totalPages > 1" class="pagination-section">
-          <div class="pagination-info">
-            Affichage {{ startIndex }}-{{ endIndex }} sur {{ filteredProducts.length }} produits
+
+        <!-- Grille de produits -->
+        <div v-if="filteredProducts.length > 0" class="products-section" :class="bannerImageUrl ? 'md:w-3/4' : 'w-full'">
+          <div class="products-grid" :class="`grid-${gridColumns}`">
+            <ProductCard
+              v-for="product in paginatedProducts"
+              :key="product.id"
+              :product="product"
+              :show-category="false"
+              :card-style="cardStyle"
+              @add-to-cart="handleAddToCart"
+              @product-click="handleProductClick"
+              @quick-view="handleQuickView"
+              @wishlist-toggle="handleWishlistToggle"
+            />
           </div>
           
-          <div class="pagination-controls">
-            <button
-              @click="currentPage--"
-              :disabled="currentPage <= 1"
-              class="pagination-button"
-            >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-              </svg>
-              Précédent
-            </button>
-            
-            <div class="pagination-numbers">
-              <button
-                v-for="page in visiblePages"
-                :key="page"
-                @click="currentPage = page"
-                :class="{ active: page === currentPage }"
-                class="pagination-number"
-              >
-                {{ page }}
-              </button>
+          <!-- Pagination -->
+          <div v-if="totalPages > 1" class="pagination-section">
+            <div class="pagination-info">
+              Affichage {{ startIndex }}-{{ endIndex }} sur {{ filteredProducts.length }} produits
             </div>
             
-            <button
-              @click="currentPage++"
-              :disabled="currentPage >= totalPages"
-              class="pagination-button"
-            >
-              Suivant
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
+            <div class="pagination-controls">
+              <button
+                @click="currentPage--"
+                :disabled="currentPage <= 1"
+                class="pagination-button"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+                Précédent
+              </button>
+              
+              <div class="pagination-numbers">
+                <button
+                  v-for="page in visiblePages"
+                  :key="page"
+                  @click="currentPage = page"
+                  :class="{ active: page === currentPage }"
+                  class="pagination-number"
+                >
+                  {{ page }}
+                </button>
+              </div>
+              
+              <button
+                @click="currentPage++"
+                :disabled="currentPage >= totalPages"
+                class="pagination-button"
+              >
+                Suivant
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
       
-
     <!-- État vide après filtrage -->
-    <div v-else-if="categoryData && productsData?.products?.length > 0" class="empty-filtered-state">
+    <!-- <div v-else-if="categoryData && productsData?.products?.length > 0" class="empty-filtered-state">
         <div class="empty-content">
           <svg class="w-16 h-16 empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z" />
@@ -117,10 +119,10 @@
             Effacer les filtres
           </button>
         </div>
-      </div>
+      </div> -->
 
     <!-- État vide général -->
-    <div v-else-if="categoryData" class="empty-state">
+    <!-- <div v-else-if="categoryData" class="empty-state">
         <div class="empty-content">
           <svg class="w-16 h-16 empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
@@ -135,7 +137,7 @@
           </NuxtLink>
         </div>
       </div>
-    </div>
+    </div> -->
 
     <!-- État de chargement initial vide -->
     <!-- <div v-else class="initial-empty-state">
@@ -153,6 +155,7 @@
         </NuxtLink>
       </div>
     </div> -->
+  </div>
   </div>
 </template>
 
@@ -172,7 +175,7 @@ const props = defineProps({
   // Configuration d'affichage
   gridColumns: {
     type: Number,
-    default: 4,
+    default: 5,
     validator: (value) => [2, 3, 4, 5, 6].includes(value)
   },
   cardStyle: {
@@ -182,7 +185,7 @@ const props = defineProps({
   },
   productsPerPage: {
     type: Number,
-    default: 12
+    default: 15
   },
   
   // Options d'affichage
@@ -205,6 +208,10 @@ const props = defineProps({
   showBreadcrumb: {
     type: Boolean,
     default: true
+  },
+  bannerImageUrl: {
+    type: String,
+    default: ''
   }
 })
 

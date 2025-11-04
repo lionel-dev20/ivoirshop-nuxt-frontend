@@ -23,13 +23,13 @@
           @quick-view="handleQuickView"
           @wishlist-toggle="handleWishlistToggle"
         />
-        <div class="md:h-4 h-4"></div>
       </div>
       <AcheterEnLigne />
-      <div class="md:h-4 h-4"></div>
+      <div class="md:h-8 h-4"></div>
       <ProductCarousel 
         title="Illux | Partenaire officiel"
          category-slug="plaque-a-gaz"
+         :grid-columns="bannerImageUrl ? 4 : 5"
         :max-products="20"
         :autoplay="true"
         :autoplay-delay="300"
@@ -43,12 +43,14 @@
         @quick-view="handleQuickView"
         @wishlist-toggle="handleWishlistToggle"
       />
-      <div class="md:h-4 h-4"></div>
+
+      <div class="md:h-8 h-4"></div>
 
       <!-- Carousel de produits -->
       <ProductCarousel 
         title="Nouveautés"
          category-slug="televisions"
+         :grid-columns="bannerImageUrl ? 4 : 5"
         :max-products="20"
         :autoplay="true"
         :autoplay-delay="4000"
@@ -59,30 +61,82 @@
         @quick-view="handleQuickView"
         @wishlist-toggle="handleWishlistToggle"
       />
-      <div class="md:h-4 h-4"></div>
-  
-  
-      <div class="md:h-4 h-4"></div>
+      
+      <div class="md:h-8 h-4"></div>
       <CollectionHomepageDoubleBanner />
      <div class="h-8"></div>
       <!-- Carousel de promotions -->
+      <ProductCarousel
+  title="Nos meilleurs offres"
+  category-slug="maison-cuisine-jardin"
+  :grid-columns="bannerImageUrl ? 4 : 5"
+  :max-products="12"
+  :autoplay="false"
+  :show-pagination="true"
+  :show-navigation="true"
+  @add-to-cart="handleAddToCart"
+  @product-click="handleProductClick"
+  @quick-view="handleQuickView"
+  @wishlist-toggle="handleWishlistToggle"
+/>
+     <div class="h-8"></div>
+      <!-- Carousel de promotions -->
+      <ProductCarousel
+  title="Nos meilleurs offres electromenager"
+  category-slug="petit-electromenager"
+  :grid-columns="bannerImageUrl ? 4 : 4"
+  :max-products="12"
+  :autoplay="false"
+  :show-pagination="true"
+  :show-navigation="true"
+  banner-image-url="/images/newbannerA.webp"
+  @add-to-cart="handleAddToCart"
+  @product-click="handleProductClick"
+  @quick-view="handleQuickView"
+  @wishlist-toggle="handleWishlistToggle"
+/>
+
+<div class="h-8"></div>
+      <!-- Carousel de promotions -->
+      <ProductCarousel
+  title="Nos meilleurs offres tvs"
+  category-slug="televisions"
+  :grid-columns="bannerImageUrl ? 4 : 4"
+  :max-products="12"
+  :autoplay="false"
+  :show-pagination="true"
+  :show-navigation="true"
+  banner-image-url="/images/bannertvs.webp"
+  @add-to-cart="handleAddToCart"
+  @product-click="handleProductClick"
+  @quick-view="handleQuickView"
+  @wishlist-toggle="handleWishlistToggle"
+/>
+      <div class="md:h-8 h-4"></div>
+      <CollectionHomepageDoubleBanner1 />
+ <div class="md:h-8 h-4"></div>
       <ProductCarousel 
-        title="Promotions du moment"
-        category-slug="electromenager"
-        :max-products="15"
-        :autoplay="false"
+        title="Bonne degustation"
+         category-slug="cuiseurs-a-riz"
+         :grid-columns="bannerImageUrl ? 4 : 5"
+        :max-products="20"
+        :autoplay="true"
+        :autoplay-delay="300"
         :show-pagination="true"
         :show-navigation="true"
+        header-background-color="bg-[#00ea00]"
+        header-color="text-white"
+        navigation-color="text-black"
         @add-to-cart="handleAddToCart"
         @product-click="handleProductClick"
         @quick-view="handleQuickView"
         @wishlist-toggle="handleWishlistToggle"
       />
-      <div class="md:h-8 h-4"></div>
-            <CollectionHomepageDoubleBanner1 />
       <div class="h-8"></div>
       <Nouveaute 
-       category-slug="televisions"
+       category-slug="plaque-a-gaz"
+       header-background-color="'bg-orange-500'"
+        header-color="text-white"
        :grid-columns="5"
        :products-per-page="20"
      />

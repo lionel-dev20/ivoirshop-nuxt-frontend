@@ -1,8 +1,8 @@
 <!-- components/ProductCarousel.vue -->
 <template>
-  <div class="product-carousel-container ">
+  <div class="product-carousel-container">
     <!-- Header du carousel -->
-    <div class="carousel-header " :class="headerBackgroundColor + ' px-2 py-1.5 lg:px-6 lg:py-3 p-2 border border-gray-100 rounded-sm shadow shadow-gray-100'">
+    <div class="carousel-header" :class="headerBackgroundColor + ' px-2 py-1.5 lg:px-6 lg:py-3 p-2 border border-gray-100 rounded-sm shadow shadow-gray-100'">
       <h2 class="carousel-title" :class="headerColor">{{ title }}</h2>
       <div class="carousel-navigation">
         <button 
@@ -26,44 +26,49 @@
       </div>
     </div>
 
-    <!-- Swiper Container -->
-    <div class="swiper-container">
-      <div 
-        ref="swiperContainer"
-        class="swiper"
-        :class="{ 'swiper-initialized': swiperInitialized }"
-      >
-        <div class="swiper-wrapper">
-          <div 
-            v-for="product in products" 
-            :key="product.id"
-            class="swiper-slide"
-          >
-            <ProductCard
-              :product="product"
-              :show-category="false"
-              card-style="compact"
-              @add-to-cart="handleAddToCart"
-              @product-click="handleProductClick"
-              @quick-view="handleQuickView"
-              @wishlist-toggle="handleWishlistToggle"
-              @image-loaded="handleImageLoaded"
-            />
+    <div class="flex flex-col md:flex-row gap-4">
+      <!-- Banner Image (visible on desktop left, on mobile above products) -->
+      <div v-if="bannerImageUrl" class="md:w-1/4 w-full h-48 md:h-auto overflow-hidden rounded-md">
+        <img :src="bannerImageUrl" alt="Promotion Banner" class="w-full h-full object-cover">
+      </div>
+
+      <!-- Swiper Container - Products (visible on desktop right, on mobile below banner) -->
+      <div class="swiper-products-wrapper" :class="bannerImageUrl ? 'md:w-3/4' : 'w-full'">
+        <div 
+          ref="swiperContainer"
+          class="swiper"
+          :class="{ 'swiper-initialized': swiperInitialized }"
+        >
+          <div class="swiper-wrapper">
+            <div 
+              v-for="product in products" 
+              :key="product.id"
+              class="swiper-slide"
+            >
+              <ProductCard
+                :product="product"
+                :show-category="false"
+                card-style="compact"
+                @add-to-cart="handleAddToCart"
+                @product-click="handleProductClick"
+                @quick-view="handleQuickView"
+                @wishlist-toggle="handleWishlistToggle"
+                @image-loaded="handleImageLoaded"
+              />
+            </div>
           </div>
+          
+          <!-- Pagination dots -->
+          <!-- <div :class="`swiper-pagination swiper-pagination-${uniqueId}`"></div> -->
         </div>
-        
-        <!-- Pagination dots -->
-        <!-- <div :class="`swiper-pagination swiper-pagination-${uniqueId}`"></div> -->
       </div>
     </div>
-
+    
     <!-- Debug info -->
     <!-- <div v-if="!pending && !error" class="debug-info text-xs text-gray-500 mb-2">
       <div>Produits chargés: {{ products.length }}</div>
       <div>Catégorie: {{ props.categorySlug || props.categoryId || 'Aucune' }}</div>
     </div> -->
-
-    <!-- État de chargement supprimé - affichage direct des produits -->
 
     <!-- État d'erreur -->
     <div v-if="error" class="error-state">
@@ -110,6 +115,8 @@ interface Props {
   headerBackgroundColor?: string // Nouvelle prop
   navigationColor?: string // Nouvelle prop
   headerColor?: string // Nouvelle prop
+  bannerImageUrl?: string // Nouvelle prop
+  gridColumns?: number // Nouvelle prop
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -121,7 +128,9 @@ const props = withDefaults(defineProps<Props>(), {
   showNavigation: true,
   headerBackgroundColor: 'bg-white', // Valeur par défaut
   navigationColor: 'text-gray-900', // Valeur par défaut
-  headerColor: 'text-gray-900' // Valeur par défaut
+  headerColor: 'text-gray-900', // Valeur par défaut
+  bannerImageUrl: '', // Valeur par défaut
+  gridColumns: 4 // Valeur par défaut
 })
 
 // Emits
@@ -186,11 +195,11 @@ const initSwiper = () => {
         spaceBetween: 6,
       },
       1024: {
-        slidesPerView: 4,
+        slidesPerView: props.gridColumns > 4 ? 4 : props.gridColumns,
         spaceBetween: 12,
       },
       1280: {
-        slidesPerView: 5,
+        slidesPerView: props.gridColumns,
         spaceBetween: 12,
       }
     },

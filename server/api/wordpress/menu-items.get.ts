@@ -3,7 +3,14 @@ export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig()
   const query = getQuery(event)
   
-  const { menuSlug = 'header-menu' } = query
+  // Extraire menuId ou menuSlug, avec un fallback pour menuSlug
+  const { menuId, menuSlug: fallbackMenuSlug = 'nav-menus' } = query
+  
+  // Déterminer le paramètre à utiliser dans l'URL de l'API WordPress
+  // Si menuId est présent, l'utiliser. Sinon, utiliser le fallbackMenuSlug
+  const targetMenuParam = menuId ? `&menu=${menuId}` : `?menu=${fallbackMenuSlug}`
+  // Identifiant pour les logs et les retours
+  const targetMenuIdentifier = menuId || fallbackMenuSlug
 
   if (!config.WORDPRESS_URL) {
     throw createError({
@@ -13,14 +20,14 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    console.log(`Récupération des éléments de menu pour: ${menuSlug}`)
+    console.log(`Récupération des éléments de menu pour: ${targetMenuIdentifier}`)
     
     // Essayer différentes approches pour récupérer le menu
     const approaches = [
       // Approche 1: API WordPress standard avec authentification
       {
         name: 'wp/v2/menu-items with auth',
-        url: `${config.WORDPRESS_URL}/wp-json/wp/v2/menu-items?menu=${menuSlug}`,
+        url: `${config.WORDPRESS_URL}/wp-json/wp/v2/menu-items${targetMenuParam}`,
         options: {
           headers: {
             'Authorization': `Basic ${Buffer.from(`${config.WOOCOMMERCE_CONSUMER_KEY}:${config.WOOCOMMERCE_CONSUMER_SECRET}`).toString('base64')}`
@@ -33,7 +40,7 @@ export default defineEventHandler(async (event) => {
         url: `${config.WORDPRESS_URL}/wp-json/wp/v2/menu-items`,
         options: {
           params: {
-            menu: menuSlug,
+            menu: targetMenuIdentifier, // Utilise l'ID ou le slug
             consumer_key: config.WOOCOMMERCE_CONSUMER_KEY,
             consumer_secret: config.WOOCOMMERCE_CONSUMER_SECRET
           }
@@ -42,7 +49,7 @@ export default defineEventHandler(async (event) => {
       // Approche 3: API WordPress sans authentification (si publique)
       {
         name: 'wp/v2/menu-items public',
-        url: `${config.WORDPRESS_URL}/wp-json/wp/v2/menu-items?menu=${menuSlug}`,
+        url: `${config.WORDPRESS_URL}/wp-json/wp/v2/menu-items${targetMenuParam}`,
         options: {}
       }
     ]
@@ -52,6 +59,7 @@ export default defineEventHandler(async (event) => {
         console.log(`Tentative: ${approach.name}`)
         
         const response = await $fetch(approach.url, approach.options)
+        console.log(`Réponse brute de l'API WordPress pour ${approach.name}:`, JSON.stringify(response, null, 2))
         
         if (response && Array.isArray(response) && response.length > 0) {
           console.log(`Menu trouvé avec ${approach.name}: ${response.length} éléments`)
@@ -67,7 +75,7 @@ export default defineEventHandler(async (event) => {
 
           return {
             success: true,
-            menuSlug,
+            menuSlug: targetMenuIdentifier, // Retourne l'identifiant réellement utilisé
             items: menuItems,
             total: menuItems.length
           }
@@ -78,14 +86,14 @@ export default defineEventHandler(async (event) => {
       }
     }
 
-    // Si aucune approche ne fonctionne, retourner un menu de fallback
-    console.warn(`Aucun menu trouvé pour ${menuSlug}, utilisation du menu de fallback`)
+    // Si aucune approche ne fonctionne, retourner un objet vide pour signifier l'échec
+    console.warn(`Aucun menu trouvé pour ${targetMenuIdentifier}, le menu sera vide.`)
     return {
       success: false,
-      menuSlug,
-      items: getFallbackMenuItems(),
+      menuSlug: targetMenuIdentifier, // Retourne l'identifiant réellement utilisé
+      items: [], // Retourne un tableau vide au lieu du menu de fallback
       total: 0,
-      message: 'Menu non trouvé, utilisation du menu de fallback'
+      message: 'Menu non trouvé, le menu est vide.'
     }
 
   } catch (error: any) {
@@ -93,8 +101,8 @@ export default defineEventHandler(async (event) => {
     
     return {
       success: false,
-      menuSlug,
-      items: getFallbackMenuItems(),
+      menuSlug: targetMenuIdentifier, // Retourne l'identifiant réellement utilisé
+      items: [], // Retourne un tableau vide au lieu du menu de fallback
       total: 0,
       error: error.message
     }
@@ -102,41 +110,5 @@ export default defineEventHandler(async (event) => {
 })
 
 function getFallbackMenuItems() {
-  return [
-    {
-      ID: 1,
-      title: 'Accueil',
-      url: '/',
-      menu_item_parent: '0',
-      children: []
-    },
-    {
-      ID: 2,
-      title: 'Nouveautés',
-      url: '/categorie/nouveaute',
-      menu_item_parent: '0',
-      children: []
-    },
-    {
-      ID: 3,
-      title: 'Électronique',
-      url: '/categorie/electronique',
-      menu_item_parent: '0',
-      children: []
-    },
-    {
-      ID: 4,
-      title: 'Électroménager',
-      url: '/categorie/electromenager',
-      menu_item_parent: '0',
-      children: []
-    },
-    {
-      ID: 5,
-      title: 'Mode & Beauté',
-      url: '/categorie/mode-beaute',
-      menu_item_parent: '0',
-      children: []
-    }
-  ]
+ 
 }

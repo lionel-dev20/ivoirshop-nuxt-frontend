@@ -116,48 +116,7 @@ const { data: categories, pending, error } = await useFetch<Category[]>('/api/wo
 
 // Catégories de fallback si pas de données
 const fallbackCategories: Category[] = [
-  {
-    id: 1,
-    name: 'Nouveautés',
-    slug: 'nouveaute',
-    description: 'Découvrez nos derniers produits et nouveautés',
-    count: 25
-  },
-  {
-    id: 2,
-    name: 'Électronique',
-    slug: 'electronique',
-    description: 'Smartphones, ordinateurs, accessoires et plus',
-    count: 150
-  },
-  {
-    id: 3,
-    name: 'Électroménager',
-    slug: 'electromenager',
-    description: 'Gros et petit électroménager pour votre maison',
-    count: 80
-  },
-  {
-    id: 4,
-    name: 'Mode & Beauté',
-    slug: 'mode-beaute',
-    description: 'Vêtements, cosmétiques et accessoires de mode',
-    count: 120
-  },
-  {
-    id: 5,
-    name: 'Maison & Jardin',
-    slug: 'maison-jardin',
-    description: 'Décoration, mobilier et équipements de jardin',
-    count: 95
-  },
-  {
-    id: 6,
-    name: 'Sports & Loisirs',
-    slug: 'sports-loisirs',
-    description: 'Équipements sportifs et articles de loisirs',
-    count: 60
-  }
+ 
 ]
 
 // Utiliser les catégories WordPress ou le fallback

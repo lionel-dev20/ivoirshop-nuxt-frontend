@@ -10,34 +10,10 @@ export default defineEventHandler(async () => {
   try {
     console.log('Tentative de récupération du menu depuis WordPress...')
     
-    // Essayer d'abord l'endpoint personnalisé menu-principal
-    try {
-      const menuResponse = await $fetch(`${config.WORDPRESS_URL}/wp-json/wp/v2/menu-principal`)
-      
-      if (menuResponse && Array.isArray(menuResponse) && menuResponse.length > 0) {
-        console.log(`Menu WordPress trouvé via endpoint personnalisé: ${menuResponse.length} éléments`)
-        return menuResponse
-      }
-    } catch (menuError) {
-      console.log('Endpoint menu-principal non disponible:', menuError.message)
-    }
-
-    // Essayer les catégories personnalisées
-    try {
-      const categories = await $fetch(`${config.WORDPRESS_URL}/wp-json/custom/v1/categories`)
-      
-      if (categories && Array.isArray(categories) && categories.length > 0) {
-        console.log(`Menu créé à partir de ${categories.length} catégories personnalisées`)
-        return buildMenuFromCustomCategories(categories)
-      }
-    } catch (categoriesError) {
-      console.log('Endpoint catégories personnalisées non disponible:', categoriesError.message)
-    }
-
-    // Fallback vers l'endpoint menu-items
+    // Essayer l'endpoint menu-items en premier, car il est conçu pour la hiérarchie
     try {
       const menuResponse = await $fetch('/api/wordpress/menu-items', {
-        params: { menuSlug: 'header-menu' }
+        params: { menuId: 160 }
       })
 
       if (menuResponse && menuResponse.success && menuResponse.items?.length > 0) {
@@ -45,26 +21,41 @@ export default defineEventHandler(async () => {
         return buildMenuHierarchy(menuResponse.items)
       }
     } catch (menuItemsError) {
-      console.log('Endpoint menu-items non disponible:', menuItemsError.message)
+      console.log('Endpoint menu-items non disponible ou vide:', menuItemsError.message)
     }
 
-    // Dernier recours : catégories WooCommerce
+    // Puis, les catégories WooCommerce (qui ont une structure hiérarchique définie dans buildMenuFromCategories)
     console.log('Tentative avec les catégories WooCommerce...')
-    
-    const categories = await $fetch(`${config.WORDPRESS_URL}/wp-json/wc/v3/products/categories`, {
-      params: {
-        per_page: 20,
-        orderby: 'count',
-        order: 'desc',
-        hide_empty: true,
-        consumer_key: config.WOOCOMMERCE_CONSUMER_KEY,
-        consumer_secret: config.WOOCOMMERCE_CONSUMER_SECRET
-      }
-    })
+    try {
+      const categories = await $fetch(`${config.WORDPRESS_URL}/wp-json/wc/v3/products/categories`, {
+        params: {
+          per_page: 20,
+          orderby: 'count',
+          order: 'desc',
+          hide_empty: true,
+          consumer_key: config.WOOCOMMERCE_CONSUMER_KEY,
+          consumer_secret: config.WOOCOMMERCE_CONSUMER_SECRET
+        }
+      })
 
-    if (categories && Array.isArray(categories) && categories.length > 0) {
-      console.log(`Menu créé à partir de ${categories.length} catégories WooCommerce`)
-      return buildMenuFromCategories(categories)
+      if (categories && Array.isArray(categories) && categories.length > 0) {
+        console.log(`Menu créé à partir de ${categories.length} catégories WooCommerce`)
+        return buildMenuFromCategories(categories)
+      }
+    } catch (wcCategoriesError) {
+      console.log('Endpoint catégories WooCommerce non disponible:', wcCategoriesError.message)
+    }
+
+    // Enfin, les catégories personnalisées (qui créent un menu plat) comme dernier recours
+    try {
+      const categories = await $fetch(`${config.WORDPRESS_URL}/wp-json/custom/v1/categories`)
+      
+      if (categories && Array.isArray(categories) && categories.length > 0) {
+        console.log(`Menu créé à partir de ${categories.length} catégories personnalisées`)
+        return buildMenuFromCustomCategories(categories)
+      }
+    } catch (customCategoriesError) {
+      console.log('Endpoint catégories personnalisées non disponible:', customCategoriesError.message)
     }
 
   } catch (error: any) {

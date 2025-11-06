@@ -62,9 +62,9 @@
     </div>
 
     <!-- Contenu principal avec layout sidebar + contenu -->
-    <div v-else class="flex flex-col lg:flex-row gap-1 md:gap-6">
+    <div v-else class="flex flex-col lg:flex-row gap-1 md:gap-4">
       <!-- Sidebar - Filtres -->
-      <div class="lg:w-1/4">
+      <div class="lg:w-[22%]">
         <div class="sticky top-6">
           <ProductFilters
             :products="allProducts"
@@ -76,7 +76,7 @@
       </div>
 
       <!-- Contenu principal - Résultats -->
-      <div class="lg:w-3/4">
+      <div class="lg:w-[85%]">
         <!-- En-tête avec compteur et tri -->
         <div class="flex items-center justify-between mb-6">
           <div class="flex items-center space-x-4">
@@ -106,7 +106,7 @@
         </div>
 
         <!-- Liste des produits -->
-        <div v-if="filteredProducts.length" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-1 md:gap-4">
+        <div v-if="filteredProducts.length" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-1 md:gap-2">
           <ProductCard
             v-for="product in filteredProducts"
             :key="product.id"

@@ -14,8 +14,8 @@ export const useDeliveryStore = defineStore('delivery', {
   getters: {
     hasSelectedDelivery: (state) => {
       return state.selectedDelivery.city_name !== '' && 
-             state.selectedDelivery.commune_name !== '' &&
-             state.selectedDelivery.shipping_cost > 0
+             state.selectedDelivery.commune_name !== ''
+             // Note: shipping_cost peut être 0 pour certaines zones (Point relais)
     },
     
     formattedShippingCost: (state) => {

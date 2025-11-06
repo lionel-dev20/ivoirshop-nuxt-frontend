@@ -157,18 +157,29 @@
                       Catégorie: <span class="font-semibold">{{ getProductTypeLabel(selectedProductType) }}</span>
                     </p>
                     <p class="text-xs text-blue-600 mt-1">
-                      Basé sur les produits de votre panier (classe de livraison WooCommerce)
+                      <!-- Basé sur les produits de votre panier (classe de livraison WooCommerce) -->
                     </p>
-                    <p v-if="orderForm.commune" class="text-sm font-semibold text-blue-900 mt-2">
-                      Frais de livraison: {{ formatPrice(getPrice(orderForm.city, orderForm.commune, selectedProductType)) }}
-                    </p>
+                    <div v-if="orderForm.city && orderForm.commune" class="mt-2 space-y-1">
+                      <p class="text-sm text-blue-700">
+                        <span class="font-medium">Ville:</span> {{ orderForm.city }}
+                      </p>
+                      <p class="text-sm text-blue-700">
+                        <span class="font-medium">Quartier:</span> {{ orderForm.commune }}
+                      </p>
+                      <p class="text-sm text-blue-700">
+                        <span class="font-medium">Type:</span> {{ selectedProductType }}
+                      </p>
+                      <p class="text-base font-semibold text-blue-900 mt-2 bg-white px-3 py-2 rounded">
+                        Frais de livraison: {{ formatPrice(getPrice(orderForm.city, orderForm.commune, selectedProductType)) }}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
             <!-- Récapitulatif livraison -->
-            <div v-if="deliveryStore.hasSelectedDelivery" class="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
+            <!-- <div v-if="deliveryStore.hasSelectedDelivery" class="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
               <h3 class="font-medium text-blue-900 mb-2 flex items-center">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
@@ -183,7 +194,7 @@
                   <span class="font-medium">Frais:</span> {{ deliveryStore.formattedShippingCost }}
                 </p>
               </div>
-            </div>
+            </div> -->
 
             <div v-if="orderForm.commune" class="mt-4">
               <label for="deliveryAddressDetails" class="block text-sm font-medium text-gray-700 mb-1">
@@ -433,7 +444,16 @@ const cities = ref(deliveryZones.map(zone => ({ id: zone.id, name: zone.name }))
 const filteredCommunes = ref<{ id: number; name: string, price_light: number, price_medium: number, price_heavy: number }[]>([])
 
 // Utiliser automatiquement le shipping_class le plus lourd du panier
-const selectedProductType = computed(() => cartStore.heaviestShippingClass)
+const selectedProductType = computed(() => {
+  const heaviest = cartStore.heaviestShippingClass
+  console.log('🎯 Shipping class le plus lourd du panier:', heaviest)
+  console.log('📦 Articles dans le panier:', cartStore.items.map(item => ({
+    name: item.name,
+    shipping_class: item.shipping_class,
+    weight: item.weight
+  })))
+  return heaviest
+})
 
 // État pour les coupons
 const couponCode = ref('')
@@ -498,18 +518,46 @@ const formatPrice = (price: string | number) => {
 }
 
 const getPrice = (cityName: string, communeName: string, productType: 'light' | 'medium' | 'heavy') => {
+  console.log('💵 getPrice appelé:', { cityName, communeName, productType })
+  
+  if (!cityName || !communeName || !productType) {
+    console.log('⚠️ Paramètres manquants:', { cityName, communeName, productType })
+    return 0
+  }
+  
   const city = deliveryZones.find(c => c.name === cityName)
-  if (!city) return 0
+  if (!city) {
+    console.log('❌ Ville non trouvée:', cityName)
+    console.log('🔍 Villes disponibles:', deliveryZones.map(z => z.name))
+    return 0
+  }
+  
+  console.log('✅ Ville trouvée:', city.name, '- Nombre de communes:', city.communes.length)
   
   const commune = city.communes.find(c => c.name === communeName)
-  if (!commune) return 0
-  
-  switch (productType) {
-    case 'light': return commune.price_light
-    case 'medium': return commune.price_medium
-    case 'heavy': return commune.price_heavy
-    default: return 0
+  if (!commune) {
+    console.log('❌ Commune non trouvée:', communeName)
+    console.log('🔍 Communes disponibles:', city.communes.map(c => c.name))
+    return 0
   }
+  
+  console.log('✅ Commune trouvée:', commune.name, '- Prix:', {
+    light: commune.price_light,
+    medium: commune.price_medium,
+    heavy: commune.price_heavy
+  })
+  
+  let price = 0
+  const priceKey = `price_${productType}` as 'price_light' | 'price_medium' | 'price_heavy'
+  price = commune[priceKey] || 0
+  
+  console.log(`💰 Prix final pour type "${productType}" (clé: ${priceKey}):`, price)
+  
+  if (price === 0) {
+    console.warn('⚠️ ATTENTION: Prix de livraison = 0! Vérifiez les données dans delivery-zones.json')
+  }
+  
+  return price
 }
 
 const getProductTypeLabel = (type: string) => {
@@ -535,10 +583,50 @@ const onCommuneChange = () => {
   const selectedCity = deliveryZones.find(c => c.name === orderForm.value.city)
   const selectedCommune = selectedCity?.communes.find(c => c.name === orderForm.value.commune)
 
+  console.log('🏙️ onCommuneChange appelé:', {
+    city: orderForm.value.city,
+    commune: orderForm.value.commune,
+    selectedCity: selectedCity?.name,
+    selectedCommune: selectedCommune?.name
+  })
+
   if (selectedCity && selectedCommune) {
-    const shippingCost = getPrice(selectedCity.name, selectedCommune.name, selectedProductType.value)
+    // Utiliser le shipping_class le plus lourd du panier
+    const productType = selectedProductType.value
+    
+    console.log('📦 Type de produit détecté:', productType)
+    console.log('🛒 Articles dans le panier:', cartStore.items.map(item => ({
+      name: item.name,
+      shipping_class: item.shipping_class,
+      weight: item.weight
+    })))
+    
+    const shippingCost = getPrice(selectedCity.name, selectedCommune.name, productType)
+    
+    console.log('💰 Calcul frais de livraison:', {
+      city: selectedCity.name,
+      commune: selectedCommune.name,
+      productType: productType,
+      commune_data: {
+        price_light: selectedCommune.price_light,
+        price_medium: selectedCommune.price_medium,
+        price_heavy: selectedCommune.price_heavy
+      },
+      shippingCost: shippingCost
+    })
+    
+    // Mettre à jour le type de produit dans le store
+    deliveryStore.setProductType(productType)
+    // Mettre à jour les frais de livraison
     deliveryStore.selectCommuneByName(selectedCommune.name, shippingCost)
+    
+    console.log('✅ Store mis à jour:', {
+      product_type: deliveryStore.selectedDelivery.product_type,
+      shipping_cost: deliveryStore.selectedDelivery.shipping_cost,
+      formatted: deliveryStore.formattedShippingCost
+    })
   } else {
+    console.log('❌ Ville ou commune non trouvée')
     deliveryStore.selectCommuneByName('', 0)
   }
 }
@@ -682,6 +770,13 @@ const submitOrder = async () => {
 
 // Initialisation
 onMounted(async () => {
+  console.log('🚀 Initialisation page checkout')
+  
+  // Charger le panier depuis localStorage
+  cartStore.loadFromStorage()
+  console.log('🛒 Panier chargé:', cartStore.items.length, 'articles')
+  
+  // Charger les infos de livraison depuis localStorage
   deliveryStore.loadFromStorage()
   
   if (deliveryStore.selectedDelivery.city_name) {
@@ -697,19 +792,29 @@ onMounted(async () => {
   }
 
   // Le selectedProductType est maintenant automatiquement déterminé par le panier
-  // Pas besoin de le définir manuellement
+  console.log('📦 Type de produit détecté au montage:', selectedProductType.value)
 
   // Recalculate shipping cost if city and commune are already selected on mount
   if (orderForm.value.city && orderForm.value.commune) {
+    console.log('🔄 Recalcul initial des frais de livraison...')
     onCommuneChange()
   }
 })
 
 // Sauvegarde automatique des sélections et recalcul des frais
-watch([orderForm.value.city, orderForm.value.commune, () => cartStore.heaviestShippingClass], () => {
+watch([() => orderForm.value.city, () => orderForm.value.commune, () => cartStore.heaviestShippingClass], ([city, commune, shippingClass], [oldCity, oldCommune, oldShippingClass]) => {
+  console.log('👀 Watcher déclenché:', { 
+    city, 
+    commune, 
+    shippingClass,
+    oldShippingClass,
+    changed: shippingClass !== oldShippingClass 
+  })
+  
   deliveryStore.saveToStorage()
-  // Recalculer les frais de livraison quand le shipping class change
-  if (orderForm.value.city && orderForm.value.commune) {
+  // Recalculer les frais de livraison quand le shipping class change ou quand la ville/commune change
+  if (city && commune) {
+    console.log('🔄 Recalcul des frais de livraison...')
     onCommuneChange()
   }
 })

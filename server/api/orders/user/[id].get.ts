@@ -28,7 +28,12 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    console.log(`Récupération des commandes pour l'utilisateur ${userId} depuis ${WORDPRESS_URL}`);
+    console.log('==========================================');
+    console.log('🔍 RÉCUPÉRATION COMMANDES');
+    console.log('==========================================');
+    console.log('User ID:', userId);
+    console.log('URL WordPress:', WORDPRESS_URL);
+    console.log('URL complète:', `${WORDPRESS_URL}/wp-json/custom/v1/orders/user/${userId}`);
     
     // Appeler l'API WordPress personnalisée pour récupérer les commandes de l'utilisateur
     const response = await axios.get(
@@ -42,7 +47,21 @@ export default defineEventHandler(async (event) => {
       }
     );
     
-    console.log(`${response.data.length} commande(s) trouvée(s) pour l'utilisateur ${userId}`);
+    console.log('✅ Réponse reçue de WordPress');
+    console.log('Type de données:', typeof response.data);
+    console.log('Est un tableau:', Array.isArray(response.data));
+    console.log('Nombre de commandes:', Array.isArray(response.data) ? response.data.length : 'N/A');
+    
+    if (Array.isArray(response.data) && response.data.length > 0) {
+      console.log('📦 Première commande:', {
+        id: response.data[0].id,
+        status: response.data[0].status,
+        date: response.data[0].date_created
+      });
+    } else {
+      console.log('⚠️ Aucune commande trouvée pour l\'utilisateur', userId);
+    }
+    console.log('==========================================');
     
     // L'API WordPress renvoie directement la liste des commandes
     return response.data;

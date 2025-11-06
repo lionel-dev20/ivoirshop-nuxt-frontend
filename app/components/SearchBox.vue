@@ -149,14 +149,21 @@
 
     <!-- Message de chargement -->
     <div
-      v-if="isLoading"
+      v-if="isLoading && !suggestions.length"
       class="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-b-lg shadow-lg"
     >
-      <div class="px-3 py-2">
-        <div class="animate-pulse">
-          <div class="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-          <div class="h-3 bg-gray-200 rounded w-1/2"></div>
+      <div class="px-3 py-3">
+        <div class="flex items-center space-x-3">
+          <!-- Spinner animé -->
+          <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
+          <div class="flex-1">
+            <div class="animate-pulse space-y-2">
+              <div class="h-3 bg-gray-200 rounded w-3/4"></div>
+              <div class="h-3 bg-gray-200 rounded w-1/2"></div>
+            </div>
+          </div>
         </div>
+        <p class="text-xs text-gray-500 mt-2">Recherche en cours...</p>
       </div>
     </div>
   </div>
@@ -175,6 +182,9 @@ const showSuggestions = ref(false)
 const isLoading = ref(false)
 const selectedIndex = ref(-1)
 const searchTimeout = ref(null)
+
+// Cache pour les suggestions (évite les requêtes répétées)
+const suggestionsCache = ref<Map<string, any[]>>(new Map())
 
 // Suggestions filtrées par type
 const productSuggestions = computed(() => 
@@ -202,29 +212,59 @@ const handleSearchInput = () => {
   if (searchQuery.value.trim().length < 2) {
     suggestions.value = []
     showSuggestions.value = false
+    isLoading.value = false
     return
   }
   
+  // Afficher l'indicateur de chargement immédiatement
   isLoading.value = true
+  showSuggestions.value = true
+  
+  // Debounce réduit pour des suggestions plus rapides
   searchTimeout.value = setTimeout(() => {
     fetchSuggestions()
-  }, 300) // Délai de 300ms pour éviter trop de requêtes
+  }, 150) // Délai réduit à 150ms pour plus de réactivité
 }
 
 // Récupération des suggestions
 const fetchSuggestions = async () => {
+  const searchTerm = searchQuery.value.trim().toLowerCase()
+  
+  // Vérifier le cache d'abord
+  if (suggestionsCache.value.has(searchTerm)) {
+    console.log('💾 Suggestions chargées depuis le cache pour:', searchTerm)
+    suggestions.value = suggestionsCache.value.get(searchTerm) || []
+    isLoading.value = false
+    return
+  }
+  
   try {
-    const { data } = await $fetch('/api/search/autocomplete', {
-      params: {
-        q: searchQuery.value.trim(),
-        limit: 10
+    console.log('🔍 Recherche de suggestions pour:', searchTerm)
+    const startTime = performance.now()
+    
+    const response = await $fetch('/api/search/autocomplete', {
+      query: {
+        q: searchTerm,
+        limit: 8 // Réduit de 10 à 8 pour plus de rapidité
       }
     })
     
-    suggestions.value = data.suggestions || []
+    const endTime = performance.now()
+    console.log(`✅ Réponse reçue en ${Math.round(endTime - startTime)}ms`)
+    
+    suggestions.value = response.suggestions || []
     selectedIndex.value = -1
+    
+    // Mettre en cache (max 20 entrées)
+    if (suggestionsCache.value.size > 20) {
+      const firstKey = suggestionsCache.value.keys().next().value
+      suggestionsCache.value.delete(firstKey)
+    }
+    suggestionsCache.value.set(searchTerm, suggestions.value)
+    
+    console.log('📝 Nombre de suggestions:', suggestions.value.length)
   } catch (error) {
-    console.error('Erreur lors de la récupération des suggestions:', error)
+    console.error('❌ Erreur lors de la récupération des suggestions:', error)
     suggestions.value = []
   } finally {
     isLoading.value = false

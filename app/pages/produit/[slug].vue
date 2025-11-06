@@ -81,15 +81,16 @@
           <li>
             <NuxtLink to="/" class="hover:text-gray-700">Accueil</NuxtLink>
           </li>
-          <!-- <li class="before:content-['>'] before:mx-2">
-            <NuxtLink to="/categories" class="hover:text-gray-700">Catégories</NuxtLink>
-          </li> -->
-          <li v-for="category in product.categories" :key="category.id" class="before:content-['>'] before:mx-2">
+          <li v-for="category in product.categories" :key="category.id" class="flex items-center">
+            <span class="mx-2 text-gray-400">›</span>
             <NuxtLink :to="`/categorie/${category.slug}`" class="hover:text-gray-700 truncate">
               {{ category.name }}
             </NuxtLink>
           </li>
-          <li class="before:content-['>'] before:mx-2 text-gray-900 truncate">{{ product.name }}</li>
+          <li class="flex items-center text-gray-900 truncate">
+            <span class="mx-2 text-gray-400">›</span>
+            {{ product.name }}
+          </li>
         </ol>
       </nav>
 

@@ -6,9 +6,9 @@
         {
           "id": 101,
           "name": "Point relais Faya",
-          "price_light": 0,
-          "price_medium": 0,
-          "price_heavy": 0
+          "price_light": 1500,
+          "price_medium": 2500,
+          "price_heavy": 5000
         },
         {
           "id": 102,

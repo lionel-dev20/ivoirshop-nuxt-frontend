@@ -113,17 +113,19 @@
       </div>
     </div>
 
+    <!-- Bottom bar mobile avec bouton filtres -->
     <div class="md:hidden sticky flex items-center justify-between shadow z-30 bottom-0 mt-4 bg-white py-2 px-3.5">
       <div class="">
         <button
-          class="inline-block rounded bg-primary px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-primary-3 transition duration-150 ease-in-out hover:bg-primary-accent-300 hover:shadow-primary-2 focus:bg-primary-accent-300 focus:shadow-primary-2 focus:outline-none focus:ring-0 active:bg-primary-600 active:shadow-primary-2 dark:shadow-black/30 dark:hover:shadow-dark-strong dark:focus:shadow-dark-strong dark:active:shadow-dark-strong"
-          type="button" data-twe-collapse-init data-twe-ripple-init data-twe-ripple-color="light"
-          data-twe-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+          @click="openFilterDrawer"
+          class="inline-flex items-center gap-2 rounded bg-primary px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-primary-3 transition duration-150 ease-in-out hover:bg-primary-accent-300 hover:shadow-primary-2 focus:bg-primary-accent-300 focus:shadow-primary-2 focus:outline-none focus:ring-0 active:bg-primary-600 active:shadow-primary-2 dark:shadow-black/30 dark:hover:shadow-dark-strong dark:focus:shadow-dark-strong dark:active:shadow-dark-strong"
+          type="button">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+          </svg>
           Voir les filtres
         </button>
-
       </div>
-
 
       <button @click="toggleMobileMenu" class="md:hidden p-2 text-gray-400 hover:text-gray-500 transition-colors">
         <svg v-if="!isMobileMenuOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -133,13 +135,71 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
         </svg>
       </button>
-
-      <!-- <div class="md:hidden">
-            <ProductFilters :products="allProducts" :attributes="categoryAttributes" :brands="categoryBrands"
-              @filter="handleFilter" @clear="handleClearFilters" />
-          </div> -->
-
     </div>
+
+    <!-- Drawer mobile des filtres -->
+    <Teleport to="body">
+      <Transition
+        enter-active-class="transition-opacity duration-300"
+        leave-active-class="transition-opacity duration-300"
+        enter-from-class="opacity-0"
+        leave-to-class="opacity-0">
+        <div
+          v-if="isFilterDrawerOpen"
+          class="fixed inset-0 bg-black bg-opacity-50 z-50"
+          @click="closeFilterDrawer">
+        </div>
+      </Transition>
+
+      <Transition
+        enter-active-class="transition-transform duration-300 ease-out"
+        leave-active-class="transition-transform duration-300 ease-in"
+        enter-from-class="translate-y-full"
+        leave-to-class="translate-y-full">
+        <div
+          v-if="isFilterDrawerOpen"
+          class="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl z-50 max-h-[85vh] overflow-hidden flex flex-col"
+          @click.stop>
+          <!-- En-tête du drawer avec bouton close -->
+          <div class="flex items-center justify-between p-4 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-900">Filtres</h3>
+            <button
+              @click="closeFilterDrawer"
+              class="p-2 rounded-full hover:bg-gray-100 transition-colors">
+              <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Contenu du drawer avec scroll -->
+          <div class="flex-1 overflow-y-auto p-4">
+            <ProductFilters
+              :products="allProducts"
+              :attributes="categoryAttributes"
+              :brands="categoryBrands"
+              @filter="handleFilter"
+              @clear="handleClearFilters" />
+          </div>
+
+          <!-- Footer avec boutons d'action -->
+          <div class="p-4 border-t border-gray-200 bg-gray-50">
+            <div class="flex gap-3">
+              <button
+                @click="handleClearFilters"
+                class="flex-1 px-4 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                Réinitialiser
+              </button>
+              <button
+                @click="closeFilterDrawer"
+                class="flex-1 px-4 py-2.5 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary-accent-300 transition-colors">
+                Voir {{ filteredProducts.length }} produit{{ filteredProducts.length > 1 ? 's' : '' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
@@ -183,6 +243,42 @@ const currentFilters = ref({
 })
 
 const sortBy = ref('default')
+
+// État du drawer mobile des filtres
+const isFilterDrawerOpen = ref(false)
+
+const openFilterDrawer = () => {
+  isFilterDrawerOpen.value = true
+  // Empêcher le scroll du body quand le drawer est ouvert
+  if (process.client) {
+    document.body.style.overflow = 'hidden'
+  }
+}
+
+const closeFilterDrawer = () => {
+  isFilterDrawerOpen.value = false
+  // Réactiver le scroll du body
+  if (process.client) {
+    document.body.style.overflow = ''
+  }
+}
+
+// Fermer le drawer avec la touche Échap
+if (process.client) {
+  const handleEscape = (e: KeyboardEvent) => {
+    if (e.key === 'Escape' && isFilterDrawerOpen.value) {
+      closeFilterDrawer()
+    }
+  }
+  
+  watch(isFilterDrawerOpen, (isOpen) => {
+    if (isOpen) {
+      window.addEventListener('keydown', handleEscape)
+    } else {
+      window.removeEventListener('keydown', handleEscape)
+    }
+  })
+}
 
 // Produits filtrés et triés
 const filteredProducts = computed(() => {

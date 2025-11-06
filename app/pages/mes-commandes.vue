@@ -41,7 +41,7 @@
           to="/"
           class="mt-6 inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
         >
-          Commencer mes achats
+          Commencer mes achats sur la boutique
         </NuxtLink>
       </div>
     </div>

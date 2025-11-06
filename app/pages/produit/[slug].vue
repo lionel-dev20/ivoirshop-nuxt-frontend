@@ -464,7 +464,7 @@ const addToCart = () => {
 const orderViaWhatsapp = () => {
   if (!product.value) return;
 
-  const phoneNumber = '22547655690'; // Numéro WhatsApp
+  const phoneNumber = '2250556160699'; // Numéro WhatsApp
   const productName = product.value.name;
   const productPrice = product.value.on_sale ? formatPrice(product.value.sale_price) : formatPrice(product.value.price);
   const productLink = window.location.href;

@@ -4,7 +4,7 @@
       
       <!-- Sélection de la ville -->
       <div class="form-group">
-        <label for="city">Ville</label>
+        <label for="city">Région</label>
         <select 
           id="city" 
           v-model="selectedCityId" 

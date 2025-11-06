@@ -107,7 +107,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
               <div>
                 <label for="city" class="block text-sm font-medium text-gray-700 mb-1">
-                  Ville *
+                  Région *
                 </label>
                 <select
                   id="city"
@@ -124,7 +124,7 @@
               </div>
               <div>
                 <label for="commune" class="block text-sm font-medium text-gray-700 mb-1">
-                  Quartier / Commune *
+                  Commune/ville *
                 </label>
                 <select
                   id="commune"
@@ -142,53 +142,29 @@
               </div>
             </div>
 
-            <!-- Type de produit -->
+            <!-- Type de produit - Automatique selon le panier -->
             <div v-if="orderForm.commune" class="mt-4">
-              <label class="block text-sm font-medium text-gray-700 mb-3">
-                Type de produit (pour calculer la livraison) *
-              </label>
-              
-              <!-- Message si aucun type disponible -->
-              <div v-if="productTypes.length === 0" class="text-center py-8 bg-gray-50 rounded-lg border border-gray-200">
-                <svg class="mx-auto h-12 w-12 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-                </svg>
-                <p class="text-sm text-gray-600">Aucun type de livraison configuré pour ces produits</p>
-              </div>
-              
-              <!-- Affichage des types disponibles -->
-              <div v-else class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <label
-                  v-for="type in productTypes"
-                  :key="type.value"
-                  class="relative flex cursor-pointer rounded-lg border p-4 focus:outline-none transition-colors"
-                  :class="selectedProductType === type.value ? 'border-blue-600 ring-2 ring-blue-600 bg-blue-50' : 'border-gray-300 hover:border-gray-400'"
-                >
-                  <input
-                    v-model="selectedProductType"
-                    :value="type.value"
-                    @change="onProductTypeChange"
-                    type="radio"
-                    name="product-type"
-                    class="sr-only"
-                  />
-                  <div class="flex flex-col">
-                    <span class="block text-sm font-medium text-gray-900">{{ type.label }}</span>
-                    <span class="block text-xs text-gray-500 mb-2">{{ type.description }}</span>
-                    <span v-if="orderForm.commune" class="block text-sm font-semibold text-blue-600">
-                      {{ formatPrice(getPrice(orderForm.city, orderForm.commune, type.value as 'light' | 'medium' | 'heavy')) }}
-                    </span>
+              <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div class="flex items-start">
+                  <svg class="w-5 h-5 text-blue-600 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                  </svg>
+                  <div class="flex-1">
+                    <h4 class="text-sm font-medium text-blue-900 mb-1">
+                      Type de livraison déterminé automatiquement
+                    </h4>
+                    <p class="text-sm text-blue-700">
+                      Catégorie: <span class="font-semibold">{{ getProductTypeLabel(selectedProductType) }}</span>
+                    </p>
+                    <p class="text-xs text-blue-600 mt-1">
+                      Basé sur les produits de votre panier (classe de livraison WooCommerce)
+                    </p>
+                    <p v-if="orderForm.commune" class="text-sm font-semibold text-blue-900 mt-2">
+                      Frais de livraison: {{ formatPrice(getPrice(orderForm.city, orderForm.commune, selectedProductType)) }}
+                    </p>
                   </div>
-                </label>
+                </div>
               </div>
-              
-              <!-- Note informative -->
-              <p class="mt-2 text-xs text-gray-500">
-                <svg class="inline w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
-                </svg>
-                Les types de livraison affichés correspondent aux produits dans votre panier
-              </p>
             </div>
 
             <!-- Récapitulatif livraison -->
@@ -455,7 +431,9 @@ const isSubmitting = ref(false)
 // États pour les zones de livraison
 const cities = ref(deliveryZones.map(zone => ({ id: zone.id, name: zone.name })))
 const filteredCommunes = ref<{ id: number; name: string, price_light: number, price_medium: number, price_heavy: number }[]>([])
-const selectedProductType = ref<'light' | 'medium' | 'heavy'>('medium')
+
+// Utiliser automatiquement le shipping_class le plus lourd du panier
+const selectedProductType = computed(() => cartStore.heaviestShippingClass)
 
 // État pour les coupons
 const couponCode = ref('')
@@ -565,12 +543,7 @@ const onCommuneChange = () => {
   }
 }
 
-const onProductTypeChange = () => {
-  // This function is now mostly handled by the watcher on selectedProductType
-  // However, we still call deliveryStore.setProductType to update the store's state
-  deliveryStore.setProductType(selectedProductType.value)
-  onCommuneChange() // Recalculate shipping based on new product type
-}
+// onProductTypeChange n'est plus nécessaire - le type est automatiquement déterminé par le panier
 
 // Actions pour les coupons
 const applyCoupon = async () => {
@@ -704,18 +677,8 @@ const submitOrder = async () => {
   }
 }
 
-// Watcher pour s'assurer que le selectedProductType est toujours valide
-watch(productTypes, (newTypes) => {
-  const currentTypeAvailable = newTypes.some(type => type.value === selectedProductType.value)
-  
-  if (!currentTypeAvailable && newTypes.length > 0) {
-    selectedProductType.value = (newTypes[0]?.value || 'medium') as 'light' | 'medium' | 'heavy'
-    
-    if (orderForm.value.commune) { // Assuming commune is selected when product type changes
-      onCommuneChange()
-    }
-  }
-}, { immediate: true })
+// Le selectedProductType est maintenant automatiquement déterminé par le panier via computed
+// Plus besoin de watcher car il est réactif
 
 // Initialisation
 onMounted(async () => {
@@ -731,18 +694,10 @@ onMounted(async () => {
     if (deliveryStore.selectedDelivery.commune_name) {
       orderForm.value.commune = deliveryStore.selectedDelivery.commune_name
     }
-    
-    const storedType = deliveryStore.selectedDelivery.product_type
-    const typeIsAvailable = productTypes.value.some(type => type.value === storedType)
-    
-    if (typeIsAvailable) {
-      selectedProductType.value = storedType
-    } else if (productTypes.value.length > 0) {
-      selectedProductType.value = (productTypes.value[0]?.value || 'medium') as 'light' | 'medium' | 'heavy'
-    }
-  } else if (productTypes.value.length > 0) {
-    selectedProductType.value = (productTypes.value[0]?.value || 'medium') as 'light' | 'medium' | 'heavy'
   }
+
+  // Le selectedProductType est maintenant automatiquement déterminé par le panier
+  // Pas besoin de le définir manuellement
 
   // Recalculate shipping cost if city and commune are already selected on mount
   if (orderForm.value.city && orderForm.value.commune) {
@@ -750,13 +705,10 @@ onMounted(async () => {
   }
 })
 
-// Sauvegarde automatique des sélections
-watch([orderForm.value.city, orderForm.value.commune, selectedProductType], () => {
+// Sauvegarde automatique des sélections et recalcul des frais
+watch([orderForm.value.city, orderForm.value.commune, () => cartStore.heaviestShippingClass], () => {
   deliveryStore.saveToStorage()
-})
-
-// Watcher pour recalculer les frais de livraison lorsque le type de produit change
-watch(selectedProductType, () => {
+  // Recalculer les frais de livraison quand le shipping class change
   if (orderForm.value.city && orderForm.value.commune) {
     onCommuneChange()
   }

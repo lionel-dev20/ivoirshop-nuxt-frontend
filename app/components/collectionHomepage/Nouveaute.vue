@@ -1,7 +1,5 @@
 <template>
   <div class="category-display">
-    <!-- État de chargement supprimé - affichage direct des produits -->
-
     <!-- État d'erreur -->
     <div v-if="error" class="error-container">
       <div class="error-card">
@@ -28,8 +26,6 @@
       <div class="category-header bg-white px-2 py-1.5 lg:px-5 lg:py-1 p-2 border border-gray-100 rounded-sm shadow shadow-gray-100">
         <div class="category-hero" :class="{ 'with-image': categoryData.image }">
           <div class="category-info" :class="{ 'overlay-content': categoryData.image }">
-            
-          
             
             <!-- Titre et description -->
             <div class="category-details">
@@ -61,13 +57,14 @@
             />
           </div>
           
-          <!-- Pagination -->
+          <!-- Pagination avec bouton "Voir tout" -->
           <div v-if="totalPages > 1" class="pagination-section">
             <div class="pagination-info">
               Affichage {{ startIndex }}-{{ endIndex }} sur {{ filteredProducts.length }} produits
             </div>
             
             <div class="pagination-controls">
+              <!-- Bouton Précédent -->
               <button
                 @click="currentPage--"
                 :disabled="currentPage <= 1"
@@ -79,6 +76,7 @@
                 Précédent
               </button>
               
+              <!-- Numéros de pages -->
               <div class="pagination-numbers">
                 <button
                   v-for="page in visiblePages"
@@ -91,6 +89,19 @@
                 </button>
               </div>
               
+              <!-- Bouton Voir tout -->
+              <button
+                @click="viewAllProducts"
+                class="view-all-button"
+                :class="{ active: isViewingAll }"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                </svg>
+                {{ isViewingAll ? 'Pagination' : 'Voir tout' }}
+              </button>
+              
+              <!-- Bouton Suivant -->
               <button
                 @click="currentPage++"
                 :disabled="currentPage >= totalPages"
@@ -103,59 +114,17 @@
               </button>
             </div>
           </div>
-        </div>
-      </div>
 
-      
-    <!-- État vide après filtrage -->
-    <!-- <div v-else-if="categoryData && productsData?.products?.length > 0" class="empty-filtered-state">
-        <div class="empty-content">
-          <svg class="w-16 h-16 empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z" />
-          </svg>
-          <h3>Aucun produit trouvé</h3>
-          <p>Aucun produit ne correspond à vos critères de filtrage.</p>
-          <button @click="clearAllFilters" class="clear-filters-button">
-            Effacer les filtres
-          </button>
-        </div>
-      </div> -->
-
-    <!-- État vide général -->
-    <!-- <div v-else-if="categoryData" class="empty-state">
-        <div class="empty-content">
-          <svg class="w-16 h-16 empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-          </svg>
-          <h3>Aucun produit disponible</h3>
-          <p>Cette catégorie ne contient aucun produit pour le moment.</p>
-          <NuxtLink to="/" class="back-home-button">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          <!-- Message "Voir tout" actif -->
+          <div v-if="isViewingAll" class="viewing-all-notice">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            Retour à l'accueil
-          </NuxtLink>
+            <span>Vous visualisez tous les {{ filteredProducts.length }} produits</span>
+          </div>
         </div>
       </div>
-    </div> -->
-
-    <!-- État de chargement initial vide -->
-    <!-- <div v-else class="initial-empty-state">
-      <div class="empty-content">
-        <svg class="w-16 h-16 empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-        </svg>
-        <h3>Catégorie non trouvée</h3>
-        <p>La catégorie demandée n'existe pas ou n'est pas disponible.</p>
-        <NuxtLink to="/" class="back-home-button">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-          </svg>
-          Retour à l'accueil
-        </NuxtLink>
-      </div>
-    </div> -->
-  </div>
+    </div>
   </div>
 </template>
 
@@ -225,6 +194,7 @@ const productsData = ref(null)
 const subcategories = ref([])
 const currentPage = ref(1)
 const sortBy = ref('menu_order')
+const isViewingAll = ref(false) // Nouvel état pour "Voir tout"
 const activeFilters = ref({
   sale: false,
   featured: false,
@@ -270,7 +240,7 @@ const { data: fetchedCategory, pending, error, refresh: refreshCategory } = awai
     }
   },
   {
-    server: false // Désactiver le SSR pour ce fetch si nécessaire
+    server: false
   }
 )
 
@@ -292,12 +262,6 @@ const breadcrumbItems = computed(() => {
     { id: 'shop', name: 'Boutique', link: '/shop' }
   ]
   
-  // Ajouter les catégories parentes si nécessaire
-  if (categoryData.value.parent > 0) {
-    // Logique pour récupérer les catégories parentes
-    // (simplifiée pour cet exemple)
-  }
-  
   items.push({
     id: categoryData.value.id,
     name: categoryData.value.name,
@@ -308,28 +272,6 @@ const breadcrumbItems = computed(() => {
 })
 
 const subcategoriesCount = computed(() => subcategories.value.length)
-
-const averagePrice = computed(() => {
-  if (!productsData.value?.products?.length) return 0
-  
-  const prices = productsData.value.products
-    .map(p => parseFloat(p.price))
-    .filter(price => price > 0)
-  
-  if (prices.length === 0) return 0
-  
-  return prices.reduce((sum, price) => sum + price, 0) / prices.length
-})
-
-const saleCount = computed(() => {
-  if (!productsData.value?.products?.length) return 0
-  return productsData.value.products.filter(p => p.on_sale).length
-})
-
-const featuredCount = computed(() => {
-  if (!productsData.value?.products?.length) return 0
-  return productsData.value.products.filter(p => p.featured).length
-})
 
 const filteredProducts = computed(() => {
   if (!productsData.value?.products?.length) return []
@@ -367,7 +309,6 @@ const filteredProducts = computed(() => {
       filtered.sort((a, b) => (b.rating_average || 0) - (a.rating_average || 0))
       break
     default:
-      // menu_order - garder l'ordre par défaut
       break
   }
   
@@ -379,16 +320,24 @@ const totalPages = computed(() => {
 })
 
 const paginatedProducts = computed(() => {
+  // Si "Voir tout" est actif, retourner tous les produits
+  if (isViewingAll.value) {
+    return filteredProducts.value
+  }
+  
+  // Sinon, paginer normalement
   const start = (currentPage.value - 1) * props.productsPerPage
   const end = start + props.productsPerPage
   return filteredProducts.value.slice(start, end)
 })
 
 const startIndex = computed(() => {
+  if (isViewingAll.value) return 1
   return Math.min(((currentPage.value - 1) * props.productsPerPage) + 1, filteredProducts.value.length)
 })
 
 const endIndex = computed(() => {
+  if (isViewingAll.value) return filteredProducts.value.length
   return Math.min(currentPage.value * props.productsPerPage, filteredProducts.value.length)
 })
 
@@ -397,11 +346,9 @@ const visiblePages = computed(() => {
   const current = currentPage.value
   const total = totalPages.value
   
-  // Afficher jusqu'à 5 numéros de page
   let start = Math.max(1, current - 2)
   let end = Math.min(total, start + 4)
   
-  // Ajuster si on est près de la fin
   if (end - start < 4) {
     start = Math.max(1, end - 4)
   }
@@ -418,9 +365,19 @@ const hasActiveFilters = computed(() => {
 })
 
 // Méthodes
+const viewAllProducts = () => {
+  isViewingAll.value = !isViewingAll.value
+  if (!isViewingAll.value) {
+    currentPage.value = 1 // Retour à la page 1 en mode pagination
+  }
+  // Scroll vers le haut
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
 const toggleFilter = (filterType) => {
   activeFilters.value[filterType] = !activeFilters.value[filterType]
-  currentPage.value = 1 // Reset à la première page
+  currentPage.value = 1
+  isViewingAll.value = false // Désactiver "Voir tout" lors du filtrage
 }
 
 const clearAllFilters = () => {
@@ -430,24 +387,12 @@ const clearAllFilters = () => {
     inStock: false
   }
   currentPage.value = 1
+  isViewingAll.value = false
 }
 
 const applySorting = () => {
-  currentPage.value = 1 // Reset à la première page lors du tri
-}
-
-const formatPrice = (price) => {
-  if (!price) return 'Prix non disponible'
-  const numericPrice = parseFloat(price)
-  return new Intl.NumberFormat('fr-FR', {
-    style: 'currency',
-    currency: 'XOF'
-  }).format(numericPrice).replace('XOF', 'FCFA')
-}
-
-const handleImageError = (event) => {
-  event.target.style.display = 'none'
-  event.target.parentNode.classList.add('image-error')
+  currentPage.value = 1
+  isViewingAll.value = false
 }
 
 // Gestionnaires d'événements
@@ -483,73 +428,33 @@ if (categoryData.value) {
 }
 </script>
 
-<style>
-@reference "~/assets/css/tailwind.css"; 
-
+<style scoped>
+@import "~/assets/css/tailwind.css";
 
 .category-display {
   @apply min-h-auto;
 }
 
-/* États de chargement */
-.loading-container {
-  @apply p-6;
+/* Bouton "Voir tout" */
+.view-all-button {
+  @apply inline-flex items-center gap-2 px-4 py-2 text-sm font-medium border-2 border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition-all duration-200;
 }
 
-.skeleton-category {
-  @apply max-w-7xl mx-auto;
+.view-all-button.active {
+  @apply bg-blue-600 text-white hover:bg-blue-700;
 }
 
-.skeleton-header {
-  @apply flex flex-col lg:flex-row gap-6 mb-12;
+.view-all-button svg {
+  @apply transition-transform duration-200;
 }
 
-.skeleton-image {
-  @apply w-full lg:w-1/3 h-64 bg-gray-200 rounded-lg animate-pulse;
+.view-all-button.active svg {
+  @apply rotate-180;
 }
 
-.skeleton-content {
-  @apply flex-1 space-y-4;
-}
-
-.skeleton-line {
-  @apply bg-gray-200 rounded animate-pulse;
-}
-
-.skeleton-title {
-  @apply h-8 w-2/3;
-}
-
-.skeleton-description {
-  @apply h-4 w-full;
-}
-
-.skeleton-stats {
-  @apply h-4 w-1/2;
-}
-
-.skeleton-products-grid {
-  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3;
-}
-
-.skeleton-product-card {
-  @apply bg-white rounded-lg border overflow-hidden;
-}
-
-.skeleton-product-image {
-  @apply w-full h-48 bg-gray-200 animate-pulse;
-}
-
-.skeleton-product-content {
-  @apply p-4 space-y-2;
-}
-
-.skeleton-product-title {
-  @apply h-4 w-3/4;
-}
-
-.skeleton-product-price {
-  @apply h-4 w-1/2;
+/* Message "Voir tout" actif */
+.viewing-all-notice {
+  @apply flex items-center justify-center gap-2 mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg text-blue-700 text-sm font-medium;
 }
 
 /* États d'erreur */
@@ -590,181 +495,12 @@ if (categoryData.value) {
   @apply bg-black rounded-xl;
 }
 
-.category-image-container {
-  @apply relative h-64 lg:h-80;
-}
-
-.category-image {
-  @apply w-full h-full object-cover;
-}
-
-.image-overlay {
-  @apply absolute inset-0 bg-black/40 ;
-}
-
 .category-info {
   @apply p-2 lg:p-4;
 }
 
-/* .category-info.overlay-content {
-  @apply absolute inset-0 flex flex-col justify-end text-white;
-} */
-
-/* Breadcrumb */
-.breadcrumb {
-  @apply mb-4;
-}
-
-.breadcrumb-list {
-  @apply flex items-center gap-2 text-sm;
-}
-
-.breadcrumb-item {
-  @apply flex items-center gap-2;
-}
-
-.breadcrumb-link {
-  @apply text-blue-600 hover:text-blue-800;
-}
-
-.overlay-content .breadcrumb-link {
-  @apply text-white hover:text-blue-200;
-}
-
-.breadcrumb-current {
-  @apply font-medium;
-}
-
-.breadcrumb-separator {
-  @apply w-4 h-4 text-gray-400;
-}
-
-/* Détails de catégorie */
 .category-title {
   @apply text-xl lg:text-2xl font-bold mb-1;
-}
-
-.category-description {
-  @apply text-lg text-gray-600 mb-6 max-w-3xl;
-}
-
-.overlay-content .category-description {
-  @apply text-gray-200;
-}
-
-.category-stats {
-  @apply flex flex-wrap items-center gap-6 text-sm;
-}
-
-.stat-item {
-  @apply flex items-center gap-2;
-}
-
-.stat-item svg {
-  @apply w-4 h-4;
-}
-
-/* Sous-catégories */
-.subcategories-section {
-  @apply mb-12;
-}
-
-.section-title {
-  @apply text-2xl font-bold mb-6;
-}
-
-.subcategories-grid {
-  @apply grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3;
-}
-
-.subcategory-card {
-  @apply bg-white rounded-lg border border-gray-200 p-4 text-center hover:shadow-md transition-shadow;
-}
-
-.subcategory-image {
-  @apply w-16 h-16 mx-auto mb-3 rounded-lg overflow-hidden;
-}
-
-.subcategory-image img {
-  @apply w-full h-full object-cover;
-}
-
-.subcategory-placeholder {
-  @apply w-16 h-16 mx-auto mb-3 bg-gray-100 rounded-lg flex items-center justify-center;
-}
-
-.subcategory-placeholder svg {
-  @apply w-8 h-8 text-gray-400;
-}
-
-.subcategory-name {
-  @apply font-medium text-sm mb-1;
-}
-
-.subcategory-count {
-  @apply text-xs text-gray-500;
-}
-
-/* Filtres */
-.filters-section {
-  @apply mb-8;
-}
-
-.filters-header {
-  @apply flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6;
-}
-
-.filters-controls {
-  @apply flex flex-col sm:flex-row items-start sm:items-center gap-4;
-}
-
-.quick-filters {
-  @apply flex flex-wrap gap-2;
-}
-
-.filter-button {
-  @apply inline-flex items-center gap-2 px-3 py-2 text-sm border border-gray-300 rounded-lg hover:border-blue-500 hover:text-blue-600 transition-colors;
-}
-
-.filter-button.active {
-  @apply bg-blue-50 border-blue-500 text-blue-600;
-}
-
-.filter-count {
-  @apply text-xs bg-gray-200 text-gray-600 px-1.5 py-0.5 rounded-full;
-}
-
-.filter-button.active .filter-count {
-  @apply bg-blue-200 text-blue-700;
-}
-
-.sort-controls {
-  @apply flex items-center gap-2;
-}
-
-.sort-select {
-  @apply px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500;
-}
-
-/* Filtres actifs */
-.active-filters {
-  @apply flex flex-wrap items-center gap-3 p-4 bg-blue-50 rounded-lg border border-blue-200 mb-6;
-}
-
-.active-filters-label {
-  @apply text-sm font-medium text-blue-900;
-}
-
-.active-filters-list {
-  @apply flex flex-wrap gap-2;
-}
-
-.active-filter-tag {
-  @apply inline-flex items-center gap-1 px-2 py-1 bg-blue-600 text-white text-xs rounded-full hover:bg-blue-700;
-}
-
-.clear-filters-button {
-  @apply text-sm text-blue-600 hover:text-blue-800 font-medium;
 }
 
 /* Grille de produits */
@@ -792,11 +528,11 @@ if (categoryData.value) {
 }
 
 .pagination-controls {
-  @apply flex items-center justify-center gap-2;
+  @apply flex items-center justify-center gap-2 flex-wrap;
 }
 
 .pagination-button {
-  @apply inline-flex items-center gap-1 px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed;
+  @apply inline-flex items-center gap-1 px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors;
 }
 
 .pagination-numbers {
@@ -804,68 +540,25 @@ if (categoryData.value) {
 }
 
 .pagination-number {
-  @apply w-10 h-10 flex items-center justify-center text-sm border border-gray-300 rounded-lg hover:bg-gray-50;
+  @apply w-10 h-10 flex items-center justify-center text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors;
 }
 
 .pagination-number.active {
   @apply bg-blue-600 text-white border-blue-600;
 }
 
-/* États vides */
-.empty-filtered-state,
-.empty-state,
-.initial-empty-state {
-  @apply flex justify-center items-center min-h-96 p-6;
-}
-
-.empty-content {
-  @apply text-center max-w-md;
-}
-
-.empty-icon {
-  @apply w-20 h-20 text-gray-400 mx-auto mb-6;
-}
-
-.empty-content h3 {
-  @apply text-xl font-semibold text-gray-900 mb-4;
-}
-
-.empty-content p {
-  @apply text-gray-600 mb-6;
-}
-
-.back-home-button {
-  @apply inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors;
-}
-
 /* Responsive */
 @media (max-width: 640px) {
-  .category-title {
-    @apply text-2xl;
-  }
-  
-  .filters-controls {
-    @apply flex-col items-stretch;
-  }
-  
-  .quick-filters {
-    @apply grid grid-cols-2 gap-2;
-  }
-  
-  .filter-button {
-    @apply justify-center;
-  }
-  
-  .subcategories-grid {
-    @apply grid-cols-2;
-  }
-  
   .pagination-controls {
-    @apply flex-col gap-4;
+    @apply flex-col gap-3;
   }
   
   .pagination-numbers {
     @apply order-first;
+  }
+  
+  .view-all-button {
+    @apply w-full justify-center;
   }
 }
 
@@ -877,11 +570,5 @@ if (categoryData.value) {
 
 .category-content {
   animation: fadeIn 0.5s ease-out;
-}
-
-/* Image d'erreur */
-.image-error::after {
-  content: 'Image non disponible';
-  @apply absolute inset-0 flex items-center justify-center bg-gray-100 text-gray-500 text-sm;
 }
 </style>

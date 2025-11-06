@@ -4,7 +4,14 @@ import axios from 'axios'
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
 
-  if (!config.public.woocommerceUrl || !config.private.woocommerceKey || !config.private.woocommerceSecret) {
+  // Utiliser les bonnes variables de configuration
+  const WORDPRESS_URL = config.WORDPRESS_URL || config.WC_STORE_URL;
+
+  if (!WORDPRESS_URL) {
+    console.error('Configuration WooCommerce manquante:', {
+      WORDPRESS_URL: config.WORDPRESS_URL,
+      WC_STORE_URL: config.WC_STORE_URL
+    });
     throw createError({
       statusCode: 500,
       statusMessage: 'Configuration WooCommerce manquante dans le backend.'
@@ -21,31 +28,31 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    // Appeler l'API WooCommerce pour récupérer les commandes de l'utilisateur
+    console.log(`Récupération des commandes pour l'utilisateur ${userId} depuis ${WORDPRESS_URL}`);
+    
+    // Appeler l'API WordPress personnalisée pour récupérer les commandes de l'utilisateur
     const response = await axios.get(
-      `${config.public.woocommerceUrl}/wp-json/custom/v1/orders/user/${userId}`,
+      `${WORDPRESS_URL}/wp-json/custom/v1/orders/user/${userId}`,
       {
-        params: {
-          consumer_key: config.private.woocommerceKey,
-          consumer_secret: config.private.woocommerceSecret,
-        },
         timeout: 10000,
         headers: {
           'User-Agent': 'Nuxt-WooCommerce-Client/1.0',
+          'Content-Type': 'application/json'
         },
       }
     );
     
-    // L'API WordPress est censée renvoyer directement la liste des commandes
+    console.log(`${response.data.length} commande(s) trouvée(s) pour l'utilisateur ${userId}`);
+    
+    // L'API WordPress renvoie directement la liste des commandes
     return response.data;
 
   } catch (err: any) {
     console.error(`Erreur récupération commandes pour user ${userId}:`, {
       message: err.message,
       status: err.response?.status,
-      data: err.response?.data, // Loguer les données de la réponse WordPress
-      config: err.config, // Loguer la configuration de la requête Axios
-      url: err.config?.url // Loguer l'URL exacte appelée
+      data: err.response?.data,
+      url: err.config?.url
     });
 
     throw createError({

@@ -44,7 +44,34 @@ export const useCartStore = defineStore('cart', {
       }).format(total).replace('XOF', 'FCFA')
     },
 
-    isEmpty: (state) => state.items.length === 0
+    isEmpty: (state) => state.items.length === 0,
+
+    // Retourne le shipping_class le plus lourd du panier
+    heaviestShippingClass: (state): 'light' | 'medium' | 'heavy' => {
+      if (state.items.length === 0) return 'medium'
+      
+      // Ordre de poids: light < medium < heavy
+      const weights: { [key: string]: number } = {
+        'light': 1,
+        'medium': 2,
+        'heavy': 3
+      }
+      
+      let heaviest = 'light'
+      let maxWeight = 0
+      
+      state.items.forEach(item => {
+        const shippingClass = item.shipping_class || 'medium'
+        const weight = weights[shippingClass] || 2
+        
+        if (weight > maxWeight) {
+          maxWeight = weight
+          heaviest = shippingClass
+        }
+      })
+      
+      return heaviest as 'light' | 'medium' | 'heavy'
+    }
   },
 
   actions: {

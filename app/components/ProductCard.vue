@@ -238,7 +238,9 @@ const addToCart = async () => {
       sale_price: salePrice ? parseFloat(String(salePrice)) : undefined,
       image: getProductImageData(props.product),
       stock_status: props.product.stock_status || 'instock',
-      sku: props.product.sku || ''
+      sku: props.product.sku || '',
+      shipping_class: props.product.shipping_class || 'medium',
+      weight: props.product.weight || ''
     }
     
     // Ajouter au panier

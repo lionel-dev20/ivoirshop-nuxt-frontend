@@ -4,6 +4,20 @@
     <!-- Header du carousel -->
     <div class="carousel-header" :class="headerBackgroundColor + ' px-2 py-1.5 lg:px-6 lg:py-3 p-2 border border-gray-100 rounded-sm shadow shadow-gray-100'">
       <h2 class="carousel-title" :class="headerColor">{{ title }}</h2>
+
+      <button
+        v-if="showViewAllButton"
+        @click="viewAllProducts"
+        class="view-all-button"
+        :class="{ active: isViewingAll }"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+        </svg>
+        {{ isViewingAll ? 'Pagination' : 'Voir tout' }}
+      </button>
+
+
       <div class="carousel-navigation">
         <button 
           @click="slidePrev" 
@@ -530,12 +544,40 @@ watch(() => props.categorySlug, () => {
 }
 
 
-@media (max-width: 640px) {
+/* @media (max-width: 640px) {
     .carousel-header {
         &[data-v-76bbd7dd] {
             flex-direction: row;
             align-items: flex-start;
         }
     }
+} */
+
+
+.carousel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+}
+
+.view-all-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid currentColor;
+  border-radius: 0.375rem;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.view-all-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.view-all-button.active {
+  background: rgba(255, 255, 255, 0.2);
 }
 </style>

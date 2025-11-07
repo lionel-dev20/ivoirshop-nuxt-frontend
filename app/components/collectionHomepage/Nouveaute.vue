@@ -509,7 +509,7 @@ if (categoryData.value) {
 }
 
 .products-grid {
-  @apply grid gap-1 md:gap-3;
+  @apply grid gap-1 md:gap-2;
 }
 
 .grid-2 { @apply grid-cols-1 sm:grid-cols-2; }

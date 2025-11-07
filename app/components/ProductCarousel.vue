@@ -40,7 +40,7 @@
       </div>
     </div>
 
-    <div class="flex flex-col md:flex-row gap-4">
+    <div class="flex flex-col md:flex-row gap-3">
       <!-- Banner Image (visible on desktop left, on mobile above products) -->
       <div v-if="bannerImageUrl" class="md:w-1/4 w-full h-48 md:h-auto overflow-hidden rounded-md">
         <img :src="bannerImageUrl" alt="Promotion Banner" class="w-full h-full object-cover">
@@ -439,7 +439,7 @@ watch(() => props.categorySlug, () => {
 }
 
 .nav-button {
-  @apply w-10 h-10 flex items-center justify-center bg-white border border-gray-300 rounded-full shadow-sm hover:bg-gray-50 hover:border-gray-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
+  @apply w-8 h-8 flex items-center justify-center bg-white border border-gray-300 rounded-full shadow-sm hover:bg-gray-50 hover:border-gray-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
 }
 
 .nav-button-disabled {
@@ -542,16 +542,6 @@ watch(() => props.categorySlug, () => {
     @apply self-end;
   }
 }
-
-
-/* @media (max-width: 640px) {
-    .carousel-header {
-        &[data-v-76bbd7dd] {
-            flex-direction: row;
-            align-items: flex-start;
-        }
-    }
-} */
 
 
 .carousel-header {

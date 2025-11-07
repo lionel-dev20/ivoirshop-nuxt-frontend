@@ -78,9 +78,18 @@
           <!-- Liste des produits -->
           <div v-if="filteredProducts.length"
             class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-2 gap-1">
-            <ProductCard v-for="product in filteredProducts" :key="product.id" :product="product"
+            <ProductCard v-for="product in paginatedProducts" :key="product.id" :product="product"
               :show-add-to-cart="true" />
           </div>
+
+          <!-- Pagination -->
+          <Pagination
+            v-if="filteredProducts.length > itemsPerPage"
+            :current-page="currentPage"
+            :total-items="filteredProducts.length"
+            :items-per-page="itemsPerPage"
+            @page-change="handlePageChange"
+          />
 
           <!-- Aucun produit filtré -->
           <div v-else-if="hasActiveFilters" class="text-center py-12">
@@ -244,6 +253,10 @@ const currentFilters = ref({
 
 const sortBy = ref('default')
 
+// Pagination
+const currentPage = ref(1)
+const itemsPerPage = 40
+
 // État du drawer mobile des filtres
 const isFilterDrawerOpen = ref(false)
 
@@ -406,6 +419,13 @@ const filteredProducts = computed(() => {
   return filtered
 })
 
+// Produits paginés
+const paginatedProducts = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage
+  const end = start + itemsPerPage
+  return filteredProducts.value.slice(start, end)
+})
+
 // Vérifier s'il y a des filtres actifs
 const hasActiveFilters = computed(() => {
   return currentFilters.value.priceMin !== null ||
@@ -437,7 +457,18 @@ const handleClearFilters = () => {
     inStock: false,
     onSale: false
   }
+  currentPage.value = 1 // Reset à la page 1
 }
+
+// Gestion du changement de page
+const handlePageChange = (page: number) => {
+  currentPage.value = page
+}
+
+// Réinitialiser la page quand les filtres changent
+watch([() => currentFilters.value, sortBy], () => {
+  currentPage.value = 1
+}, { deep: true })
 
 // Gestion du tri
 const handleSort = () => {

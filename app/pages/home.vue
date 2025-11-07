@@ -135,11 +135,11 @@ banner-image-url="/images/bannertvs.webp"
     />
     <div class="h-8"></div>
     <Nouveaute 
-     category-slug="plaque-a-gaz"
+     category-slug="le-bazar"
      header-background-color="'bg-orange-500'"
       header-color="text-white"
      :grid-columns="5"
-     :products-per-page="20"
+     :products-per-page="30"
    />
    <div class="h-8"></div>
 

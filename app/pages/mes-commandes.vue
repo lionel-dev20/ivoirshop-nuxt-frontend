@@ -39,9 +39,9 @@
         <p class="mt-2 text-gray-600">Vous n'avez pas encore passé de commande.</p>
         <NuxtLink
           to="/"
-          class="mt-6 inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
+          class="mt-4 inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
         >
-          Commencer mes achats sur la boutique
+          Commencer mes achats 
         </NuxtLink>
       </div>
     </div>

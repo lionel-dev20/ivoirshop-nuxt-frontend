@@ -484,7 +484,7 @@ if (categoryData.value) {
 
 /* Header de catégorie */
 .category-header {
-  @apply mb-3;
+  @apply md:mb-3 mb-1;
 }
 
 .category-hero {

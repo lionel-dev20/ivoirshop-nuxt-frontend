@@ -431,7 +431,7 @@ watch(() => props.categorySlug, () => {
 }
 
 .carousel-title {
-  @apply md:text-2xl text-lg font-bold mb-0;
+  @apply md:text-2xl text-base font-bold mb-0 text-left flex-1;
 }
 
 .carousel-navigation {
@@ -535,11 +535,23 @@ watch(() => props.categorySlug, () => {
 /* Responsive */
 @media (max-width: 640px) {
   .carousel-header {
-    @apply flex-col items-start space-y-4;
+    @apply flex-row items-center justify-between gap-2;
+  }
+  
+  .carousel-title {
+    @apply text-left text-sm;
   }
   
   .carousel-navigation {
-    @apply self-end;
+    @apply flex-shrink-0 space-x-1;
+  }
+  
+  .nav-button {
+    @apply w-7 h-7;
+  }
+  
+  .nav-button svg {
+    @apply w-4 h-4;
   }
 }
 

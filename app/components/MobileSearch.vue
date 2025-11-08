@@ -2,7 +2,7 @@
   <div class="md:hidden">
     <!-- Bouton de recherche mobile -->
     <button
-      @click="showMobileSearch = true"
+      @click="showMobileSearch = !showMobileSearch"
       class="p-2 text-gray-400 hover:text-gray-500 transition-colors"
     >
       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -14,7 +14,7 @@
     <div
       v-if="showMobileSearch"
       class="fixed inset-0 z-50 bg-black bg-opacity-50"
-      @click="showMobileSearch = false"
+      @click="close"
     >
       <div
         class="bg-white p-4 mx-4 mt-20 rounded-lg shadow-lg"
@@ -25,7 +25,7 @@
             <SearchBox />
           </div>
           <button
-            @click="showMobileSearch = false"
+            @click="close"
             class="p-2 text-gray-400 hover:text-gray-600"
           >
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -54,11 +54,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
-const showMobileSearch = ref(false)
+const { showMobileSearch, close } = useMobileSearch()
 
 // Recherches populaires
 const popularSearches = [
@@ -72,7 +71,7 @@ const popularSearches = [
 
 // Gestion de la recherche
 const handleSearch = (query: string) => {
-  showMobileSearch.value = false
+  close()
   router.push(`/recherche?q=${encodeURIComponent(query)}`)
 }
 

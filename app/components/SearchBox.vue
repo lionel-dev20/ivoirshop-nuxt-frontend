@@ -52,12 +52,13 @@
         <div v-if="productSuggestions.length > 0" class="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide">
           Produits
         </div>
-        <div
+        <NuxtLink
           v-for="(suggestion, index) in productSuggestions"
           :key="`product-${suggestion.id}`"
-          @click="selectSuggestion(suggestion)"
+          :to="`/produit/${suggestion.slug}`"
+          @click="hideSuggestions"
           @mouseenter="selectedIndex = getProductIndex(index)"
-          class="px-3 py-2 hover:bg-gray-100 cursor-pointer flex items-center space-x-3"
+          class="px-3 py-2 hover:bg-gray-100 cursor-pointer flex items-center space-x-3 no-underline"
           :class="{ 'bg-blue-50': selectedIndex === getProductIndex(index) }"
         >
           <img
@@ -75,18 +76,19 @@
             <p class="text-sm font-medium text-gray-900 truncate">{{ suggestion.name }}</p>
             <p class="text-xs text-gray-500">{{ formatPrice(suggestion.price) }}</p>
           </div>
-        </div>
+        </NuxtLink>
 
         <!-- Suggestions de catégories -->
         <div v-if="categorySuggestions.length > 0" class="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide">
           Catégories
         </div>
-        <div
+        <NuxtLink
           v-for="(suggestion, index) in categorySuggestions"
           :key="`category-${suggestion.id}`"
-          @click="selectSuggestion(suggestion)"
+          :to="`/categorie/${suggestion.slug}`"
+          @click="hideSuggestions"
           @mouseenter="selectedIndex = getCategoryIndex(index)"
-          class="px-3 py-2 hover:bg-gray-100 cursor-pointer flex items-center space-x-3"
+          class="px-3 py-2 hover:bg-gray-100 cursor-pointer flex items-center space-x-3 no-underline"
           :class="{ 'bg-blue-50': selectedIndex === getCategoryIndex(index) }"
         >
           <div class="w-8 h-8 bg-blue-100 rounded flex items-center justify-center">
@@ -98,7 +100,7 @@
             <p class="text-sm font-medium text-gray-900">{{ suggestion.name }}</p>
             <p class="text-xs text-gray-500">{{ suggestion.count }} produit{{ suggestion.count > 1 ? 's' : '' }}</p>
           </div>
-        </div>
+        </NuxtLink>
 
         <!-- Suggestions de tags -->
         <div v-if="tagSuggestions.length > 0" class="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide">
@@ -174,6 +176,7 @@ import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
+const { close: closeMobileSearch } = useMobileSearch()
 
 // État réactif
 const searchQuery = ref('')
@@ -287,15 +290,9 @@ const navigateSuggestions = (direction: number) => {
   selectedIndex.value = Math.max(0, Math.min(totalSuggestions - 1, selectedIndex.value + direction))
 }
 
-// Sélection d'une suggestion
+// Sélection d'une suggestion (pour tags et recherches génériques uniquement)
 const selectSuggestion = (suggestion: any) => {
-  if (suggestion.type === 'product') {
-    // Redirection vers la fiche produit
-    router.push(`/produit/${suggestion.slug}`)
-  } else if (suggestion.type === 'category') {
-    // Redirection vers la catégorie
-    router.push(`/categorie/${suggestion.slug}`)
-  } else if (suggestion.type === 'tag') {
+  if (suggestion.type === 'tag') {
     // Recherche par tag
     performSearch(suggestion.name)
   } else if (suggestion.type === 'generic') {
@@ -306,7 +303,7 @@ const selectSuggestion = (suggestion: any) => {
   hideSuggestions()
 }
 
-// Recherche
+// Recherche (avec support mobile amélioré)
 const performSearch = (query?: string) => {
   // Si query est un objet (événement), on l'ignore
   if (typeof query === 'object' || query === '[object KeyboardEvent]' || query === '[object PointerEvent]') {
@@ -316,7 +313,18 @@ const performSearch = (query?: string) => {
   const searchTerm = query || searchQuery.value.trim()
   if (!searchTerm) return
   
+  // Fermer les suggestions
   hideSuggestions()
+  
+  // Masquer le clavier sur mobile
+  if (typeof window !== 'undefined' && window.innerWidth <= 768) {
+    const activeElement = document.activeElement as HTMLElement
+    if (activeElement && activeElement.blur) {
+      activeElement.blur()
+    }
+  }
+  
+  // Rediriger vers la page de recherche
   router.push(`/recherche?q=${encodeURIComponent(searchTerm)}`)
 }
 
@@ -324,6 +332,10 @@ const performSearch = (query?: string) => {
 const hideSuggestions = () => {
   showSuggestions.value = false
   selectedIndex.value = -1
+  // Fermer l'overlay mobile si on est sur mobile
+  if (typeof window !== 'undefined' && window.innerWidth <= 768) {
+    closeMobileSearch()
+  }
 }
 
 // Formatage du prix

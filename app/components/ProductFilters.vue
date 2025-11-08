@@ -33,7 +33,7 @@
     <!-- Filtre par note -->
     <div class="mb-6">
       <h4 class="text-sm font-medium text-gray-700 mb-3">Note</h4>
-      <div class="space-y-2">
+      <div class="space-y-1">
         <label
           v-for="rating in ratingOptions"
           :key="rating.value"
@@ -70,23 +70,32 @@
 
     <!-- Filtres par marques -->
     <div v-if="props.brands && props.brands.length > 0" class="mb-6">
-      <h4 class="text-sm font-medium text-gray-700 mb-3">Marques</h4>
-      <div class="space-y-2 max-h-48 overflow-y-auto">
-        <label
-          v-for="brand in props.brands"
-          :key="brand.slug"
-          class="flex items-center cursor-pointer hover:bg-gray-50 p-2 rounded"
-        >
-          <input
-            v-model="filters.brands"
-            :value="brand.name"
-            type="checkbox"
-            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-            @change="updateFilters"
-          />
-          <span class="ml-3 text-sm text-gray-700">{{ brand.name }}</span>
-          <span class="ml-auto text-xs text-gray-500">({{ brand.count }})</span>
-        </label>
+      <h4 class="text-sm font-medium text-gray-700 mb-3 flex items-center justify-between">
+        <span>Marques</span>
+        <span class="text-xs text-gray-500 font-normal">({{ props.brands.length }})</span>
+      </h4>
+      <div class="max-h-64 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+        <div class="grid grid-cols-2 md:grid-cols-2 xl:grid-cols-2 gap-2">
+          <label
+            v-for="brand in props.brands"
+            :key="brand.slug"
+            class="flex items-center cursor-pointer hover:bg-gray-50 p-2 rounded-[4px] border border-gray-200 transition-all hover:border-blue-400 hover:shadow-sm"
+            :class="{ 'bg-blue-50 border-blue-500 shadow-sm': filters.brands.includes(brand.name) }"
+            :title="brand.name"
+          >
+            <input
+              v-model="filters.brands"
+              :value="brand.name"
+              type="checkbox"
+              class="h-3 w-3 text-blue-600 focus:ring-blue-500 border-gray-300 rounded flex-shrink-0"
+              @change="updateFilters"
+            />
+            <div class="ml-1 space-x-1 flex min-w-0">
+              <span class="text-xs font-bold text-gray-700 truncate block leading-tight">{{ brand.name }}</span>
+              <span class="text-[10px] text-gray-500">({{ brand.count }})</span>
+            </div>
+          </label>
+        </div>
       </div>
     </div>
 

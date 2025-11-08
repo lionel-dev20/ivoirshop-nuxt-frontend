@@ -1,6 +1,6 @@
 <!-- pages/recherche.vue -->
 <template>
-  <div class="max-w-[1440px] mx-auto p-6">
+  <div class="max-w-[1440px] mx-auto md:p-6 p-2">
     <!-- Skeleton de chargement -->
     <div v-if="loading" class="flex flex-col lg:flex-row gap-6">
       <!-- Skeleton sidebar -->

@@ -80,10 +80,10 @@ category-slug="maison-cuisine-jardin"
 @quick-view="handleQuickView"
 @wishlist-toggle="handleWishlistToggle"
 />
-   <div class="h-8"></div>
+   <div class="md:h-8 h-4"></div>
     <!-- Carousel de promotions -->
     <ProductCarousel
-title="Nos meilleurs offres electromenager"
+title="Equipez votre cuisine"
 category-slug="petit-electromenager"
 :grid-columns="bannerImageUrl ? 4 : 4"
 :max-products="12"
@@ -97,10 +97,10 @@ banner-image-url="/images/newbannerA.webp"
 @wishlist-toggle="handleWishlistToggle"
 />
 
-<div class="h-8"></div>
+<div class="md:h-8 h-4"></div>
     <!-- Carousel de promotions -->
     <ProductCarousel
-title="Nos meilleurs offres tvs"
+title="Télévision et Audio"
 category-slug="televisions"
 :grid-columns="bannerImageUrl ? 4 : 4"
 :max-products="12"
@@ -117,7 +117,7 @@ banner-image-url="/images/bannertvs.webp"
     <CollectionHomepageDoubleBanner1 />
 <div class="md:h-8 h-4"></div>
     <ProductCarousel 
-      title="Bonne degustation"
+      title="Sélections spéciale"
        category-slug="cuiseurs-a-riz"
        :grid-columns="bannerImageUrl ? 4 : 5"
       :max-products="20"
@@ -125,7 +125,7 @@ banner-image-url="/images/bannertvs.webp"
       :autoplay-delay="300"
       :show-pagination="true"
       :show-navigation="true"
-      header-background-color="bg-[#00ea00]"
+      header-background-color="bg-[#ff9900]"
       header-color="text-white"
       navigation-color="text-black"
       @add-to-cart="handleAddToCart"
@@ -133,7 +133,7 @@ banner-image-url="/images/bannertvs.webp"
       @quick-view="handleQuickView"
       @wishlist-toggle="handleWishlistToggle"
     />
-    <div class="h-8"></div>
+    <div class="md:h-8 h-4"></div>
     <Nouveaute 
      category-slug="le-bazar"
      header-background-color="'bg-orange-500'"

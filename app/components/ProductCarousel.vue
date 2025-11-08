@@ -431,7 +431,7 @@ watch(() => props.categorySlug, () => {
 }
 
 .carousel-title {
-  @apply md:text-2xl text-base font-bold mb-0 text-left flex-1;
+  @apply md:text-2xl text-2xl font-bold mb-0 text-left flex-1;
 }
 
 .carousel-navigation {
@@ -539,7 +539,7 @@ watch(() => props.categorySlug, () => {
   }
   
   .carousel-title {
-    @apply text-left text-sm;
+    @apply text-left text-xl;
   }
   
   .carousel-navigation {

@@ -154,19 +154,7 @@ banner-image-url="/images/bannertvs.webp"
      :grid-columns="4"
      :products-per-page="12"
    /> -->
-   <div class="md:h-8 h-4"></div>
-    <!-- <div class="container mx-auto px-4">
-        <DualBannerSlider
-          :limit="6"
-          :auto-rotate="true"
-          :rotation-interval="8000"
-          aspect-ratio="16/9"
-          border-radius="16px"
-          gap="24px"
-          @banner-click="handleBannerClick"
-          @banner-view="trackBannerView"
-        />
-      </div> -->
+   <div class="md:h-9 h-4"></div>
 
   </div>
 </template>

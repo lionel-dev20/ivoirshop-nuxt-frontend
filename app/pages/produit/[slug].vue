@@ -77,7 +77,7 @@
     <div v-else-if="product">
       <!-- Breadcrumb -->
       <nav class="mb-8">
-        <ol class="flex items-center space-x-2 text-sm text-gray-500">
+        <ol class="flex items-center space-x-2 text-sm text-gray-500  overflow-x-auto scrollbar-hide pr-4">
           <li>
             <NuxtLink to="/" class="hover:text-gray-700">Accueil</NuxtLink>
           </li>
@@ -325,7 +325,7 @@
               </div>
               <div class="p-4">
                 <h3 class="font-semibold text-gray-900 mb-2 line-clamp-2">{{ relatedProduct.name }}</h3>
-                <div class="flex items-center justify-between">
+                <div class="flex flex-col items-start">
                   <span v-if="relatedProduct.sale_price" class="text-red-600 font-bold">
                     {{ formatPrice(relatedProduct.sale_price) }}
                   </span>

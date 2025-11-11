@@ -140,21 +140,12 @@ banner-image-url="/images/bannertvs.webp"
       header-color="text-white"
      :grid-columns="5"
      :products-per-page="30"
+     :products-limit="30"
    />
    <div class="h-8"></div>
 
    <CollapseSeoText />
-
-    <!-- Blocs de catégories -->
-    <!-- <CategoryBlocks />
-    
-    <div class="h-8"></div>
-    <Nouveaute 
-     category-slug="clothing"
-     :grid-columns="4"
-     :products-per-page="12"
-   /> -->
-   <div class="md:h-9 h-4"></div>
+   <div class="md:h-12 h-4"></div>
 
   </div>
 </template>

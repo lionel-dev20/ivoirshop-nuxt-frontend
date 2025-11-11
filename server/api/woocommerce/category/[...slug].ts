@@ -97,14 +97,62 @@ export default defineEventHandler(async (event) => {
 
     console.log('Catégorie trouvée:', currentCategory.name, 'ID:', currentCategory.id)
 
-    // Récupère les produits de cette catégorie via l'endpoint personnalisé
-    console.log('Récupération des produits...')
-    const { data: products } = await axios.get(
-      `${WORDPRESS_URL}/wp-json/custom/v1/products/${currentCategory.id}`,
-      axiosConfig
-    )
-
-    console.log(`${products.length} produits trouvés pour la catégorie ${currentCategory.name}`)
+    // Récupère TOUS les produits de cette catégorie avec pagination
+    console.log('Récupération des produits avec pagination...')
+    
+    let allProducts: any[] = []
+    let currentPage = 1
+    let hasMoreProducts = true
+    const perPage = 100
+    
+    // Configuration pour l'API WooCommerce
+    const wcConfig = {
+      ...axiosConfig,
+      auth: {
+        username: runtimeConfig.WOOCOMMERCE_CONSUMER_KEY || '',
+        password: runtimeConfig.WOOCOMMERCE_CONSUMER_SECRET || ''
+      }
+    }
+    
+    // Boucle pour récupérer tous les produits page par page
+    while (hasMoreProducts) {
+      try {
+        console.log(`Récupération de la page ${currentPage}...`)
+        const { data: pageProducts, headers } = await axios.get(
+          `${WORDPRESS_URL}/wp-json/wc/v3/products`,
+          {
+            ...wcConfig,
+            params: {
+              category: currentCategory.id,
+              per_page: perPage,
+              page: currentPage,
+              status: 'publish'
+            }
+          }
+        )
+        
+        if (pageProducts && pageProducts.length > 0) {
+          allProducts = [...allProducts, ...pageProducts]
+          console.log(`Page ${currentPage}: ${pageProducts.length} produits récupérés`)
+          
+          // Vérifier s'il y a d'autres pages
+          const totalPages = parseInt(headers['x-wp-totalpages'] || '1')
+          if (currentPage >= totalPages) {
+            hasMoreProducts = false
+          } else {
+            currentPage++
+          }
+        } else {
+          hasMoreProducts = false
+        }
+      } catch (pageError: any) {
+        console.error(`Erreur lors de la récupération de la page ${currentPage}:`, pageError.message)
+        hasMoreProducts = false
+      }
+    }
+    
+    const products = allProducts
+    console.log(`✅ TOTAL: ${products.length} produits trouvés pour la catégorie ${currentCategory.name}`)
 
     // Extraire les attributs uniques des produits de cette catégorie
     const attributesMap = new Map<string, Set<string>>()

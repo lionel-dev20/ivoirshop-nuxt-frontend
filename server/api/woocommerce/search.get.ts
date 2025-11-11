@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
     
     const searchTerm = query.q as string
     const page = parseInt(query.page as string) || 1
-    const perPage = parseInt(query.per_page as string) || 20
+    const perPage = parseInt(query.per_page as string) || 100 // Augmenté de 20 à 100
     const category = query.category as string
     const minPrice = query.min_price as string
     const maxPrice = query.max_price as string
@@ -66,15 +66,41 @@ export default defineEventHandler(async (event) => {
       searchParams.max_price = maxPrice
     }
 
-    console.log('Recherche WooCommerce:', { searchTerm, searchParams })
+    console.log('Recherche WooCommerce de TOUS les produits:', { searchTerm, searchParams })
 
     try {
-      // Recherche des produits
-      const { data: products, headers } = await api.get('products', searchParams)
+      // Récupérer TOUS les produits correspondant à la recherche avec pagination automatique
+      let allProducts: any[] = []
+      let currentPage = 1
+      let hasMoreProducts = true
+      const productsPerPage = 100
+      let totalProducts = 0
+      let totalPages = 0
 
-      // Extraire les informations de pagination des headers
-      const totalProducts = parseInt(headers['x-wp-total'] || '0')
-      const totalPages = parseInt(headers['x-wp-totalpages'] || '0')
+      while (hasMoreProducts) {
+        console.log(`Recherche WooCommerce - page ${currentPage}...`)
+        const pageParams = { ...searchParams, per_page: productsPerPage, page: currentPage }
+        const { data: pageProducts, headers } = await api.get('products', pageParams)
+
+        if (pageProducts && pageProducts.length > 0) {
+          allProducts = [...allProducts, ...pageProducts]
+          totalProducts = parseInt(headers['x-wp-total'] || '0')
+          totalPages = parseInt(headers['x-wp-totalpages'] || '0')
+          
+          console.log(`✅ Page ${currentPage}/${totalPages}: ${pageProducts.length} produits (${allProducts.length}/${totalProducts} total)`)
+          
+          if (currentPage >= totalPages) {
+            hasMoreProducts = false
+          } else {
+            currentPage++
+          }
+        } else {
+          hasMoreProducts = false
+        }
+      }
+
+      const products = allProducts
+      console.log(`✅ RECHERCHE WC TERMINÉE: ${products.length} produits trouvés pour "${searchTerm}"`)
 
       // Formater les produits pour l'affichage
       const formattedProducts = products.map((product: any) => ({
@@ -110,16 +136,14 @@ export default defineEventHandler(async (event) => {
         formattedProducts.sort((a: any, b: any) => b.search_relevance - a.search_relevance)
       }
 
-      console.log(`${formattedProducts.length} produits trouvés sur ${totalProducts} total`)
-
       return {
         products: formattedProducts,
-        total: totalProducts,
-        totalPages: totalPages,
-        currentPage: page,
-        perPage: perPage,
+        total: formattedProducts.length,
+        totalPages: 1,
+        currentPage: 1,
+        perPage: formattedProducts.length,
         searchTerm: searchTerm,
-        hasMore: page < totalPages
+        hasMore: false
       }
 
     } catch (wcError: any) {

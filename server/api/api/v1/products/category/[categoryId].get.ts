@@ -29,27 +29,69 @@ export default defineEventHandler(async (event) => {
       }
     }
 
-    // Récupérer les paramètres de requête
-    const query = getQuery(event)
-    const perPage = query.per_page || 100
-    const page = query.page || 1
-
-    console.log(`Récupération des produits - Catégorie: ${categoryId}, Page: ${page}, Per Page: ${perPage}`)
+    console.log(`Récupération de TOUS les produits pour la catégorie: ${categoryId}`)
     
-    // Utilise l'endpoint personnalisé WordPress pour récupérer les produits par catégorie
-    const { data: productsResponse } = await axios.get(
-      `${WC_STORE_URL}/wp-json/custom/v1/products/${categoryId}`,
-      axiosConfig
-    )
+    // Configuration pour l'API WooCommerce avec authentification
+    const wcConfig = {
+      ...axiosConfig,
+      auth: {
+        username: runtimeConfig.WOOCOMMERCE_CONSUMER_KEY || '',
+        password: runtimeConfig.WOOCOMMERCE_CONSUMER_SECRET || ''
+      }
+    }
+    
+    // Récupérer TOUS les produits avec pagination automatique
+    let allProducts: any[] = []
+    let currentPage = 1
+    let hasMoreProducts = true
+    const perPage = 100
+    
+    while (hasMoreProducts) {
+      try {
+        console.log(`Récupération de la page ${currentPage} pour la catégorie ${categoryId}...`)
+        const { data: pageProducts, headers } = await axios.get(
+          `${WC_STORE_URL}/wp-json/wc/v3/products`,
+          {
+            ...wcConfig,
+            params: {
+              category: categoryId,
+              per_page: perPage,
+              page: currentPage,
+              status: 'publish'
+            }
+          }
+        )
+        
+        if (pageProducts && pageProducts.length > 0) {
+          allProducts = [...allProducts, ...pageProducts]
+          console.log(`✅ Page ${currentPage}: ${pageProducts.length} produits récupérés`)
+          
+          // Vérifier s'il y a d'autres pages
+          const totalPages = parseInt(headers['x-wp-totalpages'] || '1')
+          const totalProducts = parseInt(headers['x-wp-total'] || '0')
+          console.log(`📊 Total disponible: ${totalProducts} produits sur ${totalPages} pages`)
+          
+          if (currentPage >= totalPages) {
+            hasMoreProducts = false
+          } else {
+            currentPage++
+          }
+        } else {
+          hasMoreProducts = false
+        }
+      } catch (pageError: any) {
+        console.error(`❌ Erreur page ${currentPage}:`, pageError.message)
+        hasMoreProducts = false
+      }
+    }
+    
+    console.log(`✅ TOTAL FINAL: ${allProducts.length} produits récupérés pour la catégorie ${categoryId}`)
 
-    console.log(`${productsResponse.length} produits trouvés pour la catégorie ${categoryId}`)
-
-    // L'endpoint WordPress retourne déjà le bon format, on l'utilise directement
     return {
-      products: productsResponse,
-      total: productsResponse.length,
-      page: parseInt(page as string),
-      per_page: parseInt(perPage as string)
+      products: allProducts,
+      total: allProducts.length,
+      page: 1,
+      per_page: allProducts.length
     }
     
   } catch (err: any) {

@@ -14,7 +14,7 @@ export default defineNuxtConfig({
       drop: process.env.NODE_ENV === 'production' ? ['console', 'debugger'] : [],
     },
   },
-
+ 
   modules: ['@pinia/nuxt', [
     'shadcn-nuxt',
     {
@@ -73,6 +73,58 @@ export default defineNuxtConfig({
       meta: [
         { name: 'description', content: 'Achetez en ligne sur IvoirShop.ci : téléphones, électroménager, TV, mode et beauté. Meilleurs prix, livraison rapide et paiement sécurisé en Côte d’Ivoire.' },
         { name: 'keywords', content: 'boutique en ligne, Côte dIvoire, électronique, électroménager, smartphones, TV' }
+      ],
+      script: [
+        {
+          innerHTML: `
+            !function(f,b,e,v,n,t,s)
+            {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+            n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+            if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+            n.queue=[];t=b.createElement(e);t.async=!0;
+            t.src=v;s=b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t,s)}(window, document,'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
+            fbq('init', '1091644285194397');
+            fbq('track', 'PageView');
+          `,
+          type: 'text/javascript'
+        },
+        {
+          src: 'https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js',
+          defer: true,
+          type: 'text/javascript'
+        },
+        {
+          innerHTML: `
+            window.OneSignalDeferred = window.OneSignalDeferred || [];
+            OneSignalDeferred.push(async function(OneSignal) {
+              await OneSignal.init({
+                appId: "c16c70ab-fa4c-429b-9cd0-84ed90343914",
+              });
+            });
+          `,
+          type: 'text/javascript'
+        },
+        {
+          src: 'https://www.googletagmanager.com/gtag/js?id=G-SRMB4DV3VY',
+          async: true,
+          type: 'text/javascript'
+        },
+        {
+          innerHTML: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-SRMB4DV3VY');
+          `,
+          type: 'text/javascript'
+        }
+      ] as any,
+      noscript: [
+        {
+          innerHTML: `<img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1091644285194397&ev=PageView&noscript=1"/>`
+        }
       ]
     }
   }

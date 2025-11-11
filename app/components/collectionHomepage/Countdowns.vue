@@ -211,7 +211,7 @@ const fetchProducts = async () => {
     }
     console.log(`Category found for countdown ${props.countdownId}:`, categoryInfo)
 
-    const products = await $fetch(`/api/api/v1/products/category/${categoryInfo.id}?per_page=100`)
+    const products = await $fetch(`/api/api/v1/products/category/${categoryInfo.id}`)
     console.log(`Products fetched for countdown ${props.countdownId} (category ${categoryInfo.slug}):`, products)
     productsData.value = products.products // Extrait le tableau 'products' de l'objet de réponse
   } catch (err) {

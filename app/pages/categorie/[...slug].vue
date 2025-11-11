@@ -426,7 +426,7 @@ const paginatedProducts = computed(() => {
   return filteredProducts.value.slice(start, end)
 })
 
-// Vérifier s'il y a des filtres actifs
+// Vérifier s'il y a des filtres actifs   
 const hasActiveFilters = computed(() => {
   return currentFilters.value.priceMin !== null ||
     currentFilters.value.priceMax !== null ||

@@ -351,7 +351,7 @@ const { data, pending, error: fetchError, refresh } = await useLazyFetch('/api/s
   query: computed(() => ({
     q: searchQuery.value,
     page: 1,
-    per_page: 50
+    per_page: 100 // Augmenté pour récupérer plus de produits
   }))
 })
 

@@ -29,7 +29,7 @@ export default defineEventHandler(async () => {
     try {
       const categories = await $fetch(`${config.WORDPRESS_URL}/wp-json/wc/v3/products/categories`, {
         params: {
-          per_page: 20,
+          per_page: 100, // Augmenté de 20 à 100
           orderby: 'count',
           order: 'desc',
           hide_empty: true,

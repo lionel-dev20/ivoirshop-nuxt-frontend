@@ -222,8 +222,8 @@ const { data: fetchedCategory, pending, error, refresh: refreshCategory } = awai
         throw new Error('Catégorie non trouvée')
       }
       
-      // Récupérer les produits de la catégorie
-      const products = await $fetch(`/api/api/v1/products/category/${categoryInfo.id}?per_page=100`)
+      // Récupérer les produits de la catégorie (sans limite)
+      const products = await $fetch(`/api/api/v1/products/category/${categoryInfo.id}`)
       
       // Récupérer les sous-catégories
       const allCategories = await $fetch('/api/api/v1/categories')

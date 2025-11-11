@@ -3,7 +3,7 @@ export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig()
   const query = getQuery(event)
   
-  const { categorySlug, limit = '12', page = '1' } = query
+  const { categorySlug, limit = '100', page = '1' } = query // Augmenté de 12 à 100
 
   console.log('=== API Category Products Debug ===')
   console.log('Query params:', query)

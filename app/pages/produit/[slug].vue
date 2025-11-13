@@ -77,7 +77,7 @@
     <div v-else-if="product">
       <!-- Breadcrumb -->
       <nav class="mb-8">
-        <ol class="flex items-center space-x-2 text-sm text-gray-500  overflow-x-auto scrollbar-hide pr-4">
+        <ol class="flex items-center space-x-2 text-sm text-gray-500  overflow-x-auto scrollbar-hide pr-4 md:pr-0">
           <li>
             <NuxtLink to="/" class="hover:text-gray-700">Accueil</NuxtLink>
           </li>

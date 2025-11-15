@@ -31,7 +31,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label for="firstName" class="block text-sm font-medium text-gray-700 mb-1">
-                  Prénom *
+                  Prénom <span class="text-red-600">*</span>
                 </label>
                 <input
                   id="firstName"
@@ -44,7 +44,7 @@
               
               <div>
                 <label for="lastName" class="block text-sm font-medium text-gray-700 mb-1">
-                  Nom *
+                  Nom <span class="text-red-600">*</span>
                 </label>
                 <input
                   id="lastName"
@@ -59,20 +59,19 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
               <div>
                 <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
-                  Email *
+                  Email (optionnel)
                 </label>
                 <input
                   id="email"
                   v-model="orderForm.email"
                   type="email"
-                  required
                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
 
               <div>
                 <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">
-                  Téléphone *
+                  Téléphone <span class="text-red-600">*</span>
                 </label>
                 <input
                   id="phone"
@@ -107,7 +106,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
               <div>
                 <label for="city" class="block text-sm font-medium text-gray-700 mb-1">
-                  Région *
+                  Région <span class="text-red-600">*</span>
                 </label>
                 <select
                   id="city"
@@ -124,7 +123,7 @@
               </div>
               <div>
                 <label for="commune" class="block text-sm font-medium text-gray-700 mb-1">
-                  Commune/ville *
+                  Commune/ville <span class="text-red-600">*</span>
                 </label>
                 <select
                   id="commune"
@@ -198,7 +197,7 @@
 
             <div v-if="orderForm.commune" class="mt-4">
               <label for="deliveryAddressDetails" class="block text-sm font-medium text-gray-700 mb-1">
-                Où souhaitez-vous être livré exactement ? (Rue, numéro, indications spécifiques...) *
+                Où souhaitez-vous être livré exactement ? (Rue, numéro, indications spécifiques...) <span class="text-red-600">*</span>
               </label>
               <textarea
                 id="deliveryAddressDetails"
@@ -501,7 +500,6 @@ const canSubmit = computed(() => {
   return deliveryStore.hasSelectedDelivery && 
          orderForm.value.firstName && 
          orderForm.value.lastName && 
-         orderForm.value.email && 
          orderForm.value.phone && 
          orderForm.value.city && 
          orderForm.value.commune && 
@@ -671,8 +669,8 @@ const submitOrder = async () => {
         last_name: orderForm.value.lastName,
         email: orderForm.value.email,
         phone: orderForm.value.phone,
-        address_1: orderForm.value.commune, // Commune/Quartier for Address Line 1
-        city: orderForm.value.city, // City for billing city
+        address_1: orderForm.value.commune, // Commune/Quartier
+        city: orderForm.value.city, // Région
         state: '',
         postcode: '',
         country: 'CI'
@@ -682,16 +680,16 @@ const submitOrder = async () => {
         last_name: orderForm.value.lastName,
         email: orderForm.value.email,
         phone: orderForm.value.phone,
-        address_1: orderForm.value.commune, // Use commune for address_1
-        city: orderForm.value.city, // Use city for city
+        address_1: orderForm.value.commune, // Commune/Quartier pour address_1
+        city: orderForm.value.city, // Région pour city
         state: '',
         postcode: '',
         country: 'CI',
-        address_2: orderForm.value.deliveryAddressDetails // Add detailed delivery address to address_2
+        address_2: orderForm.value.deliveryAddressDetails // Détails supplémentaires
       },
       delivery_info: {
-        city_name: orderForm.value.city, // City for delivery info
-        commune_name: orderForm.value.commune, // Commune/Quartier for delivery info
+        city_name: orderForm.value.city, // Région
+        commune_name: orderForm.value.commune, // Commune/Quartier
         product_type: deliveryStore.selectedDelivery.product_type
       },
       coupon: deliveryStore.appliedCoupon ? {
@@ -699,6 +697,15 @@ const submitOrder = async () => {
         discount: deliveryStore.appliedCoupon.discount
       } : null
     }
+
+    // Log pour debug
+    console.log('📦 Données commande envoyées:', {
+      billing_city: orderData.billing.city,
+      billing_address_1: orderData.billing.address_1,
+      shipping_city: orderData.shipping.city,
+      shipping_address_1: orderData.shipping.address_1,
+      shipping_address_2: orderData.shipping.address_2
+    })
 
     const response = await $fetch('/api/orders/create', {
       method: 'POST',

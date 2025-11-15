@@ -3,6 +3,128 @@
   <div class="bg-white rounded-md shadow-gray-50 shadow-sm border border-gray-100 p-5">
     <h3 class="text-lg font-semibold text-gray-900 mb-4">Filtres</h3>
     
+    <!-- Filtre par catégories -->
+    <div v-if="props.categories && props.categories.length > 0" class="mb-6">
+      <h4 class="text-sm font-medium text-gray-700 mb-3 flex items-center justify-between">
+        <span>Catégories</span>
+        <span class="text-xs text-gray-500 font-normal">({{ props.categories.length }})</span>
+      </h4>
+      <div class="max-h-96 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+        <div class="space-y-1">
+          <!-- Catégorie de niveau 1 -->
+          <div v-for="category in categoryTree" :key="category.id" class="border-b border-gray-100 last:border-0">
+            <!-- Catégorie parent -->
+            <div class="flex items-center justify-between py-2">
+              <label class="flex items-center cursor-pointer hover:bg-gray-50 px-2 py-1 rounded flex-1">
+                <input
+                  v-model="filters.categories"
+                  :value="category.slug"
+                  type="checkbox"
+                  class="h-3 w-3 text-blue-600 focus:ring-blue-500 border-gray-300 rounded flex-shrink-0"
+                  @change="updateFilters"
+                />
+                <div class="ml-2 flex items-center space-x-1 min-w-0 flex-1">
+                  <span class="text-sm font-medium text-gray-800 truncate">{{ category.name }}</span>
+                  <span class="text-xs text-gray-500">({{ category.count }})</span>
+                </div>
+              </label>
+              <!-- Bouton pour afficher/masquer les sous-catégories -->
+              <button
+                v-if="category.children && category.children.length > 0"
+                @click="toggleCategory(category.id)"
+                class="p-1 hover:bg-gray-100 rounded transition-colors"
+                :aria-label="`${openCategories[category.id] ? 'Masquer' : 'Afficher'} les sous-catégories`"
+              >
+                <svg
+                  class="w-4 h-4 text-gray-600 transition-transform duration-200"
+                  :class="{ 'rotate-180': openCategories[category.id] }"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+            </div>
+            
+            <!-- Sous-catégories de niveau 1 -->
+            <Transition
+              enter-active-class="transition-all duration-200 ease-out"
+              leave-active-class="transition-all duration-200 ease-in"
+              enter-from-class="opacity-0 max-h-0"
+              leave-to-class="opacity-0 max-h-0"
+            >
+              <div v-if="openCategories[category.id] && category.children" class="ml-4 space-y-1 mb-2">
+                <div v-for="subCategory in category.children" :key="subCategory.id">
+                  <!-- Sous-catégorie de niveau 1 -->
+                  <div class="flex items-center justify-between">
+                    <label class="flex items-center cursor-pointer hover:bg-gray-50 px-2 py-1 rounded flex-1">
+                      <input
+                        v-model="filters.categories"
+                        :value="subCategory.slug"
+                        type="checkbox"
+                        class="h-3 w-3 text-blue-600 focus:ring-blue-500 border-gray-300 rounded flex-shrink-0"
+                        @change="updateFilters"
+                      />
+                      <div class="ml-2 flex items-center space-x-1 min-w-0 flex-1">
+                        <span class="text-xs text-gray-700 truncate">{{ subCategory.name }}</span>
+                        <span class="text-xs text-gray-500">({{ subCategory.count }})</span>
+                      </div>
+                    </label>
+                    <!-- Bouton pour afficher/masquer les sous-catégories de niveau 2 -->
+                    <button
+                      v-if="subCategory.children && subCategory.children.length > 0"
+                      @click="toggleCategory(subCategory.id)"
+                      class="p-1 hover:bg-gray-100 rounded transition-colors"
+                      :aria-label="`${openCategories[subCategory.id] ? 'Masquer' : 'Afficher'} les sous-catégories`"
+                    >
+                      <svg
+                        class="w-3 h-3 text-gray-600 transition-transform duration-200"
+                        :class="{ 'rotate-180': openCategories[subCategory.id] }"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                  </div>
+                  
+                  <!-- Sous-catégories de niveau 2 -->
+                  <Transition
+                    enter-active-class="transition-all duration-200 ease-out"
+                    leave-active-class="transition-all duration-200 ease-in"
+                    enter-from-class="opacity-0 max-h-0"
+                    leave-to-class="opacity-0 max-h-0"
+                  >
+                    <div v-if="openCategories[subCategory.id] && subCategory.children" class="ml-4 space-y-1 mb-1">
+                      <label
+                        v-for="subSubCategory in subCategory.children"
+                        :key="subSubCategory.id"
+                        class="flex items-center cursor-pointer hover:bg-gray-50 px-2 py-1 rounded"
+                      >
+                        <input
+                          v-model="filters.categories"
+                          :value="subSubCategory.slug"
+                          type="checkbox"
+                          class="h-3 w-3 text-blue-600 focus:ring-blue-500 border-gray-300 rounded flex-shrink-0"
+                          @change="updateFilters"
+                        />
+                        <div class="ml-2 flex items-center space-x-1 min-w-0 flex-1">
+                          <span class="text-xs text-gray-600 truncate">{{ subSubCategory.name }}</span>
+                          <span class="text-xs text-gray-500">({{ subSubCategory.count }})</span>
+                        </div>
+                      </label>
+                    </div>
+                  </Transition>
+                </div>
+              </div>
+            </Transition>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Filtre par prix -->
     <div class="mb-6">
       <h4 class="text-sm font-medium text-gray-700 mb-3">Prix</h4>
@@ -192,12 +314,22 @@ interface Brand {
   count: number
 }
 
+interface Category {
+  id: number
+  name: string
+  slug: string
+  parent: number
+  count: number
+  children?: Category[]
+}
+
 interface ProductFilters {
   priceMin: number | null
   priceMax: number | null
   rating: number | null
   attributes: Record<string, string[]>
   brands: string[]
+  categories: string[]
   inStock: boolean
   onSale: boolean
 }
@@ -206,6 +338,7 @@ const props = defineProps<{
   products: any[]
   attributes?: Attribute[]
   brands?: Brand[]
+  categories?: Category[]
 }>()
 
 const emit = defineEmits<{
@@ -220,9 +353,13 @@ const filters = ref<ProductFilters>({
   rating: null,
   attributes: {},
   brands: [],
+  categories: [],
   inStock: false,
   onSale: false
 })
+
+// État pour gérer l'ouverture/fermeture des catégories
+const openCategories = ref<Record<number, boolean>>({})
 
 // Options de note
 const ratingOptions = [
@@ -232,6 +369,48 @@ const ratingOptions = [
   { value: 2, label: '2' },
   { value: 1, label: '1' }
 ]
+
+// Construction de l'arbre hiérarchique des catégories
+const categoryTree = computed(() => {
+  if (!props.categories || props.categories.length === 0) {
+    return []
+  }
+
+  // Créer une map pour accès rapide
+  const categoryMap = new Map<number, Category>()
+  props.categories.forEach(cat => {
+    categoryMap.set(cat.id, { ...cat, children: [] })
+  })
+
+  // Trouver les parents de premier niveau (ceux qui n'ont pas leur parent dans la liste)
+  const parentIds = new Set(props.categories.map(cat => cat.parent))
+  const categoryIds = new Set(props.categories.map(cat => cat.id))
+  
+  // Les catégories de niveau 1 sont celles dont le parent n'est pas dans la liste
+  const tree: Category[] = []
+  categoryMap.forEach(category => {
+    if (!categoryIds.has(category.parent)) {
+      // C'est une catégorie de niveau 1 (son parent n'est pas dans la liste)
+      tree.push(category)
+    } else {
+      // C'est une sous-catégorie, on l'ajoute à son parent
+      const parent = categoryMap.get(category.parent)
+      if (parent) {
+        if (!parent.children) {
+          parent.children = []
+        }
+        parent.children.push(category)
+      }
+    }
+  })
+
+  return tree
+})
+
+// Fonction pour basculer l'ouverture/fermeture d'une catégorie
+const toggleCategory = (categoryId: number) => {
+  openCategories.value[categoryId] = !openCategories.value[categoryId]
+}
 
 // Attributs disponibles (générés dynamiquement depuis les produits)
 const availableAttributes = computed(() => {
@@ -355,6 +534,7 @@ const clearFilters = () => {
     rating: null,
     attributes: {},
     brands: [],
+    categories: [],
     inStock: false,
     onSale: false
   }

@@ -151,7 +151,48 @@ export default defineEventHandler(async (event) => {
       }
     }
     
-    const products = allProducts
+    // Fonction pour déterminer le shipping_class d'un produit
+    const determineShippingClass = (product: any): string => {
+      // 1. Vérifier si le produit a un shipping_class défini
+      let shippingClass = product.shipping_class || ''
+      
+      // Normaliser le shipping_class
+      if (shippingClass) {
+        const normalized = shippingClass.toLowerCase()
+        if (normalized === 'light' || normalized === 'leger' || normalized === 'léger') {
+          return 'light'
+        } else if (normalized === 'medium' || normalized === 'moyen') {
+          return 'medium'
+        } else if (normalized === 'heavy' || normalized === 'lourd') {
+          return 'heavy'
+        }
+      }
+      
+      // 2. Si pas de shipping_class, déterminer selon le poids
+      if (product.weight && parseFloat(product.weight) > 0) {
+        const weight = parseFloat(product.weight)
+        if (weight < 2) {
+          return 'light'
+        } else if (weight >= 2 && weight <= 10) {
+          return 'medium'
+        } else {
+          return 'heavy'
+        }
+      }
+      
+      // 3. Par défaut, retourner medium
+      return 'medium'
+    }
+    
+    // Ajouter le shipping_class à chaque produit
+    const products = allProducts.map((product: any) => {
+      const shipping_class = determineShippingClass(product)
+      console.log(`📦 Produit "${product.name}": shipping_class="${shipping_class}", weight=${product.weight}`)
+      return {
+        ...product,
+        shipping_class
+      }
+    })
     console.log(`✅ TOTAL: ${products.length} produits trouvés pour la catégorie ${currentCategory.name}`)
 
     // Extraire les attributs uniques des produits de cette catégorie
@@ -208,11 +249,42 @@ export default defineEventHandler(async (event) => {
     console.log(`${categoryAttributes.length} types d'attributs trouvés`)
     console.log(`${categoryBrands.length} marques trouvées`)
 
+    // Préparer la liste des catégories pour les filtres
+    // Uniquement les sous-catégories de la catégorie actuelle et leurs enfants
+    const getCategoryChildren = (parentId: number, depth: number = 0): any[] => {
+      if (depth > 2) return [] // Limite à 2 niveaux de profondeur
+      
+      const children = categoriesList.filter((cat: any) => cat.parent === parentId)
+      const result: any[] = []
+      
+      children.forEach((child: any) => {
+        result.push({
+          id: child.id,
+          name: child.name,
+          slug: child.slug,
+          parent: child.parent || 0,
+          count: child.count || 0
+        })
+        
+        // Récupérer les enfants de cet enfant
+        const grandChildren = getCategoryChildren(child.id, depth + 1)
+        result.push(...grandChildren)
+      })
+      
+      return result
+    }
+    
+    // Ne récupérer que les sous-catégories de la catégorie actuelle
+    const categoryFilters = getCategoryChildren(currentCategory.id)
+    
+    console.log(`${categoryFilters.length} sous-catégories trouvées pour ${currentCategory.name}`)
+
     return { 
       category: currentCategory, 
       products: products || [],
       attributes: categoryAttributes,
-      brands: categoryBrands
+      brands: categoryBrands,
+      categories: categoryFilters
     }
     
   } catch (err: any) {

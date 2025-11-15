@@ -102,6 +102,27 @@ export default defineEventHandler(async (event) => {
       const products = allProducts
       console.log(`✅ RECHERCHE WC TERMINÉE: ${products.length} produits trouvés pour "${searchTerm}"`)
 
+      // Fonction pour déterminer le shipping_class d'un produit
+      const determineShippingClass = (product: any): string => {
+        let shippingClass = product.shipping_class || ''
+        
+        if (shippingClass) {
+          const normalized = shippingClass.toLowerCase()
+          if (normalized === 'light' || normalized === 'leger' || normalized === 'léger') return 'light'
+          if (normalized === 'medium' || normalized === 'moyen') return 'medium'
+          if (normalized === 'heavy' || normalized === 'lourd') return 'heavy'
+        }
+        
+        if (product.weight && parseFloat(product.weight) > 0) {
+          const weight = parseFloat(product.weight)
+          if (weight < 2) return 'light'
+          if (weight >= 2 && weight <= 10) return 'medium'
+          return 'heavy'
+        }
+        
+        return 'medium'
+      }
+
       // Formater les produits pour l'affichage
       const formattedProducts = products.map((product: any) => ({
         id: product.id,
@@ -116,6 +137,8 @@ export default defineEventHandler(async (event) => {
         stock_status: product.stock_status,
         stock_quantity: product.stock_quantity,
         manage_stock: product.manage_stock,
+        weight: product.weight,
+        shipping_class: determineShippingClass(product),
         images: product.images || [],
         categories: product.categories || [],
         tags: product.tags || [],

@@ -42,7 +42,7 @@
         <div class="lg:w-1/4">
           <div class="sticky top-6 hidden md:block">
             <ProductFilters :products="allProducts" :attributes="categoryAttributes" :brands="categoryBrands"
-              @filter="handleFilter" @clear="handleClearFilters" />
+              :categories="allCategories" @filter="handleFilter" @clear="handleClearFilters" />
           </div>
         </div>
 
@@ -187,6 +187,7 @@
               :products="allProducts"
               :attributes="categoryAttributes"
               :brands="categoryBrands"
+              :categories="allCategories"
               @filter="handleFilter"
               @clear="handleClearFilters" />
           </div>
@@ -238,6 +239,7 @@ const category = computed(() => (data.value as any)?.category || null)
 const allProducts = computed(() => (data.value as any)?.products || [])
 const categoryAttributes = computed(() => (data.value as any)?.attributes || [])
 const categoryBrands = computed(() => (data.value as any)?.brands || [])
+const allCategories = computed(() => (data.value as any)?.categories || [])
 const error = computed(() => fetchError.value?.data?.message || fetchError.value?.message || null)
 
 // État des filtres et tri
@@ -247,6 +249,7 @@ const currentFilters = ref({
   rating: null as number | null,
   attributes: {} as Record<string, string[]>,
   brands: [] as string[],
+  categories: [] as string[],
   inStock: false,
   onSale: false
 })
@@ -386,6 +389,19 @@ const filteredProducts = computed(() => {
     })
   }
 
+  // Filtrage par catégories
+  if (currentFilters.value.categories && currentFilters.value.categories.length > 0) {
+    filtered = filtered.filter(product => {
+      // Vérifier si le produit appartient à l'une des catégories sélectionnées
+      if (product.categories && Array.isArray(product.categories)) {
+        return product.categories.some((cat: any) =>
+          currentFilters.value.categories.includes(cat.slug)
+        )
+      }
+      return false
+    })
+  }
+
   // Tri
   switch (sortBy.value) {
     case 'price-asc':
@@ -434,6 +450,7 @@ const hasActiveFilters = computed(() => {
     currentFilters.value.inStock ||
     currentFilters.value.onSale ||
     currentFilters.value.brands.length > 0 ||
+    currentFilters.value.categories.length > 0 ||
     Object.values(currentFilters.value.attributes).some(values => values.length > 0)
 })
 
@@ -454,6 +471,7 @@ const handleClearFilters = () => {
     rating: null,
     attributes: {},
     brands: [],
+    categories: [],
     inStock: false,
     onSale: false
   }

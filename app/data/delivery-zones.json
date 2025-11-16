@@ -6,16 +6,16 @@
         {
           "id": 101,
           "name": "Point relais Faya",
-          "price_light": 1500,
-          "price_medium": 2500,
-          "price_heavy": 5000
+          "price_light": 500,
+          "price_medium": 1000,
+          "price_heavy": 1500
         },
         {
           "id": 102,
           "name": "Riviera Faya",
-          "price_light": 500,
-          "price_medium": 1000,
-          "price_heavy": 1500
+          "price_light": 1500,
+          "price_medium": 2500,
+          "price_heavy": 5000
         },
         {
           "id": 103,

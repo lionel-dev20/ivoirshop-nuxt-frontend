@@ -4,27 +4,31 @@
     <div class="lg:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-0">
       <div class="flex justify-between items-center h-16">
 
-        <!-- Menu mobile toggle -->
-        <button 
-            @click="toggleMobileMenu"
-            class="md:hidden p-2 text-gray-400 hover:text-gray-500 transition-colors"
-          >
-            <svg v-if="!isMobileMenuOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-            <svg v-else class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+        <!-- Logo et Menu toggle ensemble -->
+        <div class="flex items-center">
+          <!-- Logo -->
+          <div class="flex-shrink-0">
+            <NuxtLink to="/" class="text-xl font-bold text-gray-900">
+              <img
+                src="/logo/ivoirshopci-coteivoir.png"
+                alt="IvoirShop Logo"
+                class="h-13 w-auto mt-3" />
+            </NuxtLink>
+          </div>
 
-        <!-- Logo -->
-        <div class="flex-shrink-0">
-          <NuxtLink to="/" class="text-xl font-bold text-gray-900">
-            <img
-              src="/logo/ivoirshopci-coteivoir.png"
-              alt="IvoirShop Logo"
-              class="h-13 w-auto mt-3 mr-12" />
-          </NuxtLink>
+          <!-- Menu toggle - visible à côté du logo -->
+          <button 
+              @click="toggleMobileMenu"
+              class="ml-5 p-2 text-gray-400 hover:text-[#ff9900] transition-colors"
+              title="Ouvrir le menu"
+            >
+              <svg v-if="!isMobileMenuOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+              <svg v-else class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
         </div>
 
         <!-- Menu desktop -->
@@ -69,17 +73,17 @@
       </div>
     </div>
 
-    <!-- Overlay pour mobile/tablette -->
+    <!-- Overlay -->
     <div 
       v-if="isMobileMenuOpen"
       @click="closeMobileMenu"
-      class="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden transition-opacity duration-300"
+      class="fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity duration-300"
     ></div>
 
-    <!-- Menu mobile -->
+    <!-- Menu latéral (accessible sur tous les écrans) -->
     <div 
       :class="[
-        'fixed top-0 left-0 h-full w-3/4 max-w-sm bg-white shadow-xl z-50 transform transition-transform duration-300 ease-in-out md:hidden',
+        'fixed top-0 left-0 h-full w-3/4 max-w-sm bg-white shadow-xl z-50 transform transition-transform duration-300 ease-in-out',
         isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
       ]"
     >

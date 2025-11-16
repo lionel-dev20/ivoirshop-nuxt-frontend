@@ -202,7 +202,7 @@
               <!-- ajouter au panier  -->
               <div class="w-full">
                 <button v-if="product.in_stock" @click="addToCart"
-                  class=" hidden md:flex w-full h-13 cursor-pointer bg-[#f19100] hover:bg-[#ff9900]/80 text-white font-semibold py-3 px-4 rounded-[4px] transition-colors items-center justify-center space-x-2">
+                  class="flex w-full h-13 cursor-pointer bg-[#f19100] hover:bg-[#ff9900]/80 text-white font-semibold py-3 px-4 rounded-[4px] transition-colors items-center justify-center space-x-2">
                   <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13l-1.5 6m0 0h9M17 21v-2a2 2 0 00-2-2H9a2 2 0 00-2 2v2">
@@ -215,9 +215,9 @@
                   Produit indisponible
                 </button>
               </div>
-               <h4 class="text-md md:text-lg font-bold hidden md:block">Ou</h4>
+               <h4 class="text-md md:text-lg font-bold hidden">Ou</h4>
               <!-- commander par whatsapp -->
-              <div class="w-full overflow-x-auto">
+              <div class="hidden w-full overflow-x-auto">
                 <button @click="orderViaWhatsapp"
                   class="flex max-w-[270px] md:w-full h-13 min-w-[210px] cursor-pointer bg-[#1aaa0f] hover:bg-[#138c0ade] text-white text-sm md:text-[12px] font-medium md:font-semibold md:py-3 md:px-2 rounded-[4px] transition-colors items-center justify-center space-x-2">
                   <img src="/logo/whatsapp-order.png" class="w-5 h-5 md:w-6 md:h-6" width="24" height="24"/>
@@ -228,15 +228,15 @@
           </div>
 
 
-          <button v-if="product.in_stock" @click="addToCart"
-                  class="w-full md:hidden h-13 cursor-pointer bg-[#f19100] hover:bg-[#ff9900]/80 text-white font-semibold py-3 px-4 rounded-[4px] transition-colors flex items-center justify-center space-x-2">
+          <!-- <button v-if="product.in_stock" @click="addToCart"
+                  class="w-full hidden h-13 cursor-pointer bg-[#f19100] hover:bg-[#ff9900]/80 text-white font-semibold py-3 px-4 rounded-[4px] transition-colors flex items-center justify-center space-x-2">
                   <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13l-1.5 6m0 0h9M17 21v-2a2 2 0 00-2-2H9a2 2 0 00-2 2v2">
                     </path>
                   </svg>
                   <span class="cursor-pointer">Achetez maintenant</span>
-                </button>
+                </button> -->
 
 
           <div class="flex flex-col lg:flex-row md:gap-x-2 items-center justify-between">

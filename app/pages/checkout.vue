@@ -211,12 +211,13 @@
 
             <div class="mt-4">
               <label for="notes" class="block text-sm font-medium text-gray-700 mb-1">
-                Notes de commande (optionnel)
+                Notes de commande <span class="text-red-600">*</span>
               </label>
               <textarea
                 id="notes"
                 v-model="orderForm.notes"
                 rows="3"
+                required
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Instructions spéciales, informations complémentaires..."
               ></textarea>

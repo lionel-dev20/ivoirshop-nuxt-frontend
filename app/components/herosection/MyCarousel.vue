@@ -61,7 +61,7 @@ const showNavigation = computed(() => {
 });
 
 const slides = [
-  { image: '/images/electromenager.png', link: 'https://ivoirshop.ci/categorie/electromenager' },
+  { image: '/images/Electromenager.png', link: 'https://ivoirshop.ci/categorie/electromenager' },
   { image: '/images/gros-electromenager.png', link: 'https://ivoirshop.ci/categorie/gros-electromenager' },
   { image: '/images/Petit-electromenager.png', link: 'https://ivoirshop.ci/categorie/petit-electromenager' },
 ] as const

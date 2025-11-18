@@ -22,7 +22,9 @@
         :key="i"
         class="flex items-center h-auto justify-center bg-gray-200 rounded-lg shadow "
       >
+      <NuxtLink :to="slide.link" target="_blank">
         <img :src="slide.image" :alt="'slide ' + i" class="w-full md:h-[446px] object-cover rounded-sm" />
+      </NuxtLink>
       </SwiperSlide>
     </Swiper>
   </div>
@@ -59,10 +61,9 @@ const showNavigation = computed(() => {
 });
 
 const slides = [
-  { image: 'https://web.archive.org/web/20240216010857if_/https://www.ivoirshop.ci/wp-content/uploads/2024/01/IVS_SLIDER_TV.jpg' },
-  { image: 'https://web.archive.org/web/20240216010935if_/https://app.ivoirshop.ci/wp-content/uploads/2023/11/Slider-8.png' },
-  { image: 'https://web.archive.org/web/20240216010855if_/https://www.ivoirshop.ci/wp-content/uploads/2024/01/IVS_SLIDER_GEN_2.jpg' },
-  { image: 'https://web.archive.org/web/20240216010935if_/https://app.ivoirshop.ci/wp-content/uploads/2023/11/Slider-8.png' }
+  { image: '/images/electromenager.png', link: 'https://ivoirshop.ci/categorie/electromenager' },
+  { image: '/images/gros-electromenager.png', link: 'https://ivoirshop.ci/categorie/gros-electromenager' },
+  { image: '/images/Petit-electromenager.png', link: 'https://ivoirshop.ci/categorie/petit-electromenager' },
 ] as const
 </script>
 

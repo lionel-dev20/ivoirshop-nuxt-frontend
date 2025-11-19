@@ -49,7 +49,7 @@ const items = [
   { image: '/categorieImage/Phone.png', name: 'Phones', link: '/categorie/sports' },
   { image: '/categorieImage/ventilateur-clim.png', name: 'Ventilateur clim', link: '/categorie/aliments' },
   { image: '/categorieImage/PlaqueGaz.png', name: 'Plaque Gaz', link: '/categorie/livres' },
-  { image: '/categorieImage/Bouilloire.png', name: 'Bouilloire', link: '/categorie/jouets' },
+  { image: '/categorieImage/bouilloire.png', name: 'Bouilloire', link: '/categorie/jouets' },
   { image: '/categorieImage/Hoofer.png', name: 'Hoofer', link: '/categorie/auto' },
   { image: '/categorieImage/television.png', name: 'television', link: '/categorie/jardin' },
   { image: '/categorieImage/congelateur.png', name: 'Congelateur', link: '/categorie/musique' },

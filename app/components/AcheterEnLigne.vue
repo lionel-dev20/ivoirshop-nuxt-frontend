@@ -41,22 +41,22 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 
 const items = [
-  { image: 'https://ci.jumia.is/cms/1_2025/W41/Freelink/Reduction.gif', name: 'Categorie de Noel', link: '/categorie/telephones' },
-  { image: 'https://ci.jumia.is/cms/1_2025/W41/Freelink/Nouveaute.gif', name: 'Electromenager', link: '/categorie/electronique' },
-  { image: 'https://ci.jumia.is/cms/1_2025/W41/Freelink/Bebe.png', name: 'Espace culturel', link: '/categorie/mode' },
-  { image: 'https://ci.jumia.is/cms/1_2025/W41/Freelink/Informatique.png', name: 'Ma cave', link: '/categorie/maison' },
-  { image: 'https://ci.jumia.is/cms/1_2025/W41/Freelink/Boutique.gif', name: 'Pharmacie', link: '/categorie/beaute' },
-  { image: 'https://ci.jumia.is/cms/1_2025/W41/Freelink/Pourcentage.png', name: 'Maison', link: '/categorie/sports' },
-  { image: 'https://ci.jumia.is/cms/1_2025/W41/Freelink/FBJ.png', name: 'Vetements & chaussure', link: '/categorie/aliments' },
-  { image: 'https://ci.jumia.is/cms/1_2025/W41/Freelink/Beaute.png', name: 'Purecultures', link: '/categorie/livres' },
-  { image: 'https://ci.jumia.is/cms/1_2025/W41/Freelink/Indispensables.png', name: 'Jouets', link: '/categorie/jouets' },
-  { image: 'https://ci.jumia.is/cms/1_2025/W41/Freelink/Marche.png', name: 'Jardin', link: '/categorie/auto' },
-  { image: 'https://ci.jumia.is/cms/1_2025/W41/Freelink/CI_W41_THUMBNAIL_HOME_PAGE_VIDE_GRNIER_livraison.png', name: 'Jardin', link: '/categorie/jardin' },
-  { image: 'https://ci.jumia.is/cms/1_2025/W41/Freelink/JForce.gif', name: 'Auto-moto', link: '/categorie/musique' },
-  { image: 'https://ci.jumia.is/cms/1_2025/W41/Freelink/Boutique.gif', name: 'Animalerie', link: '/categorie/bijoux' },
-  { image: 'https://ci.jumia.is/cms/1_2025/W41/Freelink/Bebe.png', name: 'Bricolage', link: '/categorie/animaux' },
-  { image: 'https://ci.jumia.is/cms/1_2025/W41/Freelink/Reduction.gif', name: 'Sport & loisirs', link: '/categorie/bureau' },
-  { image: 'https://ci.jumia.is/cms/1_2025/W41/Freelink/Beaute.png', name: 'heigh-tech', link: '/categorie/voyages' },
+  { image: '/categorieImage/Idée-cadeaux.png', name: 'Idée cadeaux', link: '/categorie/telephones' },
+  { image: '/categorieImage/Micro-Onde.png', name: 'Micro-Onde', link: '/categorie/electronique' },
+  { image: '/categorieImage/Bazar.png', name: 'Bazar', link: '/categorie/mode' },
+  { image: '/categorieImage/Haut-parleur.png', name: 'Haut parleur', link: '/categorie/maison' },
+  { image: '/categorieImage/Bebe.png', name: 'Bébé', link: '/categorie/beaute' },
+  { image: '/categorieImage/Phone.png', name: 'Phones', link: '/categorie/sports' },
+  { image: '/categorieImage/ventilateur-clim.png', name: 'Ventilateur clim', link: '/categorie/aliments' },
+  { image: '/categorieImage/PlaqueGaz.png', name: 'Plaque Gaz', link: '/categorie/livres' },
+  { image: '/categorieImage/Bouilloire.png', name: 'Bouilloire', link: '/categorie/jouets' },
+  { image: '/categorieImage/Hoofer.png', name: 'Hoofer', link: '/categorie/auto' },
+  { image: '/categorieImage/television.png', name: 'television', link: '/categorie/jardin' },
+  { image: '/categorieImage/congelateur.png', name: 'Congelateur', link: '/categorie/musique' },
+  { image: '/categorieImage/refigerateur.png', name: 'Refrigerateur', link: '/categorie/bijoux' },
+  { image: '/categorieImage/Gazinière.png', name: 'Gazinière', link: '/categorie/animaux' },
+  { image: '/categorieImage/Mixeur.png', name: 'Mixeur', link: '/categorie/bureau' },
+  { image: '/categorieImage/trotinette.png', name: 'Trotinette', link: '/categorie/voyages' },
 ]
 
 // État pour afficher tous les items ou seulement les premiers

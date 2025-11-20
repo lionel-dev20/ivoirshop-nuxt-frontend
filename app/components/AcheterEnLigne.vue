@@ -41,22 +41,22 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 
 const items = [
-  { image: '/categorieImage/Idée-cadeaux.png', name: 'Idée cadeaux', link: '/categorie/telephones' },
-  { image: '/categorieImage/Micro-Onde.png', name: 'Micro-Onde', link: '/categorie/electronique' },
-  { image: '/categorieImage/Bazar.png', name: 'Bazar', link: '/categorie/mode' },
-  { image: '/categorieImage/Haut-parleur.png', name: 'Haut parleur', link: '/categorie/maison' },
-  { image: '/categorieImage/Bebe.png', name: 'Bébé', link: '/categorie/beaute' },
-  { image: '/categorieImage/Phone.png', name: 'Phones', link: '/categorie/sports' },
-  { image: '/categorieImage/ventilateur-clim.png', name: 'Ventilateur clim', link: '/categorie/aliments' },
-  { image: '/categorieImage/PlaqueGaz.png', name: 'Plaque Gaz', link: '/categorie/livres' },
-  { image: '/categorieImage/bouilloire.png', name: 'Bouilloire', link: '/categorie/jouets' },
-  { image: '/categorieImage/Hoofer.png', name: 'Hoofer', link: '/categorie/auto' },
-  { image: '/categorieImage/television.png', name: 'television', link: '/categorie/jardin' },
-  { image: '/categorieImage/congelateur.png', name: 'Congelateur', link: '/categorie/musique' },
-  { image: '/categorieImage/refigerateur.png', name: 'Refrigerateur', link: '/categorie/bijoux' },
-  { image: '/categorieImage/Gazinière.png', name: 'Gazinière', link: '/categorie/animaux' },
-  { image: '/categorieImage/Mixeur.png', name: 'Mixeur', link: '/categorie/bureau' },
-  { image: '/categorieImage/trotinette.png', name: 'Trotinette', link: '/categorie/voyages' },
+  { image: '/categorieImage/Idée-cadeaux.png', name: 'Idée cadeaux', link: 'https://ivoirshop.ci/categorie/noel' },
+  { image: '/categorieImage/Micro-Onde.png', name: 'Micro-Onde', link: 'https://ivoirshop.ci/categorie/micro-ondes' },
+  { image: '/categorieImage/Bazar.png', name: 'Bazar', link: 'https://ivoirshop.ci/categorie/le-bazar' },
+  { image: '/categorieImage/Haut-parleur.png', name: 'Haut parleur', link: 'https://ivoirshop.ci/categorie/haut-parleurs' },
+  { image: '/categorieImage/Bebe.png', name: 'Bébé', link: 'https://ivoirshop.ci/categorie/produits-pour-bebes' },
+  { image: '/categorieImage/Phone.png', name: 'Phones', link: 'https://ivoirshop.ci/categorie/telephone-tablette' },
+  { image: '/categorieImage/ventilateur-clim.png', name: 'Ventilateur clim', link: 'https://ivoirshop.ci/categorie/chauffage-ventilation' },
+  { image: '/categorieImage/PlaqueGaz.png', name: 'Plaques à Gaz', link: 'https://ivoirshop.ci/categorie/electromenager/appareils-de-cuisson/plaque-a-gaz' },
+  { image: '/categorieImage/bouilloire.png', name: 'Bouilloire', link: 'https://ivoirshop.ci/categorie/electromenager/petit-electromenager/micro-ondes' },
+  { image: '/categorieImage/Hoofer.png', name: 'Hoofer', link: 'https://ivoirshop.ci/categorie/home-cinema' },
+  { image: '/categorieImage/television.png', name: 'Télévision', link: 'https://ivoirshop.ci/categorie/televisions' },
+  { image: '/categorieImage/congelateur.png', name: 'Congélateur', link: 'https://ivoirshop.ci/categorie/electromenager/gros-electromenager/congelateurs' },
+  { image: '/categorieImage/refigerateur.png', name: 'Réfrigérateur', link: 'https://ivoirshop.ci/categorie/electromenager/gros-electromenager/refrigerateurs' },
+  { image: '/categorieImage/Gazinière.png', name: 'Gazinière', link: 'https://ivoirshop.ci/categorie/electromenager/gros-electromenager/gazinieres' },
+  { image: '/categorieImage/Mixeur.png', name: 'Mixeur', link: 'https://ivoirshop.ci/categorie/electromenager/petit-electromenager/mixeurs' },
+  { image: '/categorieImage/trotinette.png', name: 'Trotinette', link: 'https://ivoirshop.ci/categorie/scooters-et-wagons' },
 ]
 
 // État pour afficher tous les items ou seulement les premiers

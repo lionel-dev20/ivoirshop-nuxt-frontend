@@ -418,6 +418,26 @@ useSeoMeta({
   description: 'Finalisez votre commande en toute sécurité'
 })
 
+// Google Analytics (gtag.js)
+useHead({
+  script: [
+    {
+      src: 'https://www.googletagmanager.com/gtag/js?id=G-SRMB4DV3VY',
+      async: true,
+      type: 'text/javascript'
+    },
+    {
+      innerHTML: `
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-SRMB4DV3VY');
+      `,
+      type: 'text/javascript'
+    }
+  ]
+})
+
 // Redirection si panier vide (uniquement côté client)
 if (process.client && cartStore.isEmpty) {
   await navigateTo('/categorie')

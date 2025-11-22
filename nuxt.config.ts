@@ -117,20 +117,20 @@ export default defineNuxtConfig({
           `,
           type: 'text/javascript'
         },
-        {
-          src: 'https://www.googletagmanager.com/gtag/js?id=G-SRMB4DV3VY',
-          async: true,
-          type: 'text/javascript'
-        },
-        {
-          innerHTML: `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-SRMB4DV3VY');
-          `,
-          type: 'text/javascript'
-        }
+        // {
+        //   src: 'https://www.googletagmanager.com/gtag/js?id=G-SRMB4DV3VY',
+        //   async: true,
+        //   type: 'text/javascript'
+        // },
+        // {
+        //   innerHTML: `
+        //     window.dataLayer = window.dataLayer || [];
+        //     function gtag(){dataLayer.push(arguments);}
+        //     gtag('js', new Date());
+        //     gtag('config', 'G-SRMB4DV3VY');
+        //   `,
+        //   type: 'text/javascript'
+        // }
       ] as any,
       noscript: [
         {

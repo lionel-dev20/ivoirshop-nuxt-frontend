@@ -1,7 +1,7 @@
 <template>
     <div class="flex justify-between items-center gap-x-3">
         <!-- Left here baner -->
-        <NuxtLink v-for="(item, index) in bannerAdsPartener" :key="index" to="https://ivoirshop.ci/recherche?q=ilux" target="_blank"
+        <NuxtLink v-for="(item, index) in bannerAdsPartener" :key="index" to="https://ivoirshop.ci/recherche?q=ilux"
             class="hidden md:block object-cover md:min-h-[380px] md:min-w-[250px]  rounded-md justify-start items-center gap-x-2 bg-white py-1.5 px-1.5 border-1 border-gray-100 shadow-md shadow-gray-100">
             <img :src="item.image" alt="Publicité 1" loading="lazy"
                 class="object-cover h-[380px] w-[250px] rounded-md" />
@@ -16,7 +16,7 @@
             <div class="grid grid-cols-4 md:grid-cols-4 lg:grid-cols-5 md:gap-0.5 gap-1 h-full">
                 <NuxtLink to="/" v-for="(item, index) in listParnerImg" :key="index"
                     :class="{'hidden': index >= listParnerImg.length - 3 && screenWidth < 768}"
-                    class="object-cover h-full w-full rounded-md flex justify-start items-center gap-x-0.5 md:gap-x-1 md:gap-y-1 md:py-0.5 py-2 px-2.5 md:px-0.5 bg-white border-1 border-gray-100 shadow-md shadow-gray-100 hover:scale-103 transition-transform duration-200">
+                    class="object-cover h-full w-full rounded-md flex justify-start items-center gap-x-0.5 md:gap-x-1 md:gap-y-1 md:py-0.5 py-0.5 px-0.5 md:px-0.5 bg-white border-1 border-gray-100 shadow-md shadow-gray-100 hover:scale-103 transition-transform duration-200">
                     <img :src="item.image" :alt="item.title" loading="lazy"
                         class="object-cover h-12 w-auto md:w-auto md:h-full block items-center justify-center rounded-md shadow-gray-100" />
                 </NuxtLink>
@@ -25,7 +25,7 @@
 
 
         <!-- Right here baner -->
-        <NuxtLink v-for="(item, index) in bannerAdsPartener" :key="index" to="https://ivoirshop.ci/recherche?q=leadder" target="_blank"
+        <NuxtLink v-for="(item, index) in bannerAdsPartener" :key="index" to="https://ivoirshop.ci/recherche?q=leadder"
             class="hidden md:block object-cover md:min-h-[380px] md:min-w-[250px]  rounded-md flex justify-start items-center gap-x-3 bg-white py-1.5 px-1.5 border-1 border-gray-100 shadow-md shadow-gray-100">
             <img
                 src="/images/partenaire_leadder.png"

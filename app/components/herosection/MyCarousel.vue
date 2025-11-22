@@ -22,7 +22,7 @@
         :key="i"
         class="flex items-center h-auto justify-center bg-gray-200 rounded-lg shadow "
       >
-      <NuxtLink :to="slide.link" target="_blank">
+      <NuxtLink :to="slide.link">
         <img :src="slide.image" :alt="'slide ' + i" class="w-full md:h-[446px] object-cover rounded-sm" />
       </NuxtLink>
       </SwiperSlide>

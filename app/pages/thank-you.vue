@@ -266,8 +266,41 @@ useSeoMeta({
   robots: 'noindex, nofollow' // Page privée
 })
 
+// Type pour les données de commande
+interface OrderItem {
+  product_id?: number | string
+  id?: number | string
+  name: string
+  quantity: number
+  price: number | string
+  image?: any
+}
+
+interface OrderData {
+  order_id?: number | string
+  order_number?: string
+  total: number | string
+  items: OrderItem[]
+  shipping_cost?: number
+  customer?: any
+  date?: string | Date
+  [key: string]: any
+}
+
 // Récupération des données de commande depuis la query ou le sessionStorage
-const orderData = ref(null)
+const orderData = ref<OrderData | null>(null)
+
+// Transformer les produits au format GA4
+const gaItems = computed(() => {
+  if (!orderData.value || !orderData.value.items) return []
+
+  return orderData.value.items.map((item: OrderItem) => ({
+    item_id: item.product_id?.toString() || item.id?.toString() || '',
+    item_name: item.name || '',
+    quantity: item.quantity || 1,
+    price: typeof item.price === 'number' ? item.price : parseFloat(String(item.price)) || 0
+  }))
+})
 
 onMounted(() => {
   // Essaie de récupérer depuis les paramètres de query
@@ -296,6 +329,34 @@ onMounted(() => {
   // Redirection si aucune donnée
   if (!orderData.value) {
     navigateTo('/')
+    return
+  }
+
+  // Envoyer l'événement purchase à Google Analytics
+  if (process.client && orderData.value) {
+    const dataLayer = (window as any).dataLayer || []
+    ;(window as any).dataLayer = dataLayer
+    
+    // Calculer le total (sous-total + livraison)
+    const totalValue = typeof orderData.value.total === 'number' 
+      ? orderData.value.total 
+      : parseFloat(String(orderData.value.total)) || 0
+    
+    dataLayer.push({
+      event: 'purchase',
+      ecommerce: {
+        transaction_id: orderData.value.order_id?.toString() || orderData.value.order_number?.toString() || '',
+        value: totalValue,
+        currency: 'XOF', // Côte d'Ivoire utilise XOF
+        items: gaItems.value
+      }
+    })
+    
+    console.log('✅ Événement purchase envoyé à Google Analytics:', {
+      transaction_id: orderData.value.order_id || orderData.value.order_number,
+      value: totalValue,
+      items_count: gaItems.value.length
+    })
   }
 })
 

@@ -418,25 +418,7 @@ useSeoMeta({
   description: 'Finalisez votre commande en toute sécurité'
 })
 
-// Google Analytics (gtag.js)
-useHead({
-  script: [
-    {
-      src: 'https://www.googletagmanager.com/gtag/js?id=G-SRMB4DV3VY',
-      async: true,
-      type: 'text/javascript'
-    },
-    {
-      innerHTML: `
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-SRMB4DV3VY');
-      `,
-      type: 'text/javascript'
-    }
-  ]
-})
+
 
 // Redirection si panier vide (uniquement côté client)
 if (process.client && cartStore.isEmpty) {
@@ -798,6 +780,15 @@ const submitOrder = async () => {
 // Initialisation
 onMounted(async () => {
   console.log('🚀 Initialisation page checkout')
+  
+  // Envoyer l'événement begin_checkout à Google Analytics
+  if (process.client) {
+    const dataLayer = (window as any).dataLayer || []
+    ;(window as any).dataLayer = dataLayer
+    dataLayer.push({
+      event: 'begin_checkout'
+    })
+  }
   
   // Charger le panier depuis localStorage
   cartStore.loadFromStorage()

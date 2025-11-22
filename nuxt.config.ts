@@ -92,6 +92,7 @@ export default defineNuxtConfig({
         },
         {
           src: 'https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js',
+          async: true,
           defer: true,
           type: 'text/javascript'
         },

@@ -373,7 +373,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
@@ -545,6 +545,28 @@ const logoMethodePaiement = [
     logo: '/logo/visa.webp'
   }
 ]
+
+// Google Analytics - View Item Event
+onMounted(() => {
+  if (process.client && (window as any).gtag && product.value) {
+    const productPrice = product.value.on_sale ? product.value.sale_price : product.value.price
+    const categories = product.value.categories || []
+    const productCategory = categories.length > 0 ? categories[0].name : ''
+
+    (window as any).gtag("event", "view_item", {
+      currency: "XAF",
+      value: productPrice,
+      items: [
+        {
+          item_id: product.value.id,
+          item_name: product.value.name,
+          item_category: productCategory,
+          price: productPrice,
+        }
+      ]
+    });
+  }
+});
 </script>
 
 <style scoped>

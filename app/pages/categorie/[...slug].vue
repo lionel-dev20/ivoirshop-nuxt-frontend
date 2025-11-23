@@ -214,7 +214,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
@@ -502,6 +502,28 @@ useSeoMeta({
   ogTitle: () => category.value?.name,
   ogDescription: () => category.value?.description?.replace(/<[^>]*>/g, '')
 })
+
+// Google Analytics - View Item List Event
+onMounted(() => {
+  if (process.client && (window as any).gtag && category.value && allProducts.value.length > 0) {
+    const categoryName: string = category.value.name || ''
+    
+    (window as any).gtag("event", "view_item_list", {
+      item_list_name: categoryName,
+      items: allProducts.value.map((p: any) => {
+        const productPrice = p.sale_price || p.regular_price || p.price || 0
+        const productCategory = (p.categories && p.categories.length > 0) ? p.categories[0].name : categoryName
+        
+        return {
+          item_id: p.id,
+          item_name: p.name,
+          item_category: productCategory,
+          price: productPrice,
+        }
+      }),
+    });
+  }
+});
 
 </script>
 

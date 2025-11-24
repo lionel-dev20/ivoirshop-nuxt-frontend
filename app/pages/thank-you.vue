@@ -254,7 +254,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
@@ -357,6 +357,24 @@ onMounted(() => {
       value: totalValue,
       items_count: gaItems.value.length
     })
+    
+    // Envoyer l'événement Purchase à Facebook Pixel
+    if (process.client && typeof (window as any).fbq !== 'undefined' && orderData.value) {
+      // Récupérer le montant total de la commande
+      const totalAmount = typeof orderData.value.total === 'number' 
+        ? orderData.value.total 
+        : parseFloat(String(orderData.value.total)) || 0
+      
+      ;(window as any).fbq('track', 'Purchase', {
+        value: totalAmount,
+        currency: 'XOF'
+      })
+      
+      console.log('✅ Événement Purchase envoyé à Facebook Pixel:', {
+        value: totalAmount,
+        currency: 'XOF'
+      })
+    }
   }
 })
 

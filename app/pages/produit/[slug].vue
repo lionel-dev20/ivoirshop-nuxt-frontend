@@ -546,11 +546,16 @@ const logoMethodePaiement = [
   }
 ]
 
-// Google Analytics - View Item Event
+// Google Analytics - View Item Event via dataLayer
 onMounted(() => {
   // Attendre que le produit soit chargé
   const sendViewItemEvent = () => {
-    if (process.client && (window as any).gtag && product.value && !loading.value) {
+    if (!product.value || loading.value) return
+    
+    if (process.client) {
+      // Initialiser dataLayer si nécessaire
+      ;(window as any).dataLayer = (window as any).dataLayer || []
+      
       // Déterminer le prix à utiliser (sale_price si en promotion, sinon regular_price ou price)
       const finalPrice = product.value.on_sale 
         ? (product.value.sale_price || product.value.price || 0)
@@ -563,23 +568,22 @@ onMounted(() => {
       const categories = product.value.categories || []
       const productCategory = categories.length > 0 ? (categories[0].name || '') : ''
       
-      // Construire l'objet item pour Google Analytics
-      const itemData: any = {
-        item_id: String(product.value.id),
-        item_name: product.value.name || '',
-        price: productPrice,
-      }
-      
-      // Ajouter la catégorie si disponible
-      if (productCategory) {
-        itemData.item_category = productCategory
-      }
-      
-      // Envoyer l'événement à Google Analytics
-      (window as any).gtag("event", "view_item", {
-        currency: "XAF",
-        value: productPrice,
-        items: [itemData]
+      // Envoyer l'événement à dataLayer
+      ;(window as any).dataLayer.push({
+        event: 'view_item',
+        ecommerce: {
+          currency: 'XOF',
+          value: productPrice,
+          items: [
+            {
+              item_id: product.value.id,
+              item_name: product.value.name,
+              item_category: productCategory,
+              price: productPrice,
+              quantity: 1
+            }
+          ]
+        }
       })
     }
   }

@@ -373,7 +373,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted } from 'vue'
+import { computed, ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
@@ -548,23 +548,53 @@ const logoMethodePaiement = [
 
 // Google Analytics - View Item Event
 onMounted(() => {
-  if (process.client && (window as any).gtag && product.value) {
-    const productPrice = product.value.on_sale ? product.value.sale_price : product.value.price
-    const categories = product.value.categories || []
-    const productCategory = categories.length > 0 ? categories[0].name : ''
-
-    (window as any).gtag("event", "view_item", {
-      currency: "XAF",
-      value: productPrice,
-      items: [
-        {
-          item_id: product.value.id,
-          item_name: product.value.name,
-          item_category: productCategory,
-          price: productPrice,
-        }
-      ]
-    });
+  // Attendre que le produit soit chargé
+  const sendViewItemEvent = () => {
+    if (process.client && (window as any).gtag && product.value && !loading.value) {
+      // Déterminer le prix à utiliser (sale_price si en promotion, sinon regular_price ou price)
+      const finalPrice = product.value.on_sale 
+        ? (product.value.sale_price || product.value.price || 0)
+        : (product.value.regular_price || product.value.price || 0)
+      
+      // Convertir en nombre si c'est une string
+      const productPrice = typeof finalPrice === 'string' ? parseFloat(finalPrice) : (finalPrice || 0)
+      
+      // Extraire la catégorie
+      const categories = product.value.categories || []
+      const productCategory = categories.length > 0 ? (categories[0].name || '') : ''
+      
+      // Construire l'objet item pour Google Analytics
+      const itemData: any = {
+        item_id: String(product.value.id),
+        item_name: product.value.name || '',
+        price: productPrice,
+      }
+      
+      // Ajouter la catégorie si disponible
+      if (productCategory) {
+        itemData.item_category = productCategory
+      }
+      
+      // Envoyer l'événement à Google Analytics
+      (window as any).gtag("event", "view_item", {
+        currency: "XAF",
+        value: productPrice,
+        items: [itemData]
+      })
+    }
+  }
+  
+  // Si le produit est déjà chargé, envoyer immédiatement
+  if (product.value && !loading.value) {
+    sendViewItemEvent()
+  } else {
+    // Sinon, attendre que le produit soit chargé en observant les changements
+    const unwatch = watch([product, loading], () => {
+      if (product.value && !loading.value) {
+        sendViewItemEvent()
+        unwatch() // Arrêter de surveiller une fois que l'événement est envoyé
+      }
+    }, { immediate: true })
   }
 });
 </script>

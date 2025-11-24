@@ -503,25 +503,52 @@ useSeoMeta({
   ogDescription: () => category.value?.description?.replace(/<[^>]*>/g, '')
 })
 
-// Google Analytics - View Item List Event
+// Google Analytics - View Item List Event via dataLayer
 onMounted(() => {
-  if (process.client && (window as any).gtag && category.value && allProducts.value.length > 0) {
-    const categoryName: string = category.value.name || ''
+  // Attendre que les produits soient chargés
+  const sendViewItemListEvent = () => {
+    if (!allProducts.value || !Array.isArray(allProducts.value) || allProducts.value.length === 0 || loading.value) return
     
-    (window as any).gtag("event", "view_item_list", {
-      item_list_name: categoryName,
-      items: allProducts.value.map((p: any) => {
-        const productPrice = p.sale_price || p.regular_price || p.price || 0
-        const productCategory = (p.categories && p.categories.length > 0) ? p.categories[0].name : categoryName
-        
-        return {
-          item_id: p.id,
-          item_name: p.name,
-          item_category: productCategory,
-          price: productPrice,
+    if (process.client) {
+      // Initialiser dataLayer si nécessaire
+      ;(window as any).dataLayer = (window as any).dataLayer || []
+      
+      // Nom de la catégorie principale
+      const categoryName = category.value?.name || 'Non renseigné'
+      
+      // Envoyer l'événement à dataLayer
+      ;(window as any).dataLayer.push({
+        event: 'view_item_list',
+        ecommerce: {
+          items: allProducts.value.map((p: any) => {
+            // Extraire la catégorie du produit (première catégorie disponible ou catégorie principale)
+            const productCategory = (p.categories && p.categories.length > 0) 
+              ? p.categories[0].name 
+              : categoryName
+            
+            return {
+              item_id: p.id,
+              item_name: p.name,
+              item_category: productCategory || 'Non renseigné',
+              quantity: 1
+            }
+          })
         }
-      }),
-    });
+      })
+    }
+  }
+  
+  // Si les produits sont déjà chargés, envoyer immédiatement
+  if (allProducts.value && allProducts.value.length > 0 && !loading.value) {
+    sendViewItemListEvent()
+  } else {
+    // Sinon, attendre que les produits soient chargés en observant les changements
+    const unwatch = watch([allProducts, loading], () => {
+      if (allProducts.value && allProducts.value.length > 0 && !loading.value) {
+        sendViewItemListEvent()
+        unwatch() // Arrêter de surveiller une fois que l'événement est envoyé
+      }
+    }, { immediate: true })
   }
 });
 

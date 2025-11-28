@@ -1,10 +1,10 @@
 [
   {
     "id": "flash-sale-smartphones",
-    "title": "À ne pas manquer",
-    "categorySlug": "plaque-a-gaz",
-    "endTime": "2025-11-05T10:00:00Z",
+    "title": "Super vente-flash",
+    "categorySlug": "vente-flash",
+    "endTime": "2025-11-29T10:00:00Z",
     "gridColumns": 5,
-    "productsPerPage": 10
+    "productsPerPage": 60
   }
 ]

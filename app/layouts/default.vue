@@ -1,6 +1,6 @@
 <!-- layouts/default.vue -->
 <template>
-  <div class="min-h-screen bg-gray-50 flex flex-col">
+  <div :class="['min-h-screen flex flex-col', isIndexPage ? 'bg-black' : 'bg-gray-50']">
     <TopBanner />
     <AppHeader />
     <main class="flex-1">
@@ -12,5 +12,6 @@
 </template>
 
 <script setup lang="ts">
-// Ce layout sera utilisé automatiquement par Nuxt
+const route = useRoute()
+const isIndexPage = computed(() => route.path === '/')
 </script>

@@ -1,6 +1,6 @@
 <template>
         <div class="flex-col w-64 rounded-lg flex items-center justify-between gap-y-4 overflow-hidden">
-          <div class="bg-white py-5 border-1 border-gray-100 shadow-md shadow-gray-100 w-full h-full rounded-md flex flex-col">
+          <div class="bg-white py-3.5 border-1 border-gray-100 shadow-md shadow-gray-100 w-full h-full rounded-md flex flex-col">
            <div  v-for="(item, index) in avantsliste" :key="index" class="flex justify-start items-center gap-x-2">
             <NuxtLink to="/" class="object-cover h-full w-full rounded-md flex justify-start items-center gap-x-3 py-2 px-5">
               <div class=" border-amber-500 rounded-full p-2 border-2 bg-white">

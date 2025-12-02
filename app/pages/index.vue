@@ -160,35 +160,6 @@ import ProductCarousel from '~/components/ProductCarousel.vue';
 import Countdowns from '~/components/collectionHomepage/Countdowns.vue'; // Import the new component
 import countdownsData from '~/data/countdowns.json'; // Import the countdowns data
 
-const newProducts = [
-  {
-    id: 1,
-    name: 'Chaussures de sport',
-    slug: 'chaussures-de-sport',
-    thumbnail: '/images/shoes.jpg',
-    regularPrice: 79.99,
-    isNew: true
-  },
-  {
-    id: 2,
-    name: 'Sac à dos',
-    slug: 'sac-a-dos',
-    thumbnail: '/images/bag.jpg',
-    regularPrice: 49.99,
-    salePrice: 39.99
-  }
-]
-
-const saleProducts = [
-  {
-    id: 3,
-    name: 'T-shirt coton',
-    slug: 'tshirt-coton',
-    thumbnail: '/images/tshirt.jpg',
-    regularPrice: 19.99,
-    salePrice: 14.99
-  }
-]
 
 // Gestionnaires d'événements pour le carousel
 const handleAddToCart = (product) => {

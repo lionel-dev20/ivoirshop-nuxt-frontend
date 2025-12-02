@@ -10,10 +10,10 @@
       <div class="flex items-center gap-2">
         <span class="text-sm">Termine dans</span>
         <div class="flex items-center gap-1 font-mono text-lg">
-          <span class="bg-white text-gray-800 md:px-5 md:py-2 md:rounded-sm px-2 py-1 rounded-md">{{ formattedCountdown.days }}j</span> :
-          <span class="bg-white text-gray-800 md:px-5 md:py-2 md:rounded-sm px-2 py-1 rounded-md">{{ formattedCountdown.hours }}h</span> :
-          <span class="bg-white text-gray-800 md:px-5 md:py-2 md:rounded-sm px-2 py-1 rounded-md">{{ formattedCountdown.minutes }}m</span> :
-          <span class="bg-white text-gray-800 md:px-5 md:py-2 md:rounded-sm px-2 py-1 rounded-md">{{ formattedCountdown.seconds }}s</span>
+          <span class="bg-white font-sora font-bold text-gray-800 md:px-5 md:py-2 md:rounded-sm px-2 py-1 rounded-md">{{ formattedCountdown.days }}j</span> :
+          <span class="bg-white font-sora font-bold text-gray-800 md:px-5 md:py-2 md:rounded-sm px-2 py-1 rounded-md">{{ formattedCountdown.hours }}h</span> :
+          <span class="bg-white font-sora font-bold text-gray-800 md:px-5 md:py-2 md:rounded-sm px-2 py-1 rounded-md">{{ formattedCountdown.minutes }}m</span> :
+          <span class="bg-white font-sora font-bold text-gray-800 md:px-5 md:py-2 md:rounded-sm px-2 py-1 rounded-md">{{ formattedCountdown.seconds }}s</span>
         </div>
         <NuxtLink to="/products/flash-sales" class="hidden md:block ml-4 px-4 py-1.5 md:px-5 md:py-3 md:rounded-sm bg-white text-gray-800 rounded-md text-sm font-semibold hover:bg-gray-100 transition-colors">
           Voir Plus
@@ -341,7 +341,7 @@ watch(() => props.categorySlug, () => {
 .countdown-header {
   @apply mb-3;
   /* Utilisation de la couleur personnalisée */
-  background-color: #cc6a01; /* Orange Ivoirshop */
+  background-color: #ff0000; /* Orange Ivoirshop */
 }
 
 .error-container {

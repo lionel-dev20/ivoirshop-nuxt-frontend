@@ -61,6 +61,7 @@ const showNavigation = computed(() => {
 });
 
 const slides = [
+  { image: '/images/noel.png', link: 'https://ivoirshop.ci/categorie/jouets-bebe-tout-petits' },
   { image: '/images/Electromenager.png', link: 'https://ivoirshop.ci/categorie/electromenager' },
   { image: '/images/gros-electromenager.png', link: 'https://ivoirshop.ci/categorie/gros-electromenager' },
   { image: '/images/Petit-electromenager.png', link: 'https://ivoirshop.ci/categorie/petit-electromenager' },

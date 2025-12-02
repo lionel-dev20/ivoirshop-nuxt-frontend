@@ -19,11 +19,13 @@ body {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-    font-family: "Sora", sans-serif;
+  font-family: "Sora", sans-serif;
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
   font-size: 0.8rem;
   padding: 0;
+  background: #ffe4e4 !important;
+  min-height: 100vh;
 }
 </style>

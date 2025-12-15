@@ -466,6 +466,54 @@ const addToCart = () => {
 
   cartStore.addItem(cartProduct, quantity.value)
   cartStore.openCart()
+
+  // Google Analytics - Add to Cart Event
+  if (process.client) {
+    // Initialiser dataLayer si nécessaire
+    ;(window as any).dataLayer = (window as any).dataLayer || []
+
+    // Déterminer le prix à utiliser (sale_price si en promotion, sinon regular_price ou price)
+    const finalPrice = product.value.on_sale 
+      ? (product.value.sale_price || product.value.price || 0)
+      : (product.value.regular_price || product.value.price || 0)
+    
+    // Convertir en nombre si c'est une string
+    const productPrice = typeof finalPrice === 'string' ? parseFloat(finalPrice) : (finalPrice || 0)
+    
+    // Extraire la catégorie
+    const categories = product.value.categories || []
+    const productCategory = categories.length > 0 ? (categories[0].name || 'Non renseigné') : 'Non renseigné'
+    
+    // Obtenir le lien du produit
+    const productLink = window.location.href
+
+    // Envoyer l'événement add_to_cart à dataLayer
+    ;(window as any).dataLayer.push({
+      event: 'add_to_cart',
+      ecommerce: {
+        currency: 'XOF',
+        value: productPrice * quantity.value,
+        items: [
+          {
+            item_id: String(product.value.sku || product.value.id),
+            item_name: product.value.name,
+            item_category: productCategory,
+            item_url: productLink,
+            price: productPrice,
+            quantity: quantity.value
+          }
+        ]
+      }
+    })
+
+    console.log('🛒 add_to_cart envoyé :', {
+      nom: product.value.name,
+      prix: productPrice,
+      lien: productLink,
+      quantité: quantity.value,
+      stock_quantity: product.value.stock_quantity
+    })
+  }
 }
 
 const orderViaWhatsapp = () => {

@@ -8,14 +8,33 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L4.35 16.5c-.77.833.192 2.5 1.732 2.5z" />
           </svg>
         </div>
-        <h3>Erreur de chargement</h3>
-        <p>{{ error.message || 'Une erreur est survenue lors du chargement de la catégorie.' }}</p>
-        <button @click="refreshCategory" class="retry-button">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-          </svg>
-          Réessayer
-        </button>
+        <h3>Catégorie non trouvée</h3>
+        <p class="mb-4">{{ error.message || 'Une erreur est survenue lors du chargement de la catégorie.' }}</p>
+        
+        <div v-if="categorySlug || categoryId" class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4 text-sm text-left">
+          <p class="font-semibold text-yellow-900 mb-2">🔍 Paramètres de recherche :</p>
+          <ul class="space-y-1 text-yellow-800">
+            <li v-if="categorySlug">• Slug recherché : <code class="bg-yellow-100 px-2 py-1 rounded">{{ categorySlug }}</code></li>
+            <li v-if="categoryId">• ID recherché : <code class="bg-yellow-100 px-2 py-1 rounded">{{ categoryId }}</code></li>
+          </ul>
+          <p class="mt-3 text-yellow-900">
+            💡 <strong>Astuce :</strong> Vérifiez que le slug ou l'ID correspond bien à une catégorie existante dans WooCommerce.
+            <br>
+            Consultez la console du navigateur pour voir les slugs disponibles.
+          </p>
+        </div>
+        
+        <div class="flex gap-2 justify-center">
+          <button @click="refreshCategory" class="retry-button">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            Réessayer
+          </button>
+          <NuxtLink to="/debug-categories" class="debug-button">
+            🔍 Voir les catégories disponibles
+          </NuxtLink>
+        </div>
       </div>
     </div>
 
@@ -23,15 +42,26 @@
     <div v-if="categoryData" class="category-content">
       
       <!-- Header de la catégorie -->
-      <div class="category-header bg-white px-2 py-1.5 lg:px-5 lg:py-1 p-2 border border-gray-100 rounded-sm shadow shadow-gray-100">
-        <div class="category-hero" :class="{ 'with-image': categoryData.image }">
-          <div class="category-info" :class="{ 'overlay-content': categoryData.image }">
-            
+      <div class="category-header bg-white px-2 py-1.5 lg:px-5 lg:py-3 p-2 border border-gray-100 rounded-sm shadow shadow-gray-100">
+        <div class="category-hero flex items-center justify-between" :class="{ 'with-image': categoryData.image }">
+          <div class="category-info flex-1" :class="{ 'overlay-content': categoryData.image }">
             <!-- Titre et description -->
             <div class="category-details">
               <h1 class="category-title">{{ categoryData.name }}</h1>
             </div>
           </div>
+          
+          <!-- Bouton Voir plus -->
+          <NuxtLink 
+            v-if="categoryData && categoryData.slug" 
+            :to="`/categorie/${categoryData.slug}`"
+            class="hidden md:flex justify-center items-center w-full md:w-auto ml-4 px-4 py-1.5 md:px-5 md:py-3 md:rounded-sm bg-white text-gray-800 rounded-md text-sm font-semibold hover:bg-gray-100 transition-colors"
+            >
+            <span>Voir plus</span>
+            <svg class="w-4 h-4 inline ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </NuxtLink>
         </div>
       </div>
 
@@ -208,22 +238,53 @@ const { data: fetchedCategory, pending, error, refresh: refreshCategory } = awai
     try {
       let categoryInfo = null
       
-      // Récupérer les informations de la catégorie
+      // Récupérer toutes les catégories disponibles
+      const categories = await $fetch('/api/api/v1/categories')
+      console.log('📦 Catégories disponibles:', categories.map(c => ({ id: c.id, slug: c.slug, name: c.name })))
+      
+      // Recherche intelligente de la catégorie
       if (props.categoryId) {
-        const categories = await $fetch('/api/api/v1/categories')
+        // Recherche par ID (prioritaire)
         categoryInfo = categories.find(cat => cat.id == props.categoryId)
+        console.log(`🔍 Recherche par ID (${props.categoryId}):`, categoryInfo ? `✅ Trouvée: ${categoryInfo.name}` : '❌ Non trouvée')
       } else if (props.categorySlug) {
-        const categories = await $fetch('/api/api/v1/categories')
+        // Recherche par slug exact
         categoryInfo = categories.find(cat => cat.slug === props.categorySlug)
+        console.log(`🔍 Recherche par slug exact (${props.categorySlug}):`, categoryInfo ? `✅ Trouvée: ${categoryInfo.name}` : '❌ Non trouvée')
+        
+        // Si non trouvé, essayer une recherche plus flexible
+        if (!categoryInfo) {
+          // Recherche par slug partiel ou par nom similaire
+          const normalizedSlug = props.categorySlug.toLowerCase().replace(/[-_]/g, '')
+          categoryInfo = categories.find(cat => {
+            const catSlug = cat.slug.toLowerCase().replace(/[-_]/g, '')
+            const catName = cat.name.toLowerCase().replace(/[-_\s]/g, '')
+            return catSlug.includes(normalizedSlug) || catName.includes(normalizedSlug) || normalizedSlug.includes(catSlug)
+          })
+          
+          if (categoryInfo) {
+            console.log(`⚠️ Catégorie trouvée avec recherche flexible: "${categoryInfo.name}" (slug: "${categoryInfo.slug}")`)
+            console.log(`💡 Suggestion: Utilisez category-slug="${categoryInfo.slug}" ou :category-id="${categoryInfo.id}"`)
+          }
+        }
       }
       
       if (!categoryInfo) {
-        console.error('Catégorie non trouvée avec les paramètres:', { categoryId: props.categoryId, categorySlug: props.categorySlug })
-        throw new Error('Catégorie non trouvée')
+        const availableSlugs = categories.map(c => c.slug).join(', ')
+        console.error('❌ Catégorie non trouvée avec les paramètres:', { 
+          categoryId: props.categoryId, 
+          categorySlug: props.categorySlug,
+          slugsDisponibles: availableSlugs
+        })
+        
+        throw new Error(`Catégorie non trouvée. Slugs disponibles: ${availableSlugs}`)
       }
+      
+      console.log(`✅ Catégorie finale sélectionnée: "${categoryInfo.name}" (ID: ${categoryInfo.id}, slug: "${categoryInfo.slug}")`)
       
       // Récupérer les produits de la catégorie (sans limite)
       const products = await $fetch(`/api/api/v1/products/category/${categoryInfo.id}`)
+      console.log(`📦 ${products?.products?.length || 0} produits trouvés pour la catégorie "${categoryInfo.name}"`)
       
       // Récupérer les sous-catégories
       const allCategories = await $fetch('/api/api/v1/categories')
@@ -482,6 +543,10 @@ if (categoryData.value) {
   @apply inline-flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors;
 }
 
+.debug-button {
+  @apply inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors;
+}
+
 /* Header de catégorie */
 .category-header {
   @apply md:mb-3 mb-1;
@@ -500,7 +565,19 @@ if (categoryData.value) {
 }
 
 .category-title {
-  @apply text-xl lg:text-2xl font-bold mb-1;
+  @apply text-xl lg:text-2xl font-bold mb-0;
+}
+
+.view-more-button {
+  @apply inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg transition-all duration-200;
+}
+
+.view-more-button svg {
+  @apply transition-transform duration-200;
+}
+
+.view-more-button:hover svg {
+  @apply translate-x-1;
 }
 
 /* Grille de produits */

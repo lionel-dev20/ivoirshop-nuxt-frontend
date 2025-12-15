@@ -3,20 +3,7 @@
   <div class="product-carousel-container">
     <!-- Header du carousel -->
     <div class="carousel-header" :class="headerBackgroundColor + ' px-2 py-1.5 lg:px-6 lg:py-3 p-2 border border-gray-100 rounded-sm shadow shadow-gray-100'">
-      <h2 class="carousel-title" :class="headerColor">{{ title }}</h2>
-
-      <button
-        v-if="showViewAllButton"
-        @click="viewAllProducts"
-        class="view-all-button"
-        :class="{ active: isViewingAll }"
-      >
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-        </svg>
-        {{ isViewingAll ? 'Pagination' : 'Voir tout' }}
-      </button>
-
+      <h2 class="carousel-title" :class="headerColor">{{ displayTitle }}</h2>
 
       <div class="carousel-navigation">
         <button 
@@ -36,6 +23,32 @@
           <svg class="w-5 h-5" :class="navigationColor" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
           </svg>
+        </button>
+      </div>
+
+      <div class="carousel-actions">
+        <!-- Bouton Voir plus (vers la page catégorie) -->
+        <NuxtLink 
+          v-if="categorySlug"
+          :to="`/categorie/${categorySlug}`"
+          class="hidden md:flex justify-center items-center w-full md:w-auto ml-4 px-4 py-1.5 md:px-5 md:py-3 md:rounded-sm bg-white text-gray-800 rounded-md text-sm font-semibold hover:bg-gray-100 transition-colors"
+          >
+          <span>Voir plus</span>
+          <svg class="w-4 h-4 inline ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </NuxtLink>
+
+        <button
+          v-if="showViewAllButton"
+          @click="viewAllProducts"
+          class="view-all-button"
+          :class="{ active: isViewingAll }"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+          </svg>
+          {{ isViewingAll ? 'Pagination' : 'Voir tout' }}
         </button>
       </div>
     </div>
@@ -131,6 +144,7 @@ interface Props {
   headerColor?: string // Nouvelle prop
   bannerImageUrl?: string // Nouvelle prop
   gridColumns?: number // Nouvelle prop
+  autoFetchTitle?: boolean // Nouvelle prop pour récupérer automatiquement le titre
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -144,7 +158,8 @@ const props = withDefaults(defineProps<Props>(), {
   navigationColor: 'text-gray-900', // Valeur par défaut
   headerColor: 'text-gray-900', // Valeur par défaut
   bannerImageUrl: '', // Valeur par défaut
-  gridColumns: 4 // Valeur par défaut
+  gridColumns: 4, // Valeur par défaut
+  autoFetchTitle: true // Par défaut, récupérer automatiquement le titre
 })
 
 // Emits
@@ -162,6 +177,7 @@ const swiperInitialized = ref(false)
 const pending = ref(false)
 const error = ref<any>(null)
 const products = ref<any[]>([])
+const dynamicTitle = ref<string>(props.title || 'Produits recommandés')
 
 // ID unique pour isoler les carousels
 const uniqueId = Math.random().toString(36).substr(2, 9)
@@ -169,6 +185,11 @@ const uniqueId = Math.random().toString(36).substr(2, 9)
 // Compteur d'images chargées
 const loadedImagesCount = ref(0)
 const totalImagesCount = ref(0)
+
+// Computed pour le titre final à afficher
+const displayTitle = computed(() => {
+  return dynamicTitle.value
+})
 
 // Configuration Swiper
 const swiperModules = [Navigation, Pagination]
@@ -269,6 +290,34 @@ const slideNext = () => {
 const slidePrev = () => {
   if (swiper.value) {
     swiper.value.slidePrev()
+  }
+}
+
+// Fonction pour récupérer le titre de la catégorie
+const fetchCategoryTitle = async () => {
+  if (!props.autoFetchTitle || !props.categorySlug) {
+    return
+  }
+
+  // Si un titre a déjà été fourni en props, on l'utilise
+  if (props.title && props.title !== 'Produits recommandés') {
+    dynamicTitle.value = props.title
+    return
+  }
+
+  try {
+    const category = await $fetch(`/api/wordpress/category/${props.categorySlug}`)
+    
+    if (category && category.name) {
+      dynamicTitle.value = category.name
+      console.log(`✅ Titre automatique récupéré: "${category.name}" pour la catégorie "${props.categorySlug}"`)
+    } else {
+      // Fallback au titre fourni ou au titre par défaut
+      dynamicTitle.value = props.title || 'Produits recommandés'
+    }
+  } catch (err) {
+    console.log(`⚠️ Impossible de récupérer le titre pour "${props.categorySlug}", utilisation du titre par défaut`)
+    dynamicTitle.value = props.title || 'Produits recommandés'
   }
 }
 
@@ -389,6 +438,10 @@ const handleImageLoaded = () => {
 
 // Lifecycle
 onMounted(async () => {
+  // Récupérer d'abord le titre de la catégorie si nécessaire
+  await fetchCategoryTitle()
+  
+  // Puis charger les produits
   await loadProducts()
   await nextTick()
   
@@ -415,7 +468,8 @@ watch(() => props.categoryId, () => {
   loadProducts()
 })
 
-watch(() => props.categorySlug, () => {
+watch(() => props.categorySlug, async () => {
+  await fetchCategoryTitle()
   loadProducts()
 })
 </script>
@@ -434,8 +488,24 @@ watch(() => props.categorySlug, () => {
   @apply md:text-2xl text-2xl font-bold mb-0 text-left flex-1;
 }
 
+.carousel-actions {
+  @apply flex items-center gap-2;
+}
+
 .carousel-navigation {
   @apply flex items-center space-x-2;
+}
+
+.view-more-link {
+  @apply inline-flex items-center gap-2 px-3 py-2 text-sm font-semibold text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg transition-all duration-200;
+}
+
+.view-more-link svg {
+  @apply transition-transform duration-200;
+}
+
+.view-more-link:hover svg {
+  @apply translate-x-1;
 }
 
 .nav-button {

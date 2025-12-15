@@ -27,7 +27,6 @@
     <AcheterEnLigne />
     <div class="md:h-8 h-4"></div>
     <ProductCarousel 
-      title="Illux | Partenaire officiel"
       category-slug="plaque-a-gaz"
       :grid-columns="bannerImageUrl ? 4 : 5"
       :max-products="20"
@@ -36,6 +35,7 @@
       :show-pagination="true"
       :show-navigation="true"
       :show-view-all-button="true"
+      :auto-fetch-title="true"
       header-background-color="bg-red-500"
       header-color="text-white"
       navigation-color="text-black"
@@ -49,7 +49,6 @@
 
     <!-- Carousel de produits -->
     <ProductCarousel 
-      title="Nouveautés"
        category-slug="televisions"
        :grid-columns="bannerImageUrl ? 4 : 5"
       :max-products="20"
@@ -57,6 +56,7 @@
       :autoplay-delay="4000"
       :show-pagination="true"
       :show-navigation="true"
+      :auto-fetch-title="true"
       @add-to-cart="handleAddToCart"
       @product-click="handleProductClick"
       @quick-view="handleQuickView"
@@ -68,13 +68,13 @@
    <div class="h-8"></div>
     <!-- Carousel de promotions -->
     <ProductCarousel
-title="Nos meilleurs offres"
 category-slug="maison-cuisine-jardin"
 :grid-columns="bannerImageUrl ? 4 : 5"
 :max-products="12"
 :autoplay="false"
 :show-pagination="true"
 :show-navigation="true"
+:auto-fetch-title="true"
 @add-to-cart="handleAddToCart"
 @product-click="handleProductClick"
 @quick-view="handleQuickView"
@@ -83,13 +83,13 @@ category-slug="maison-cuisine-jardin"
    <div class="md:h-8 h-4"></div>
     <!-- Carousel de promotions -->
     <ProductCarousel
-title="Equipez votre cuisine"
 category-slug="petit-electromenager"
 :grid-columns="bannerImageUrl ? 4 : 4"
 :max-products="12"
 :autoplay="false"
 :show-pagination="true"
 :show-navigation="true"
+:auto-fetch-title="true"
 banner-image-url="/images/newbannerA.webp"
 @add-to-cart="handleAddToCart"
 @product-click="handleProductClick"
@@ -100,13 +100,13 @@ banner-image-url="/images/newbannerA.webp"
 <div class="md:h-8 h-4"></div>
     <!-- Carousel de promotions -->
     <ProductCarousel
-title="Télévision et Audio"
 category-slug="televisions"
 :grid-columns="bannerImageUrl ? 4 : 4"
 :max-products="12"
 :autoplay="false"
 :show-pagination="true"
 :show-navigation="true"
+:auto-fetch-title="true"
 banner-image-url="/images/bannertvs.webp"
 @add-to-cart="handleAddToCart"
 @product-click="handleProductClick"
@@ -117,7 +117,6 @@ banner-image-url="/images/bannertvs.webp"
     <CollectionHomepageDoubleBanner1 />
 <div class="md:h-8 h-4"></div>
     <ProductCarousel 
-      title="Sélections spéciale"
        category-slug="cuiseurs-a-riz"
        :grid-columns="bannerImageUrl ? 4 : 5"
       :max-products="20"
@@ -125,6 +124,7 @@ banner-image-url="/images/bannertvs.webp"
       :autoplay-delay="300"
       :show-pagination="true"
       :show-navigation="true"
+      :auto-fetch-title="true"
       header-background-color="bg-[#ff9900]"
       header-color="text-white"
       navigation-color="text-black"
@@ -135,7 +135,7 @@ banner-image-url="/images/bannertvs.webp"
     />
     <div class="md:h-8 h-4"></div>
     <Nouveaute 
-     category-slug="le-bazar"
+     :category-id="300"
      header-background-color="'bg-orange-500'"
       header-color="text-white"
      :grid-columns="5"
@@ -184,6 +184,11 @@ const countdowns = ref(countdownsData);
 </script>
 
 <style scoped>
-
+a.view-more-link {
+  padding: 10px !important;
+    border-radius: 4px !important;
+    margin-left: 12px !important;
+    color: #000 !important;
+}
 </style>
 

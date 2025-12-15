@@ -15,8 +15,15 @@
           <span class="bg-white font-sora font-bold text-gray-800 md:px-5 md:py-2 md:rounded-sm px-2 py-1 rounded-md">{{ formattedCountdown.minutes }}m</span> :
           <span class="bg-white font-sora font-bold text-gray-800 md:px-5 md:py-2 md:rounded-sm px-2 py-1 rounded-md">{{ formattedCountdown.seconds }}s</span>
         </div>
-        <NuxtLink to="/products/flash-sales" class="hidden md:block ml-4 px-4 py-1.5 md:px-5 md:py-3 md:rounded-sm bg-white text-gray-800 rounded-md text-sm font-semibold hover:bg-gray-100 transition-colors">
-          Voir Plus
+        <NuxtLink 
+          v-if="categorySlug"
+          :to="`/categorie/${categorySlug}`" 
+          class="hidden md:block ml-4 px-4 py-1.5 md:px-5 md:py-3 md:rounded-sm bg-white text-gray-800 rounded-md text-sm font-semibold hover:bg-gray-100 transition-colors"
+        >
+          <span>Voir Plus</span>
+          <svg class="w-4 h-4 inline ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
         </NuxtLink>
       </div>
     </div>

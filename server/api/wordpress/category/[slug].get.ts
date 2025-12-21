@@ -18,12 +18,19 @@ export default defineEventHandler(async (event) => {
   try {
     console.log(`Récupération de la catégorie avec slug: ${slug}`)
     
+    // Vérifier si le slug est un ID numérique
+    const isNumericId = !isNaN(Number(slug)) && slug.trim() !== ''
+    const categoryId = isNumericId ? Number(slug) : null
+    
     // Essayer d'abord l'endpoint personnalisé
     try {
       const categories = await $fetch(`${config.WORDPRESS_URL}/wp-json/custom/v1/categories`)
       
       if (categories && Array.isArray(categories)) {
-        const category = categories.find((cat: any) => cat.slug === slug)
+        // Si c'est un ID numérique, chercher par ID, sinon par slug
+        const category = categoryId 
+          ? categories.find((cat: any) => cat.id === categoryId)
+          : categories.find((cat: any) => cat.slug === slug)
         
         if (category) {
           console.log(`Catégorie trouvée via endpoint personnalisé: ${category.name}`)
@@ -41,7 +48,35 @@ export default defineEventHandler(async (event) => {
     }
 
     // Fallback vers WooCommerce
-    const categories = await $fetch(`${config.WORDPRESS_URL}/wp-json/wc/v3/products/categories`, {
+    let categories
+    if (categoryId) {
+      // Si c'est un ID numérique, récupérer directement par ID
+      try {
+        const category = await $fetch(`${config.WORDPRESS_URL}/wp-json/wc/v3/products/categories/${categoryId}`, {
+          params: {
+            consumer_key: config.WOOCOMMERCE_CONSUMER_KEY,
+            consumer_secret: config.WOOCOMMERCE_CONSUMER_SECRET
+          }
+        })
+        
+        if (category) {
+          console.log(`Catégorie trouvée via WooCommerce (par ID): ${category.name}`)
+          return {
+            id: category.id,
+            name: category.name,
+            slug: category.slug,
+            description: category.description || '',
+            image: category.image?.src || null,
+            count: category.count || 0
+          }
+        }
+      } catch (idError) {
+        console.log(`Erreur lors de la récupération par ID ${categoryId}, tentative par slug...`)
+      }
+    }
+    
+    // Essayer par slug si ce n'est pas un ID ou si la recherche par ID a échoué
+    categories = await $fetch(`${config.WORDPRESS_URL}/wp-json/wc/v3/products/categories`, {
       params: {
         slug: slug,
         per_page: 1,

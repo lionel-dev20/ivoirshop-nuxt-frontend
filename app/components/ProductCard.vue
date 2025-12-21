@@ -31,7 +31,7 @@
     <!-- Infos produit -->
     <div class="flex flex-col flex-1">
       <NuxtLink
-        :to="`/product/${product.slug}`"
+        :to="`/produit/${product.slug}`"
         class="text-gray-800 font-medium line-clamp-1"
       >
         {{ product.name }}

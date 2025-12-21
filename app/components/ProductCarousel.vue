@@ -29,8 +29,8 @@
       <div class="carousel-actions">
         <!-- Bouton Voir plus (vers la page catégorie) -->
         <NuxtLink 
-          v-if="categorySlug"
-          :to="`/categorie/${categorySlug}`"
+          v-if="categorySlugForLink"
+          :to="`/categorie/${categorySlugForLink}`"
           class="hidden md:flex justify-center items-center w-full md:w-auto ml-4 px-4 py-1.5 md:px-5 md:py-3 md:rounded-sm bg-white text-gray-800 rounded-md text-sm font-semibold hover:bg-gray-100 transition-colors"
           >
           <span>Voir plus</span>
@@ -178,6 +178,7 @@ const pending = ref(false)
 const error = ref<any>(null)
 const products = ref<any[]>([])
 const dynamicTitle = ref<string>(props.title || 'Produits recommandés')
+const categoryData = ref<any>(null) // Stocker les données de la catégorie pour récupérer le slug
 
 // ID unique pour isoler les carousels
 const uniqueId = Math.random().toString(36).substr(2, 9)
@@ -189,6 +190,19 @@ const totalImagesCount = ref(0)
 // Computed pour le titre final à afficher
 const displayTitle = computed(() => {
   return dynamicTitle.value
+})
+
+// Computed pour le slug de la catégorie (utilisé pour le lien "Voir plus")
+const categorySlugForLink = computed(() => {
+  // Si categorySlug est fourni directement, l'utiliser
+  if (props.categorySlug) {
+    return props.categorySlug
+  }
+  // Sinon, utiliser le slug de la catégorie récupérée
+  if (categoryData.value && categoryData.value.slug) {
+    return categoryData.value.slug
+  }
+  return null
 })
 
 // Configuration Swiper
@@ -295,7 +309,7 @@ const slidePrev = () => {
 
 // Fonction pour récupérer le titre de la catégorie
 const fetchCategoryTitle = async () => {
-  if (!props.autoFetchTitle || !props.categorySlug) {
+  if (!props.autoFetchTitle || (!props.categorySlug && !props.categoryId)) {
     return
   }
 
@@ -306,18 +320,23 @@ const fetchCategoryTitle = async () => {
   }
 
   try {
-    const category = await $fetch(`/api/wordpress/category/${props.categorySlug}`)
+    // Utiliser categoryId si disponible, sinon categorySlug
+    const identifier = props.categoryId ? props.categoryId.toString() : props.categorySlug
+    const category = await $fetch(`/api/wordpress/category/${identifier}`)
     
     if (category && category.name) {
       dynamicTitle.value = category.name
-      console.log(`✅ Titre automatique récupéré: "${category.name}" pour la catégorie "${props.categorySlug}"`)
+      // Stocker les données de la catégorie pour récupérer le slug
+      categoryData.value = category
     } else {
       // Fallback au titre fourni ou au titre par défaut
       dynamicTitle.value = props.title || 'Produits recommandés'
+      categoryData.value = null
     }
   } catch (err) {
-    console.log(`⚠️ Impossible de récupérer le titre pour "${props.categorySlug}", utilisation du titre par défaut`)
+    const identifier = props.categoryId ? props.categoryId.toString() : props.categorySlug
     dynamicTitle.value = props.title || 'Produits recommandés'
+    categoryData.value = null
   }
 }
 
@@ -354,7 +373,6 @@ const loadProducts = async () => {
       // Si l'API retourne directement un tableau de produits
       products.value = response.slice(0, props.maxProducts)
     } else {
-      console.warn('Format de réponse API inattendu:', response)
       products.value = []
     }
     
@@ -362,7 +380,6 @@ const loadProducts = async () => {
     totalImagesCount.value = products.value.length
     loadedImagesCount.value = 0
   } catch (err: any) {
-    console.error('Erreur lors du chargement des produits:', err)
     error.value = {
       message: err.message || 'Une erreur est survenue lors du chargement des produits.',
       statusCode: err.statusCode || 500
@@ -388,11 +405,9 @@ const loadGenericProducts = async () => {
     } else if (response && Array.isArray(response)) {
       products.value = response.slice(0, props.maxProducts)
     } else {
-      console.warn('Format de réponse API inattendu pour les produits génériques:', response)
       products.value = []
     }
   } catch (err: any) {
-    console.error('Erreur lors du chargement des produits génériques:', err)
     error.value = {
       message: err.message || 'Une erreur est survenue lors du chargement des produits.',
       statusCode: err.statusCode || 500
@@ -464,7 +479,8 @@ watch(() => products.value, () => {
   }
 }, { deep: true })
 
-watch(() => props.categoryId, () => {
+watch(() => props.categoryId, async () => {
+  await fetchCategoryTitle()
   loadProducts()
 })
 

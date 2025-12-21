@@ -6,8 +6,9 @@
       <RightDoubleAds class="hidden md:block" />
     </div>
     <div class="md:h-4 h-4"></div>
-    <ListPartner />
-    <div class="md:h-6 h-4"></div>      <!-- <div class="h-8"></div> -->
+    <!-- <ListPartner />
+    <div class="md:h-6 h-4"></div>     -->
+      <!-- <div class="h-8"></div> -->
    
     <!-- Carrousels de produits et compte à rebours -->
     <div v-for="countdown in countdowns" :key="countdown.id">
@@ -24,10 +25,37 @@
         @wishlist-toggle="handleWishlistToggle"
       />
     </div>
-    <AcheterEnLigne />
+
     <div class="md:h-8 h-4"></div>
     <ProductCarousel 
-      category-slug="plaque-a-gaz"
+      :category-id="353"
+      :grid-columns="bannerImageUrl ? 4 : 4"
+      :max-products="20"
+      :autoplay="true"
+      :autoplay-delay="300"
+      :show-pagination="true"
+      :show-navigation="true"
+      :show-view-all-button="true"
+      :auto-fetch-title="true"
+      header-background-color="bg-white"
+      header-color="text-black"
+      navigation-color="text-black"
+      banner-image-url="/images/newbannerA.webp"
+      @add-to-cart="handleAddToCart"
+      @product-click="handleProductClick"
+      @quick-view="handleQuickView"
+      @wishlist-toggle="handleWishlistToggle"
+    />
+
+    <div class="md:h-8 h-4"></div>
+
+    <AcheterEnLigne />
+    
+
+    <div class="md:h-8 h-4"></div>
+
+    <ProductCarousel 
+      :category-id="347"
       :grid-columns="bannerImageUrl ? 4 : 5"
       :max-products="20"
       :autoplay="true"
@@ -36,7 +64,7 @@
       :show-navigation="true"
       :show-view-all-button="true"
       :auto-fetch-title="true"
-      header-background-color="bg-red-500"
+      header-background-color="bg-[#a50a0a]"
       header-color="text-white"
       navigation-color="text-black"
       @add-to-cart="handleAddToCart"
@@ -46,86 +74,17 @@
     />
 
     <div class="md:h-8 h-4"></div>
-
-    <!-- Carousel de produits -->
     <ProductCarousel 
-       category-slug="televisions"
-       :grid-columns="bannerImageUrl ? 4 : 5"
-      :max-products="20"
-      :autoplay="true"
-      :autoplay-delay="4000"
-      :show-pagination="true"
-      :show-navigation="true"
-      :auto-fetch-title="true"
-      @add-to-cart="handleAddToCart"
-      @product-click="handleProductClick"
-      @quick-view="handleQuickView"
-      @wishlist-toggle="handleWishlistToggle"
-    />
-    
-    <div class="md:h-8 h-4"></div>
-    <CollectionHomepageDoubleBanner />
-   <div class="h-8"></div>
-    <!-- Carousel de promotions -->
-    <ProductCarousel
-category-slug="maison-cuisine-jardin"
-:grid-columns="bannerImageUrl ? 4 : 5"
-:max-products="12"
-:autoplay="false"
-:show-pagination="true"
-:show-navigation="true"
-:auto-fetch-title="true"
-@add-to-cart="handleAddToCart"
-@product-click="handleProductClick"
-@quick-view="handleQuickView"
-@wishlist-toggle="handleWishlistToggle"
-/>
-   <div class="md:h-8 h-4"></div>
-    <!-- Carousel de promotions -->
-    <ProductCarousel
-category-slug="petit-electromenager"
-:grid-columns="bannerImageUrl ? 4 : 4"
-:max-products="12"
-:autoplay="false"
-:show-pagination="true"
-:show-navigation="true"
-:auto-fetch-title="true"
-banner-image-url="/images/newbannerA.webp"
-@add-to-cart="handleAddToCart"
-@product-click="handleProductClick"
-@quick-view="handleQuickView"
-@wishlist-toggle="handleWishlistToggle"
-/>
-
-<div class="md:h-8 h-4"></div>
-    <!-- Carousel de promotions -->
-    <ProductCarousel
-category-slug="televisions"
-:grid-columns="bannerImageUrl ? 4 : 4"
-:max-products="12"
-:autoplay="false"
-:show-pagination="true"
-:show-navigation="true"
-:auto-fetch-title="true"
-banner-image-url="/images/bannertvs.webp"
-@add-to-cart="handleAddToCart"
-@product-click="handleProductClick"
-@quick-view="handleQuickView"
-@wishlist-toggle="handleWishlistToggle"
-/>
-    <div class="md:h-8 h-4"></div>
-    <CollectionHomepageDoubleBanner1 />
-<div class="md:h-8 h-4"></div>
-    <ProductCarousel 
-       category-slug="cuiseurs-a-riz"
-       :grid-columns="bannerImageUrl ? 4 : 5"
+      :category-id="354"
+      :grid-columns="bannerImageUrl ? 4 : 5"
       :max-products="20"
       :autoplay="true"
       :autoplay-delay="300"
       :show-pagination="true"
       :show-navigation="true"
+      :show-view-all-button="true"
       :auto-fetch-title="true"
-      header-background-color="bg-[#ff9900]"
+      header-background-color="bg-[#019d39]"
       header-color="text-white"
       navigation-color="text-black"
       @add-to-cart="handleAddToCart"
@@ -133,11 +92,230 @@ banner-image-url="/images/bannertvs.webp"
       @quick-view="handleQuickView"
       @wishlist-toggle="handleWishlistToggle"
     />
+
+    <div class="md:h-8 h-4"></div>
+    <CollectionHomepageDoubleBanner :banners="doubleBanners[0]" />
+
+    <div class="md:h-8 h-4"></div>
+    <ProductCarousel 
+      :category-id="355"
+      :grid-columns="bannerImageUrl ? 4 : 5"
+      :max-products="20"
+      :autoplay="true"
+      :autoplay-delay="300"
+      :show-pagination="true"
+      :show-navigation="true"
+      :show-view-all-button="true"
+      :auto-fetch-title="true"
+      header-background-color="bg-white"
+      header-color="text-black"
+      navigation-color="text-black"
+      @add-to-cart="handleAddToCart"
+      @product-click="handleProductClick"
+      @quick-view="handleQuickView"
+      @wishlist-toggle="handleWishlistToggle"
+    />
+
+    <div class="md:h-8 h-4"></div>
+    <ProductCarousel 
+      :category-id="356"
+      :grid-columns="bannerImageUrl ? 4 : 4"
+      :max-products="20"
+      :autoplay="true"
+      :autoplay-delay="300"
+      :show-pagination="true"
+      :show-navigation="true"
+      :show-view-all-button="true"
+      :auto-fetch-title="true"
+      header-background-color="bg-white"
+      header-color="text-black"
+      navigation-color="text-black"
+      banner-image-url="/images/newbannerA.webp"
+      @add-to-cart="handleAddToCart"
+      @product-click="handleProductClick"
+      @quick-view="handleQuickView"
+      @wishlist-toggle="handleWishlistToggle"
+    />
+
+    <div class="md:h-8 h-4"></div>
+    <ProductCarousel 
+      :category-id="357"
+      :grid-columns="bannerImageUrl ? 4 : 5"
+      :max-products="20"
+      :autoplay="true"
+      :autoplay-delay="300"
+      :show-pagination="true"
+      :show-navigation="true"
+      :show-view-all-button="true"
+      :auto-fetch-title="true"
+      header-background-color="bg-white"
+      header-color="text-black"
+      navigation-color="text-black"
+      @add-to-cart="handleAddToCart"
+      @product-click="handleProductClick"
+      @quick-view="handleQuickView"
+      @wishlist-toggle="handleWishlistToggle"
+    />
+
+    <div class="md:h-8 h-4"></div>
+    <CollectionHomepageDoubleBanner :banners="doubleBanners[1]" />
+    <div class="md:h-8 h-4"></div>
+
+    <ProductCarousel 
+      :category-id="358"
+      :grid-columns="bannerImageUrl ? 4 : 5"
+      :max-products="20"
+      :autoplay="true"
+      :autoplay-delay="300"
+      :show-pagination="true"
+      :show-navigation="true"
+      :show-view-all-button="true"
+      :auto-fetch-title="true"
+      header-background-color="bg-white"
+      header-color="text-black"
+      navigation-color="text-black"
+      @add-to-cart="handleAddToCart"
+      @product-click="handleProductClick"
+      @quick-view="handleQuickView"
+      @wishlist-toggle="handleWishlistToggle"
+    />
+
+    <div class="md:h-8 h-4"></div>
+    <ProductCarousel 
+      :category-id="359"
+      :grid-columns="bannerImageUrl ? 4 : 5"
+      :max-products="20"
+      :autoplay="true"
+      :autoplay-delay="300"
+      :show-pagination="true"
+      :show-navigation="true"
+      :show-view-all-button="true"
+      :auto-fetch-title="true"
+      header-background-color="bg-white"
+      header-color="text-black"
+      navigation-color="text-black"
+      banner-image-url="/images/newbannerA.webp"
+      @add-to-cart="handleAddToCart"
+      @product-click="handleProductClick"
+      @quick-view="handleQuickView"
+      @wishlist-toggle="handleWishlistToggle"
+    />
+
+    <div class="md:h-8 h-4"></div>
+    <ProductCarousel 
+      :category-id="312"
+      :grid-columns="bannerImageUrl ? 4 : 5"
+      :max-products="20"
+      :autoplay="true"
+      :autoplay-delay="300"
+      :show-pagination="true"
+      :show-navigation="true"
+      :show-view-all-button="true"
+      :auto-fetch-title="true"
+      header-background-color="bg-white"
+      header-color="text-black"
+      navigation-color="text-black"
+      @add-to-cart="handleAddToCart"
+      @product-click="handleProductClick"
+      @quick-view="handleQuickView"
+      @wishlist-toggle="handleWishlistToggle"
+    />
+
+    <div class="md:h-8 h-4"></div>
+    <CollectionHomepageDoubleBanner :banners="doubleBanners[2]" />
+    <div class="md:h-8 h-4"></div>
+
+    <ProductCarousel 
+      :category-id="360"
+      :grid-columns="bannerImageUrl ? 4 : 5"
+      :max-products="20"
+      :autoplay="true"
+      :autoplay-delay="300"
+      :show-pagination="true"
+      :show-navigation="true"
+      :show-view-all-button="true"
+      :auto-fetch-title="true"
+      header-background-color="bg-white"
+      header-color="text-black"
+      navigation-color="text-black"
+      @add-to-cart="handleAddToCart"
+      @product-click="handleProductClick"
+      @quick-view="handleQuickView"
+      @wishlist-toggle="handleWishlistToggle"
+    />
+
+    <div class="md:h-8 h-4"></div>
+
+    <ProductCarousel 
+      :category-id="361"
+      :grid-columns="bannerImageUrl ? 4 : 5"
+      :max-products="20"
+      :autoplay="true"
+      :autoplay-delay="300"
+      :show-pagination="true"
+      :show-navigation="true"
+      :show-view-all-button="true"
+      :auto-fetch-title="true"
+      header-background-color="bg-white"
+      header-color="text-black"
+      navigation-color="text-black"
+      banner-image-url="/images/newbannerA.webp"
+      @add-to-cart="handleAddToCart"
+      @product-click="handleProductClick"
+      @quick-view="handleQuickView"
+      @wishlist-toggle="handleWishlistToggle"
+    />
+
+    <div class="md:h-8 h-4"></div>
+    <div class="md:h-8 h-4"></div>
+
+    <ProductCarousel 
+      :category-id="362"
+      :grid-columns="bannerImageUrl ? 4 : 5"
+      :max-products="20"
+      :autoplay="true"
+      :autoplay-delay="300"
+      :show-pagination="true"
+      :show-navigation="true"
+      :show-view-all-button="true"
+      :auto-fetch-title="true"
+      header-background-color="bg-white"
+      header-color="text-black"
+      navigation-color="text-black"
+      banner-image-url="/images/newbannerA.webp"
+      @add-to-cart="handleAddToCart"
+      @product-click="handleProductClick"
+      @quick-view="handleQuickView"
+      @wishlist-toggle="handleWishlistToggle"
+    />
+
+    <div class="md:h-8 h-4"></div>
+
+    <ProductCarousel 
+      :category-id="363"
+      :grid-columns="bannerImageUrl ? 4 : 5"
+      :max-products="20"
+      :autoplay="true"
+      :autoplay-delay="300"
+      :show-pagination="true"
+      :show-navigation="true"
+      :show-view-all-button="true"
+      :auto-fetch-title="true"
+      header-background-color="bg-white"
+      header-color="text-black"
+      navigation-color="text-black"
+      @add-to-cart="handleAddToCart"
+      @product-click="handleProductClick"
+      @quick-view="handleQuickView"
+      @wishlist-toggle="handleWishlistToggle"
+    />
+
+    
     <div class="md:h-8 h-4"></div>
     <Nouveaute 
      :category-id="300"
      header-background-color="'bg-orange-500'"
-      header-color="text-white"
+      header-color="text-black"
      :grid-columns="5"
      :products-per-page="30"
      :products-limit="30"
@@ -181,6 +359,49 @@ const handleWishlistToggle = (product) => {
 
 // Expose countdownsData to the template
 const countdowns = ref(countdownsData);
+
+// Tableau de données pour les bannières doubles
+const doubleBanners = ref([
+  // Première bannière (ligne 97)
+  [
+    {
+      image: 'https://site.glotelho.cm/media/wysiwyg/DOUBLE-BANNER0110_01.webp',
+      link: '/',
+      alt: 'Banner 1'
+    },
+    {
+      image: 'https://site.glotelho.cm/media/wysiwyg/DOUBLE-BANNER0110_02.webp',
+      link: '/',
+      alt: 'Banner 2'
+    }
+  ],
+  // Deuxième bannière (ligne 161)
+  [
+    {
+      image: 'https://site.glotelho.cm/media/wysiwyg/DOUBLE-BANNER1209_02.webp',
+      link: '/',
+      alt: 'Banner 3'
+    },
+    {
+      image: 'https://site.glotelho.cm/media/wysiwyg/DOUBLE-BANNER1209_01.webp',
+      link: '/',
+      alt: 'Banner 4'
+    }
+  ],
+  // Troisième bannière (ligne 225)
+  [
+    {
+      image: 'https://site.glotelho.cm/media/wysiwyg/DOUBLE-BANNER0110_01.webp',
+      link: '/',
+      alt: 'Banner 5'
+    },
+    {
+      image: 'https://site.glotelho.cm/media/wysiwyg/DOUBLE-BANNER0110_02.webp',
+      link: '/',
+      alt: 'Banner 6'
+    }
+  ]
+]);
 </script>
 
 <style scoped>

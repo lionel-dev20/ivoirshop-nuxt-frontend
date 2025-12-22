@@ -5,10 +5,10 @@
       <HerosectionMyCarousel />
       <RightDoubleAds class="hidden md:block" />
     </div>
-    <div class="md:h-8 h-4"></div>
-    <!-- <ListPartner />
-    <div class="md:h-6 h-4"></div>     -->
-      <!-- <div class="h-8"></div> -->
+    <div class="md:h-6 h-4"></div>
+    <ListPartner />
+    <div class="md:h-6 h-4"></div>    
+      <div class="h-8"></div>
    
     <!-- Carrousels de produits et compte à rebours -->
     <div v-for="countdown in countdowns" :key="countdown.id">

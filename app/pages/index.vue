@@ -47,11 +47,8 @@
       @wishlist-toggle="handleWishlistToggle"
     />
 
-    <div class="md:h-4 h-4"></div>
 
     <AcheterEnLigne />
-    
-
     <div class="md:h-4 h-4"></div>
 
     <ProductCarousel 
@@ -73,7 +70,7 @@
       @wishlist-toggle="handleWishlistToggle"
     />
 
-    <div class="md:h-8 h-4"></div>
+    <div class="md:h-4 h-4"></div>
     <ProductCarousel 
       :category-id="354"
       :grid-columns="bannerImageUrl ? 4 : 5"
@@ -116,7 +113,7 @@
       @wishlist-toggle="handleWishlistToggle"
     />
 
-    <div class="md:h-8 h-4"></div>
+    <div class="md:h-4 h-4"></div>
     <ProductCarousel 
       :category-id="356"
       :grid-columns="bannerImageUrl ? 4 : 4"
@@ -137,7 +134,7 @@
       @wishlist-toggle="handleWishlistToggle"
     />
 
-    <div class="md:h-8 h-4"></div>
+    <div class="md:h-4 h-4"></div>
     <ProductCarousel 
       :category-id="357"
       :grid-columns="bannerImageUrl ? 4 : 5"
@@ -180,7 +177,7 @@
       @wishlist-toggle="handleWishlistToggle"
     />
 
-    <div class="md:h-8 h-4"></div>
+    <div class="md:h-4 h-4"></div>
     <ProductCarousel 
       :category-id="359"
       :grid-columns="bannerImageUrl ? 4 : 4"
@@ -201,7 +198,7 @@
       @wishlist-toggle="handleWishlistToggle"
     />
 
-    <div class="md:h-8 h-4"></div>
+    <div class="md:h-4 h-4"></div>
     <ProductCarousel 
       :category-id="312"
       :grid-columns="bannerImageUrl ? 4 : 5"
@@ -244,7 +241,7 @@
       @wishlist-toggle="handleWishlistToggle"
     />
 
-    <div class="md:h-8 h-4"></div>
+    <div class="md:h-4 h-4"></div>
     <ProductCarousel 
       :category-id="361"
       :grid-columns="bannerImageUrl ? 4 : 5"
@@ -265,7 +262,7 @@
       @wishlist-toggle="handleWishlistToggle"
     />
 
-    <div class="md:h-8 h-4"></div>
+    <div class="md:h-4 h-4"></div>
     <ProductCarousel 
       :category-id="362"
       :grid-columns="bannerImageUrl ? 4 : 5"
@@ -286,7 +283,7 @@
       @wishlist-toggle="handleWishlistToggle"
     />
 
-    <div class="md:h-8 h-4"></div>
+    <div class="md:h-4 h-4"></div>
 
     <ProductCarousel 
       :category-id="363"
@@ -308,7 +305,7 @@
     />
 
     
-    <div class="md:h-8 h-4"></div>
+    <div class="md:h-4 h-4"></div>
     <Nouveaute 
      :category-id="300"
      header-background-color="'bg-orange-500'"
@@ -362,12 +359,12 @@ const doubleBanners = ref([
   // Première bannière (ligne 97)
   [
     {
-      image: 'https://site.glotelho.cm/media/wysiwyg/DOUBLE-BANNER0110_01.webp',
+      image: '/images/slide_objet_et_prix.png',
       link: '/',
       alt: 'Banner 1'
     },
     {
-      image: 'https://site.glotelho.cm/media/wysiwyg/DOUBLE-BANNER0110_02.webp',
+      image: '/images/slide_objet_et_prix.pngvrai_1_3.png',
       link: '/',
       alt: 'Banner 2'
     }
@@ -375,12 +372,12 @@ const doubleBanners = ref([
   // Deuxième bannière (ligne 161)
   [
     {
-      image: 'https://site.glotelho.cm/media/wysiwyg/DOUBLE-BANNER1209_02.webp',
+      image: '/images/slide_objet_et_prix.pngvrai_1_4.png',
       link: '/',
       alt: 'Banner 3'
     },
     {
-      image: 'https://site.glotelho.cm/media/wysiwyg/DOUBLE-BANNER1209_01.webp',
+      image: '/images/slide_objet_et_prix.pngvrai_1_5.png',
       link: '/',
       alt: 'Banner 4'
     }
@@ -388,12 +385,12 @@ const doubleBanners = ref([
   // Troisième bannière (ligne 225)
   [
     {
-      image: 'https://site.glotelho.cm/media/wysiwyg/DOUBLE-BANNER0110_01.webp',
+      image: '/images/slide_objet_et_prix.pngvrai_2.png',
       link: '/',
       alt: 'Banner 5'
     },
     {
-      image: 'https://site.glotelho.cm/media/wysiwyg/DOUBLE-BANNER0110_02.webp',
+      image: '/images/slide_objet_et_prix1.png',
       link: '/',
       alt: 'Banner 6'
     }

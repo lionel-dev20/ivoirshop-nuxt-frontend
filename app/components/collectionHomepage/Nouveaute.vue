@@ -240,17 +240,14 @@ const { data: fetchedCategory, pending, error, refresh: refreshCategory } = awai
       
       // Récupérer toutes les catégories disponibles
       const categories = await $fetch('/api/api/v1/categories')
-      console.log('📦 Catégories disponibles:', categories.map(c => ({ id: c.id, slug: c.slug, name: c.name })))
       
       // Recherche intelligente de la catégorie
       if (props.categoryId) {
         // Recherche par ID (prioritaire)
         categoryInfo = categories.find(cat => cat.id == props.categoryId)
-        console.log(`🔍 Recherche par ID (${props.categoryId}):`, categoryInfo ? `✅ Trouvée: ${categoryInfo.name}` : '❌ Non trouvée')
       } else if (props.categorySlug) {
         // Recherche par slug exact
         categoryInfo = categories.find(cat => cat.slug === props.categorySlug)
-        console.log(`🔍 Recherche par slug exact (${props.categorySlug}):`, categoryInfo ? `✅ Trouvée: ${categoryInfo.name}` : '❌ Non trouvée')
         
         // Si non trouvé, essayer une recherche plus flexible
         if (!categoryInfo) {
@@ -263,28 +260,19 @@ const { data: fetchedCategory, pending, error, refresh: refreshCategory } = awai
           })
           
           if (categoryInfo) {
-            console.log(`⚠️ Catégorie trouvée avec recherche flexible: "${categoryInfo.name}" (slug: "${categoryInfo.slug}")`)
-            console.log(`💡 Suggestion: Utilisez category-slug="${categoryInfo.slug}" ou :category-id="${categoryInfo.id}"`)
           }
         }
       }
       
       if (!categoryInfo) {
         const availableSlugs = categories.map(c => c.slug).join(', ')
-        console.error('❌ Catégorie non trouvée avec les paramètres:', { 
-          categoryId: props.categoryId, 
-          categorySlug: props.categorySlug,
-          slugsDisponibles: availableSlugs
-        })
         
         throw new Error(`Catégorie non trouvée. Slugs disponibles: ${availableSlugs}`)
       }
       
-      console.log(`✅ Catégorie finale sélectionnée: "${categoryInfo.name}" (ID: ${categoryInfo.id}, slug: "${categoryInfo.slug}")`)
       
       // Récupérer les produits de la catégorie (sans limite)
       const products = await $fetch(`/api/api/v1/products/category/${categoryInfo.id}`)
-      console.log(`📦 ${products?.products?.length || 0} produits trouvés pour la catégorie "${categoryInfo.name}"`)
       
       // Récupérer les sous-catégories
       const allCategories = await $fetch('/api/api/v1/categories')
@@ -296,7 +284,6 @@ const { data: fetchedCategory, pending, error, refresh: refreshCategory } = awai
         subcategories: subCats
       }
     } catch (err) {
-      console.error('Erreur lors du fetch de la catégorie:', err)
       throw err
     }
   },

@@ -25,7 +25,6 @@ export default defineEventHandler(async (event) => {
     }
     
   } catch (err: any) {
-    console.error('Erreur lors de la récupération des statistiques:', err)
     
     return {
       success: false,

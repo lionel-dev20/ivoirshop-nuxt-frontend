@@ -9,7 +9,6 @@ export default defineEventHandler(async (event) => {
     const productSlug = params.slug
     const runtimeConfig = useRuntimeConfig()
     
-    console.log('Recherche du produit:', productSlug)
 
     if (!runtimeConfig.WC_STORE_URL && !runtimeConfig.WORDPRESS_URL) {
       throw createError({ 
@@ -33,7 +32,6 @@ export default defineEventHandler(async (event) => {
       axiosConfig
     )
 
-    console.log('Produit trouvé:', data.product?.name)
 
     return {
       product: data.product,
@@ -42,13 +40,6 @@ export default defineEventHandler(async (event) => {
     }
     
   } catch (err: any) {
-    console.error('Erreur détaillée:', {
-      message: err.message,
-      response: err.response?.data,
-      status: err.response?.status,
-      url: err.config?.url
-    })
-    
     if (err.response?.status === 404) {
       throw createError({ 
         statusCode: 404, 

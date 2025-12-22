@@ -11,12 +11,10 @@ export default defineEventHandler(async (event) => {
   }
 
   if (!config.WORDPRESS_URL) {
-    console.warn('WORDPRESS_URL non défini')
     return null
   }
 
   try {
-    console.log(`Récupération de la catégorie avec slug: ${slug}`)
     
     // Vérifier si le slug est un ID numérique
     const isNumericId = !isNaN(Number(slug)) && slug.trim() !== ''
@@ -33,7 +31,6 @@ export default defineEventHandler(async (event) => {
           : categories.find((cat: any) => cat.slug === slug)
         
         if (category) {
-          console.log(`Catégorie trouvée via endpoint personnalisé: ${category.name}`)
           return {
             id: category.id,
             name: category.name,
@@ -44,7 +41,6 @@ export default defineEventHandler(async (event) => {
         }
       }
     } catch (customError) {
-      console.log('Endpoint personnalisé non disponible, tentative avec WooCommerce...')
     }
 
     // Fallback vers WooCommerce
@@ -60,7 +56,6 @@ export default defineEventHandler(async (event) => {
         })
         
         if (category) {
-          console.log(`Catégorie trouvée via WooCommerce (par ID): ${category.name}`)
           return {
             id: category.id,
             name: category.name,
@@ -71,7 +66,6 @@ export default defineEventHandler(async (event) => {
           }
         }
       } catch (idError) {
-        console.log(`Erreur lors de la récupération par ID ${categoryId}, tentative par slug...`)
       }
     }
     
@@ -87,7 +81,6 @@ export default defineEventHandler(async (event) => {
 
     if (categories && Array.isArray(categories) && categories.length > 0) {
       const category = categories[0]
-      console.log(`Catégorie trouvée via WooCommerce: ${category.name}`)
       
       return {
         id: category.id,
@@ -99,11 +92,9 @@ export default defineEventHandler(async (event) => {
       }
     }
 
-    console.log(`Aucune catégorie trouvée pour le slug: ${slug}`)
     return null
 
   } catch (error: any) {
-    console.error('Erreur lors de la récupération de la catégorie:', error.message)
     return null
   }
 })

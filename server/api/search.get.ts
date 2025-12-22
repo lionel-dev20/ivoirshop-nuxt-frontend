@@ -29,7 +29,6 @@ export default defineEventHandler(async (event) => {
       version: 'wc/v3',
     })
 
-    console.log('Recherche de TOUS les produits pour:', searchTerm)
 
     try {
       // Récupérer TOUS les produits correspondant à la recherche avec pagination automatique
@@ -41,7 +40,6 @@ export default defineEventHandler(async (event) => {
       let totalPages = 0
 
       while (hasMoreProducts) {
-        console.log(`Recherche - page ${currentPage}...`)
         const { data: pageProducts, headers } = await api.get('products', {
           search: searchTerm.trim(),
           per_page: productsPerPage,
@@ -60,7 +58,6 @@ export default defineEventHandler(async (event) => {
           totalProducts = parseInt(headers['x-wp-total'] || '0')
           totalPages = parseInt(headers['x-wp-totalpages'] || '0')
           
-          console.log(`✅ Page ${currentPage}/${totalPages}: ${pageProducts.length} produits (${allProducts.length}/${totalProducts} total)`)
           
           if (currentPage >= totalPages) {
             hasMoreProducts = false
@@ -74,7 +71,6 @@ export default defineEventHandler(async (event) => {
 
       const products = allProducts
 
-      console.log(`✅ RECHERCHE TERMINÉE: ${products.length} produits trouvés pour "${searchTerm}"`)
 
       // Formater les produits
       const formattedProducts = products.map((product: any) => ({
@@ -114,14 +110,7 @@ export default defineEventHandler(async (event) => {
       }
 
     } catch (wcError: any) {
-      console.error('Erreur WooCommerce:', {
-        message: wcError.message,
-        status: wcError.response?.status,
-        data: wcError.response?.data
-      })
-
       // Fallback : données de test
-      console.log('Utilisation de données de test pour la recherche...')
       return { 
         products: [
           {
@@ -153,11 +142,6 @@ export default defineEventHandler(async (event) => {
     }
     
   } catch (err: any) {
-    console.error('Erreur lors de la recherche:', {
-      message: err.message,
-      stack: err.stack
-    })
-    
     throw createError({ 
       statusCode: 500, 
       statusMessage: `Erreur lors de la recherche: ${err.message}` 

@@ -11,7 +11,6 @@ export default defineEventHandler(async (event) => {
 
     // Vérification de la configuration
     if (!WORDPRESS_URL || !CONSUMER_KEY || !CONSUMER_SECRET) {
-      console.error('Configuration WooCommerce manquante')
       throw createError({ 
         statusCode: 500, 
         statusMessage: 'Configuration WooCommerce manquante' 
@@ -31,7 +30,6 @@ export default defineEventHandler(async (event) => {
       }
     }
 
-    console.log('Récupération des marques...')
 
     let brands: any[] = []
 
@@ -52,9 +50,7 @@ export default defineEventHandler(async (event) => {
         count: brand.count,
         image: brand.image?.src || null
       }))
-      console.log(`${brands.length} marques trouvées via taxonomie 'brands'`)
     } catch (err: any) {
-      console.log('Taxonomie brands non disponible, essai avec l\'attribut brand...')
       
       // Méthode 2 : Essayer de récupérer les marques via l'attribut 'brand' ou 'marque'
       try {
@@ -75,7 +71,6 @@ export default defineEventHandler(async (event) => {
         )
 
         if (brandAttribute) {
-          console.log('Attribut marque trouvé:', brandAttribute.name)
           
           // Récupérer les termes de cet attribut
           const { data: terms } = await axios.get(
@@ -94,12 +89,9 @@ export default defineEventHandler(async (event) => {
             image: null
           }))
           
-          console.log(`${brands.length} marques trouvées via attribut`)
         } else {
-          console.log('Aucun attribut marque trouvé')
         }
       } catch (attrErr) {
-        console.error('Erreur lors de la récupération des marques via attribut:', attrErr)
       }
     }
 
@@ -109,12 +101,6 @@ export default defineEventHandler(async (event) => {
     }
     
   } catch (err: any) {
-    console.error('Erreur lors de la récupération des marques:', {
-      message: err.message,
-      response: err.response?.data,
-      status: err.response?.status
-    })
-    
     // Retourner des marques vides en cas d'erreur
     return {
       brands: [],

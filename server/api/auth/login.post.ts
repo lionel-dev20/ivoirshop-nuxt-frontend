@@ -70,7 +70,6 @@ export default defineEventHandler(async (event) => {
       }
     } catch (wcErr) {
       // Si on ne peut pas récupérer depuis WooCommerce, on continue avec les données JWT
-      console.warn('Impossible de récupérer les détails WooCommerce:', wcErr)
     }
 
     return {
@@ -78,7 +77,6 @@ export default defineEventHandler(async (event) => {
       success: true,
     }
   } catch (err: any) {
-    console.error('Erreur login:', err)
     
     const statusCode = err.response?.status || err.statusCode || 401
     const message = err.response?.data?.message || err.statusMessage || 'Identifiants incorrects'

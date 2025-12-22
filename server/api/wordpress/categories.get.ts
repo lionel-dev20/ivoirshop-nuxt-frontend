@@ -3,19 +3,16 @@ export default defineEventHandler(async () => {
   const config = useRuntimeConfig()
   
   if (!config.WORDPRESS_URL) {
-    console.warn('WORDPRESS_URL non défini, utilisation des catégories de fallback')
     return getFallbackCategories()
   }
 
   try {
-    console.log('Récupération des catégories depuis WordPress...')
     
     // Essayer d'abord l'endpoint personnalisé
     try {
       const categories = await $fetch(`${config.WORDPRESS_URL}/wp-json/custom/v1/categories`)
       
       if (categories && Array.isArray(categories) && categories.length > 0) {
-        console.log(`Récupération de ${categories.length} catégories depuis l'endpoint personnalisé`)
         
         // Transformer les catégories pour le format attendu
         const transformedCategories = categories.map(category => ({
@@ -30,11 +27,9 @@ export default defineEventHandler(async () => {
         return transformedCategories
       }
     } catch (customError) {
-      console.log('Endpoint personnalisé non disponible:', customError.message)
     }
 
     // Fallback vers WooCommerce
-    console.log('Tentative avec WooCommerce...')
     
     const categories = await $fetch(`${config.WORDPRESS_URL}/wp-json/wc/v3/products/categories`, {
       params: {
@@ -48,7 +43,6 @@ export default defineEventHandler(async () => {
     })
 
     if (categories && Array.isArray(categories) && categories.length > 0) {
-      console.log(`Récupération de ${categories.length} catégories depuis WooCommerce`)
       
       // Transformer les catégories pour le format attendu
       const transformedCategories = categories.map(category => ({
@@ -64,10 +58,8 @@ export default defineEventHandler(async () => {
     }
 
   } catch (error: any) {
-    console.error('Erreur lors de la récupération des catégories:', error.message)
   }
 
-  console.warn('Aucune catégorie trouvée, utilisation des catégories de fallback')
   return getFallbackCategories()
 })
 

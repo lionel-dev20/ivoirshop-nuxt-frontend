@@ -3,8 +3,6 @@ export default defineEventHandler(async (event) => {
   const query = getQuery(event)
   const { categorySlug } = query
 
-  console.log('=== Test Products API ===')
-  console.log('Category slug:', categorySlug)
 
   // Produits de test basés sur la catégorie
   const testProducts: any = {

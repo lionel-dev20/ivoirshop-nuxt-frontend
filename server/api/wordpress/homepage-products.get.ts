@@ -22,7 +22,6 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    console.log('Récupération des produits de la page d\'accueil...')
     
     // Construire les paramètres pour l'endpoint WordPress
     const params = new URLSearchParams({
@@ -40,16 +39,13 @@ export default defineEventHandler(async (event) => {
     const response = await $fetch(`${config.WORDPRESS_URL}/wp-json/api/v1/homepage-products?${params.toString()}`)
 
     if (response) {
-      console.log('Produits de la page d\'accueil récupérés avec succès')
       return response
     }
 
   } catch (error: any) {
-    console.error('Erreur lors de la récupération des produits de la page d\'accueil:', error.message)
   }
 
   // Fallback vers des produits de test
-  console.warn('Utilisation des produits de fallback pour la page d\'accueil')
   return getFallbackHomepageProducts()
 })
 

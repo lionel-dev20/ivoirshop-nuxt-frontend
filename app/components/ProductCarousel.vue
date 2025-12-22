@@ -1,6 +1,6 @@
 <!-- components/ProductCarousel.vue -->
 <template>
-  <div class="product-carousel-container">
+  <div v-if="hasProducts || pending" class="product-carousel-container">
     <!-- Header du carousel -->
     <div class="carousel-header" :class="headerBackgroundColor + ' px-2 py-1.5 lg:px-6 lg:py-3 p-2 border border-gray-100 rounded-sm shadow shadow-gray-100'">
       <h2 class="carousel-title" :class="headerColor">{{ displayTitle }}</h2>
@@ -186,6 +186,18 @@ const uniqueId = Math.random().toString(36).substr(2, 9)
 // Compteur d'images chargées
 const loadedImagesCount = ref(0)
 const totalImagesCount = ref(0)
+
+// Computed pour vérifier si le composant doit être affiché
+const hasProducts = computed(() => {
+  // Afficher le composant si :
+  // 1. On est en train de charger (pending) - pour éviter le flash
+  // 2. OU il y a des produits disponibles
+  // Ne pas afficher si le chargement est terminé et qu'il n'y a aucun produit
+  if (pending.value) {
+    return true // Afficher pendant le chargement
+  }
+  return products.value.length > 0 // Afficher seulement s'il y a des produits
+})
 
 // Computed pour le titre final à afficher
 const displayTitle = computed(() => {

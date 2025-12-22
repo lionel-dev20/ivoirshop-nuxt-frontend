@@ -41,7 +41,6 @@ export default defineEventHandler(async (event) => {
       error: null 
     }
   } catch (err: any) {
-    console.error('Erreur récupération commandes:', err)
     return { 
       data: null,
       error: err.message || 'Impossible de récupérer les commandes' 

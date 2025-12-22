@@ -26,7 +26,6 @@ export default defineEventHandler(async () => {
 
     return buildTree(res.items || [])
   } catch (err: any) {
-    console.error('Erreur chargement menu:', err.message || err)
     throw createError({ statusCode: 500, statusMessage: err.message || 'Erreur WordPress' })
   }
 })

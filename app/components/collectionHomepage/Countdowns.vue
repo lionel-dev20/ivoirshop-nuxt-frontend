@@ -213,16 +213,12 @@ const fetchProducts = async () => {
     const categoryInfo = categories.find(cat => cat.slug === props.categorySlug)
 
     if (!categoryInfo) {
-      console.error(`Category with slug "${props.categorySlug}" not found for countdown.`, categories)
       throw new Error(`Category with slug "${props.categorySlug}" not found`)
     }
-    console.log(`Category found for countdown ${props.countdownId}:`, categoryInfo)
 
     const products = await $fetch(`/api/api/v1/products/category/${categoryInfo.id}`)
-    console.log(`Products fetched for countdown ${props.countdownId} (category ${categoryInfo.slug}):`, products)
     productsData.value = products.products // Extrait le tableau 'products' de l'objet de réponse
   } catch (err) {
-    console.error(`Error fetching products for category ${props.categorySlug}:`, err)
     error.value = err
   } finally {
     pending.value = false

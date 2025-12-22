@@ -181,8 +181,5 @@ onMounted(() => {
   }
   
   // Debug: Afficher les données du menu dans la console
-  console.log('📋 Menu Data:', menuData.value)
-  console.log('📋 Menu Items:', menuItems.value)
-  console.log('⚠️ Error:', error.value)
 })
 </script>

@@ -6,9 +6,6 @@ export default defineEventHandler(async (event) => {
   try {
     const body = await readBody(event)
     
-    console.log('=== CRÉATION COMMANDE ===')
-    console.log('Customer:', body.customer)
-    console.log('Items:', body.items?.map((item: any) => ({ id: item.id, name: item.name, quantity: item.quantity })))
 
     // Validation simple
     if (!body.customer || !body.items || body.items.length === 0) {
@@ -70,7 +67,6 @@ export default defineEventHandler(async (event) => {
       coupon: body.coupon || null
     }
 
-    console.log('Données préparées:', JSON.stringify(orderData, null, 2))
 
     // Configuration axios (même que vos autres APIs qui fonctionnent)
     const axiosConfig = {
@@ -81,7 +77,6 @@ export default defineEventHandler(async (event) => {
       }
     }
 
-    console.log('URL:', `${process.env.WC_STORE_URL}/wp-json/custom/v1/create-order`)
 
     // Utilisation de l'endpoint personnalisé au lieu de l'API WooCommerce standard
     const response = await axios.post(
@@ -90,7 +85,6 @@ export default defineEventHandler(async (event) => {
       axiosConfig
     )
 
-    console.log('✅ Commande créée:', response.data)
 
     return {
       success: true,
@@ -102,11 +96,6 @@ export default defineEventHandler(async (event) => {
     }
 
   } catch (err: any) {
-    console.error('❌ ERREUR COMMANDE:')
-    console.error('Message:', err.message)
-    console.error('Status:', err.response?.status)
-    console.error('Data:', err.response?.data)
-    console.error('URL:', err.config?.url)
     
     // Messages d'erreur spécifiques
     let errorMessage = 'Erreur inconnue'

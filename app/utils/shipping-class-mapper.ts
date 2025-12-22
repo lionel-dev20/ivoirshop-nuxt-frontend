@@ -54,7 +54,6 @@ export function normalizeShippingClass(shippingClass: string | undefined): Shipp
   
   // Si aucun mapping trouvé, logger un warning en développement
   if (process.dev) {
-    console.warn(`⚠️ Shipping class non reconnu: "${shippingClass}". Utilisez 'light', 'medium', ou 'heavy'.`)
   }
   
   return ''

@@ -293,42 +293,20 @@ const loadOrders = async () => {
   error.value = ''
   
   try {
-    console.log('==========================================')
-    console.log('📱 CHARGEMENT COMMANDES (CLIENT)')
-    console.log('==========================================')
-    console.log('Utilisateur connecté:', authUser.value)
-    console.log('ID utilisateur:', authUser.value?.id)
     
     if (!authUser.value?.id) {
-      console.log('❌ Pas d\'utilisateur connecté, redirection vers login')
       await navigateTo('/auth/login')
       return
     }
 
-    console.log('🌐 Appel API:', `/api/orders/user/${authUser.value.id}`)
     const response = await $fetch<Order[]>(`/api/orders/user/${authUser.value.id}`)
     
-    console.log('✅ Réponse API reçue')
-    console.log('Type:', typeof response)
-    console.log('Est un tableau:', Array.isArray(response))
-    console.log('Nombre de commandes:', Array.isArray(response) ? response.length : 'N/A')
     
     if (Array.isArray(response) && response.length > 0) {
-      console.log('📦 Première commande:', response[0])
     }
     
     orders.value = response
-    console.log('📋 Orders value assigné:', orders.value.length, 'commandes')
-    console.log('==========================================')
   } catch (err: any) {
-    console.error('==========================================')
-    console.error('❌ ERREUR CHARGEMENT COMMANDES')
-    console.error('==========================================')
-    console.error('Erreur complète:', err)
-    console.error('Message:', err.message)
-    console.error('Status:', err.statusCode || err.status)
-    console.error('Data:', err.data)
-    console.error('==========================================')
     error.value = err.statusMessage || err.message || 'Impossible de charger les commandes'
   } finally {
     loading.value = false

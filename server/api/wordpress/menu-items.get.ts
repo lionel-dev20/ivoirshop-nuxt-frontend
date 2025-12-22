@@ -6,7 +6,6 @@ export default defineEventHandler(async (event) => {
   const menuSlug = 'menu-principal'
 
   try {
-    console.log(`🔍 Récupération du menu: ${menuSlug}`)
     
     const authHeader = Buffer.from(
       `${config.WOOCOMMERCE_CONSUMER_KEY}:${config.WOOCOMMERCE_CONSUMER_SECRET}`
@@ -22,7 +21,6 @@ export default defineEventHandler(async (event) => {
       }
     )
 
-    console.log(`✅ Menu récupéré:`, response)
 
     if (response && Array.isArray(response) && response.length > 0) {
       // Construire la hiérarchie
@@ -60,7 +58,6 @@ export default defineEventHandler(async (event) => {
     }
 
   } catch (error: any) {
-    console.error('❌ Erreur:', error)
     return {
       success: false,
       items: [],

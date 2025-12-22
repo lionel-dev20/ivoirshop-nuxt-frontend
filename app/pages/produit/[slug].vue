@@ -505,14 +505,6 @@ const addToCart = () => {
         ]
       }
     })
-
-    console.log('🛒 add_to_cart envoyé :', {
-      nom: product.value.name,
-      prix: productPrice,
-      lien: productLink,
-      quantité: quantity.value,
-      stock_quantity: product.value.stock_quantity
-    })
   }
 }
 

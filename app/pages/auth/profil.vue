@@ -175,7 +175,6 @@ const loadProfileData = async () => {
       orders.value = []
     }
   } catch (err: any) {
-    console.error('Erreur chargement profil ou commandes :', err)
     // Gérer l'erreur d'API
     alert(err.statusMessage || err.message || 'Erreur lors du chargement du profil ou des commandes.')
     orders.value = []
@@ -210,7 +209,6 @@ const updateProfile = async () => {
       alert(response.message || "Impossible de mettre à jour le profil.")
     }
   } catch (err: any) {
-    console.error('Erreur mise à jour :', err)
     alert(err.statusMessage || err.message || "Impossible de mettre à jour le profil.")
   } finally {
     loading.value = false // Désactiver le chargement

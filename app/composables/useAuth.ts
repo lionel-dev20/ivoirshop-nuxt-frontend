@@ -47,7 +47,6 @@ export const useAuth = () => {
     } catch (err: any) {
       const errorMsg = err?.data?.message || err?.message || "Erreur lors de l'inscription";
       globalError.value = errorMsg;
-      console.error("Erreur inscription:", err);
       throw new Error(errorMsg);
     } finally {
       globalLoading.value = false;
@@ -76,7 +75,6 @@ export const useAuth = () => {
     } catch (err: any) {
       const errorMsg = err?.data?.message || err?.message || "Identifiants incorrects";
       globalError.value = errorMsg;
-      console.error("Erreur connexion:", err);
       throw new Error(errorMsg);
     } finally {
       globalLoading.value = false;
@@ -95,7 +93,6 @@ export const useAuth = () => {
       globalUser.value = res ?? null;
       return res;
     } catch (err) {
-      console.error("Erreur récupération utilisateur:", err);
       globalUser.value = null;
       return null;
     }
@@ -111,7 +108,6 @@ export const useAuth = () => {
         credentials: "include" 
       });
     } catch (err) {
-      console.error("Erreur lors de la déconnexion:", err);
     } finally {
       globalUser.value = null;
       globalError.value = null;

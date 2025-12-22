@@ -77,7 +77,6 @@ const login = async () => {
       await navigateTo('/auth/profil')
     }
   } catch (err: any) {
-    console.error('Erreur de connexion:', err)
     localError.value = err.message || error.value || 'Erreur lors de la connexion'
   }
 }

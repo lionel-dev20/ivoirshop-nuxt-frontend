@@ -3,8 +3,6 @@ export default defineEventHandler(async (event) => {
   const query = getQuery(event)
   const { categorySlug = 'televisions' } = query
 
-  console.log('=== Test Images API ===')
-  console.log('Category slug:', categorySlug)
 
   try {
     // Utiliser l'API WordPress pour récupérer les produits
@@ -14,15 +12,10 @@ export default defineEventHandler(async (event) => {
       }
     })
 
-    console.log('Réponse API:', response)
 
     // Analyser les images des produits
     if (response?.products && Array.isArray(response.products)) {
       const imageAnalysis = response.products.map((product, index) => {
-        console.log(`\n--- Produit ${index + 1}: ${product.name} ---`)
-        console.log('Image directe:', product.image)
-        console.log('Images array:', product.images)
-        console.log('Thumbnail:', product.thumbnail)
         
         return {
           id: product.id,
@@ -60,7 +53,6 @@ export default defineEventHandler(async (event) => {
     }
 
   } catch (error: any) {
-    console.error('Erreur lors du test des images:', error.message)
     return {
       success: false,
       error: error.message,

@@ -43,7 +43,6 @@ export default defineEventHandler(async (event) => {
       message: 'Compte créé avec succès'
     }
   } catch (err: any) {
-    console.error('Erreur inscription:', err)
     
     let errorMessage = 'Erreur lors de la création du compte'
     

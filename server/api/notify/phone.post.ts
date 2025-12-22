@@ -1,5 +1,5 @@
 // server/api/notify/phone.post.ts
-import { defineEventHandler, readBody, createError } from 'h3'
+import { defineEventHandler, readBody, createError, getHeader } from 'h3'
 
 interface PhoneNotification {
   phone: string
@@ -60,13 +60,6 @@ export default defineEventHandler(async (event) => {
     
     phoneNotifications.push(notification)
     
-    // Log pour debug
-    console.log('📱 Nouveau numéro enregistré:', {
-      phone: `+225${cleanPhone}`,
-      timestamp: notification.timestamp,
-      total_registrations: phoneNotifications.length
-    })
-    
     // En production, vous pourriez :
     // 1. Sauvegarder en base de données
     // 2. Envoyer une confirmation WhatsApp
@@ -80,7 +73,6 @@ export default defineEventHandler(async (event) => {
     }
     
   } catch (err: any) {
-    console.error('Erreur lors de l\'enregistrement du numéro:', err)
     
     throw createError({
       statusCode: err.statusCode || 500,
@@ -95,7 +87,7 @@ function getClientIP(event: any): string | undefined {
   const realIP = getHeader(event, 'x-real-ip')
   
   if (forwarded) {
-    return forwarded.split(',')[0].trim()
+    return forwarded.split(',')[0]?.trim() || forwarded
   }
   
   if (realIP) {

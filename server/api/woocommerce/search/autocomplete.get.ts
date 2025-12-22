@@ -26,7 +26,6 @@ export default defineEventHandler(async (event) => {
       version: 'wc/v3',
     })
 
-    console.log('Autocomplétion WooCommerce pour:', searchTerm)
 
     try {
       // Recherche des produits pour l'autocomplétion
@@ -93,7 +92,6 @@ export default defineEventHandler(async (event) => {
       // Limiter le nombre de suggestions
       const limitedSuggestions = suggestions.slice(0, limit)
 
-      console.log(`${limitedSuggestions.length} suggestions générées`)
 
       return {
         data: {
@@ -102,11 +100,6 @@ export default defineEventHandler(async (event) => {
       }
 
     } catch (wcError: any) {
-      console.error('Erreur WooCommerce autocomplétion:', {
-        message: wcError.message,
-        status: wcError.response?.status
-      })
-
       // Fallback : suggestions de base
       const fallbackSuggestions = [
         {
@@ -131,11 +124,6 @@ export default defineEventHandler(async (event) => {
     }
 
   } catch (err: any) {
-    console.error('Erreur lors de l\'autocomplétion:', {
-      message: err.message,
-      stack: err.stack
-    })
-    
     throw createError({ 
       statusCode: 500, 
       statusMessage: `Erreur lors de l'autocomplétion: ${err.message}` 

@@ -81,7 +81,6 @@ export const useDeliveryStore = defineStore('delivery', {
           throw new Error((response as any).message || 'Code coupon invalide')
         }
       } catch (error: any) {
-        console.error('Erreur application coupon:', error)
         throw new Error(error.statusMessage || error.message || 'Code coupon invalide')
       } finally {
         this.isApplyingCoupon = false
@@ -110,7 +109,6 @@ export const useDeliveryStore = defineStore('delivery', {
           }
           localStorage.setItem('deliveryData', JSON.stringify(data))
         } catch (error) {
-          console.error('Erreur sauvegarde localStorage:', error)
         }
       }
     },
@@ -125,7 +123,6 @@ export const useDeliveryStore = defineStore('delivery', {
             this.selectedDelivery = data.selectedDelivery || this.selectedDelivery
           }
         } catch (error) {
-          console.error('Erreur chargement localStorage:', error)
         }
       }
     },
@@ -136,7 +133,6 @@ export const useDeliveryStore = defineStore('delivery', {
         try {
           localStorage.removeItem('deliveryData')
         } catch (error) {
-          console.error('Erreur nettoyage localStorage:', error)
         }
       }
     }

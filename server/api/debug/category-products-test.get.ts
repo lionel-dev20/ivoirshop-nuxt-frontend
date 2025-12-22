@@ -4,8 +4,6 @@ export default defineEventHandler(async (event) => {
   const query = getQuery(event)
   const { categorySlug = 'smartphones' } = query
 
-  console.log('=== Category Products Test ===')
-  console.log('Category slug:', categorySlug)
 
   if (!config.WORDPRESS_URL) {
     return {
@@ -17,7 +15,6 @@ export default defineEventHandler(async (event) => {
 
   try {
     // Étape 1: Trouver la catégorie par slug
-    console.log(`Recherche de la catégorie avec le slug: ${categorySlug}`)
     const categories = await $fetch(`${config.WORDPRESS_URL}/wp-json/wc/v3/products/categories`, {
       params: {
         consumer_key: config.WOOCOMMERCE_CONSUMER_KEY,
@@ -25,13 +22,10 @@ export default defineEventHandler(async (event) => {
       }
     })
 
-    console.log(`Total des catégories disponibles: ${categories?.length || 0}`)
     
     // Afficher toutes les catégories disponibles pour debug
     if (categories && Array.isArray(categories)) {
-      console.log('Catégories disponibles:')
       categories.forEach((cat: any, index: number) => {
-        console.log(`${index + 1}. ID: ${cat.id}, Nom: "${cat.name}", Slug: "${cat.slug}"`)
       })
     }
 
@@ -40,12 +34,6 @@ export default defineEventHandler(async (event) => {
       cat.slug === categorySlug || 
       cat.name.toLowerCase().includes(categorySlug.toLowerCase())
     )
-
-    console.log('Catégorie trouvée:', targetCategory ? {
-      id: targetCategory.id,
-      name: targetCategory.name,
-      slug: targetCategory.slug
-    } : 'Aucune')
 
     if (!targetCategory) {
       return {
@@ -60,7 +48,6 @@ export default defineEventHandler(async (event) => {
     }
 
     // Étape 2: Récupérer les produits de cette catégorie
-    console.log(`Récupération des produits pour la catégorie ID: ${targetCategory.id}`)
     const products = await $fetch(`${config.WORDPRESS_URL}/wp-json/wc/v3/products`, {
       params: {
         category: targetCategory.id,
@@ -71,7 +58,6 @@ export default defineEventHandler(async (event) => {
       }
     })
 
-    console.log(`Produits trouvés pour "${targetCategory.name}": ${products?.length || 0}`)
 
     // Transformer les produits
     const transformedProducts = products?.map((product: any) => ({
@@ -107,7 +93,6 @@ export default defineEventHandler(async (event) => {
     }
 
   } catch (error: any) {
-    console.error('Erreur lors du test des produits par catégorie:', error.message)
     return {
       success: false,
       error: error.message,

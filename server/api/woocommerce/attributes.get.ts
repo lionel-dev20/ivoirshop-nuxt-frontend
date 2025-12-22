@@ -11,7 +11,6 @@ export default defineEventHandler(async (event) => {
 
     // Vérification de la configuration
     if (!WORDPRESS_URL || !CONSUMER_KEY || !CONSUMER_SECRET) {
-      console.error('Configuration WooCommerce manquante')
       throw createError({ 
         statusCode: 500, 
         statusMessage: 'Configuration WooCommerce manquante' 
@@ -31,7 +30,6 @@ export default defineEventHandler(async (event) => {
       }
     }
 
-    console.log('Récupération des attributs de produits...')
 
     // Récupérer tous les attributs de produits
     const { data: attributes } = await axios.get(
@@ -39,7 +37,6 @@ export default defineEventHandler(async (event) => {
       axiosConfig
     )
 
-    console.log(`${attributes.length} attributs trouvés`)
 
     // Pour chaque attribut, récupérer les termes (valeurs possibles)
     const attributesWithTerms = await Promise.all(
@@ -68,7 +65,6 @@ export default defineEventHandler(async (event) => {
             }))
           }
         } catch (err) {
-          console.error(`Erreur lors de la récupération des termes pour l'attribut ${attr.slug}:`, err)
           return {
             id: attr.id,
             name: attr.name,
@@ -82,7 +78,6 @@ export default defineEventHandler(async (event) => {
       })
     )
 
-    console.log('Attributs avec termes récupérés:', attributesWithTerms.length)
 
     return {
       attributes: attributesWithTerms,
@@ -90,12 +85,6 @@ export default defineEventHandler(async (event) => {
     }
     
   } catch (err: any) {
-    console.error('Erreur lors de la récupération des attributs:', {
-      message: err.message,
-      response: err.response?.data,
-      status: err.response?.status
-    })
-    
     // Retourner des attributs vides en cas d'erreur
     return {
       attributes: [],

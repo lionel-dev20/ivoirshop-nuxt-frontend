@@ -37,39 +37,30 @@ const imageError = ref(false)
 
 // Calculer l'URL finale de l'image
 const finalImageUrl = computed(() => {
-  console.log('=== ProductImage URL Debug ===')
-  console.log('Props src:', props.src)
-  console.log('Image error:', imageError.value)
   
   if (imageError.value) {
-    console.log('Using fallback due to error')
     return props.fallbackSrc
   }
   
   // Si src est une string
   if (typeof props.src === 'string' && props.src && props.src !== '/images/placeholder-product.jpg') {
-    console.log('Using string src:', props.src)
     return props.src
   }
   
   // Si src est un tableau
   if (Array.isArray(props.src) && props.src.length > 0) {
     const firstImage = props.src[0]
-    console.log('First image from array:', firstImage)
     
     if (typeof firstImage === 'string' && firstImage !== '/images/placeholder-product.jpg') {
-      console.log('Using string from array:', firstImage)
       return firstImage
     }
     if (typeof firstImage === 'object' && firstImage?.src && firstImage.src !== '/images/placeholder-product.jpg') {
-      console.log('Using object src from array:', firstImage.src)
       return firstImage.src
     }
   }
   
   // Si aucune image valide, utiliser une image de test comme fallback
   const testImageUrl = `https://picsum.photos/300/200?random=${Math.floor(Math.random() * 1000)}`
-  console.log('No valid image found, using test image as fallback:', testImageUrl)
   return testImageUrl
 })
 
@@ -80,14 +71,12 @@ const emit = defineEmits<{
 
 const handleImageLoad = () => {
   imageError.value = false
-  console.log('Image loaded successfully:', finalImageUrl.value)
   
   // Émettre un événement pour notifier que l'image est chargée
   emit('imageLoaded')
 }
 
 const handleImageError = () => {
-  console.log('Image failed to load:', finalImageUrl.value)
   imageError.value = true
 }
 

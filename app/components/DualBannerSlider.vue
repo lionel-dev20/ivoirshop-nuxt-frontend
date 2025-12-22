@@ -251,7 +251,6 @@
         const response = await $fetch(`${baseURL}/wp-json/api/v1/banners?limit=${props.limit}&active_only=true`)
         return Array.isArray(response) ? response : []
       } catch (err) {
-        console.error('Erreur lors du fetch des bannières:', err)
         throw err
       }
     },

@@ -235,14 +235,12 @@ const fetchSuggestions = async () => {
   
   // Vérifier le cache d'abord
   if (suggestionsCache.value.has(searchTerm)) {
-    console.log('💾 Suggestions chargées depuis le cache pour:', searchTerm)
     suggestions.value = suggestionsCache.value.get(searchTerm) || []
     isLoading.value = false
     return
   }
   
   try {
-    console.log('🔍 Recherche de suggestions pour:', searchTerm)
     const startTime = performance.now()
     
     const response = await $fetch('/api/search/autocomplete', {
@@ -253,7 +251,6 @@ const fetchSuggestions = async () => {
     })
     
     const endTime = performance.now()
-    console.log(`✅ Réponse reçue en ${Math.round(endTime - startTime)}ms`)
     
     suggestions.value = response.suggestions || []
     selectedIndex.value = -1
@@ -265,9 +262,7 @@ const fetchSuggestions = async () => {
     }
     suggestionsCache.value.set(searchTerm, suggestions.value)
     
-    console.log('📝 Nombre de suggestions:', suggestions.value.length)
   } catch (error) {
-    console.error('❌ Erreur lors de la récupération des suggestions:', error)
     suggestions.value = []
   } finally {
     isLoading.value = false

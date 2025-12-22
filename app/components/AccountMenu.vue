@@ -123,7 +123,6 @@ const handleLogout = async () => {
     closeMenu()
     await navigateTo('/')
   } catch (error) {
-    console.error('Erreur lors de la déconnexion:', error)
   }
 }
 

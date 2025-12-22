@@ -39,12 +39,6 @@ export default defineEventHandler(async (event) => {
     }
 
   } catch (err: any) {
-    console.error('Erreur récupération communes:', {
-      message: err.message,
-      status: err.response?.status,
-      data: err.response?.data
-    })
-
     throw createError({
       statusCode: err.response?.status || 500,
       statusMessage: `Erreur: ${err.message}`

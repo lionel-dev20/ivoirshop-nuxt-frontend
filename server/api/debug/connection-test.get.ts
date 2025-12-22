@@ -2,10 +2,6 @@
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig()
   
-  console.log('=== Test de Connexion WordPress ===')
-  console.log('WORDPRESS_URL:', config.WORDPRESS_URL)
-  console.log('CONSUMER_KEY:', config.WOOCOMMERCE_CONSUMER_KEY ? 'Défini' : 'Non défini')
-  console.log('CONSUMER_SECRET:', config.WOOCOMMERCE_CONSUMER_SECRET ? 'Défini' : 'Non défini')
 
   if (!config.WORDPRESS_URL) {
     return {
@@ -25,7 +21,6 @@ export default defineEventHandler(async (event) => {
 
   try {
     // Test de connexion simple
-    console.log('Test de connexion à:', config.WORDPRESS_URL)
     
     const response = await $fetch(`${config.WORDPRESS_URL}/wp-json/wc/v3/system_status`, {
       params: {
@@ -35,7 +30,6 @@ export default defineEventHandler(async (event) => {
       timeout: 10000 // 10 secondes de timeout
     })
 
-    console.log('Connexion réussie!')
     
     return {
       success: true,
@@ -46,7 +40,6 @@ export default defineEventHandler(async (event) => {
     }
 
   } catch (error: any) {
-    console.error('Erreur de connexion:', error.message)
     
     return {
       success: false,

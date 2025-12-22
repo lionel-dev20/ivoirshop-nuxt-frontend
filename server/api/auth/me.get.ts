@@ -49,12 +49,10 @@ export default defineEventHandler(async (event) => {
       }
     } catch (wcErr) {
       // Si WooCommerce échoue, on retourne les infos WordPress
-      console.warn('Impossible de récupérer les détails WooCommerce:', wcErr)
     }
 
     return userDetails
   } catch (err) {
-    console.error('Erreur récupération utilisateur:', err)
     return null
   }
 })

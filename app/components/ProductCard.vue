@@ -250,7 +250,6 @@ const addToCart = async () => {
     cartStore.openCart()
     
   } catch (error) {
-    console.error('Erreur lors de l\'ajout au panier:', error)
   } finally {
     isAdding.value = false
   }

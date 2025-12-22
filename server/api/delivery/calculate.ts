@@ -42,11 +42,6 @@ export default defineEventHandler(async (event) => {
     }
 
   } catch (err: any) {
-    console.error('Erreur calcul livraison:', {
-      message: err.message,
-      status: err.response?.status,
-      data: err.response?.data
-    })
 
     throw createError({
       statusCode: err.response?.status || 500,

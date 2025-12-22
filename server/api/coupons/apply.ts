@@ -83,12 +83,6 @@ export default defineEventHandler(async (event) => {
     }
 
   } catch (err: any) {
-    console.error('Erreur application coupon:', {
-      message: err.message,
-      status: err.response?.status,
-      data: err.response?.data
-    })
-
     if (err.statusCode) {
       throw err
     }

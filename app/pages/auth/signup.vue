@@ -101,7 +101,6 @@ const handleRegister = async () => {
     }
   } catch (err: any) {
     errorMessage.value = err.message || "Erreur lors de l'inscription";
-    console.error('Erreur inscription:', err)
   } finally {
     loading.value = false;
   }

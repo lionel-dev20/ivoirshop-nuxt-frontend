@@ -50,19 +50,15 @@ export const useCartStore = defineStore('cart', {
     // Retourne le shipping_class le plus lourd du panier
     heaviestShippingClass: (state): ShippingClassType => {
       if (state.items.length === 0) {
-        console.log('⚠️ Panier vide - heaviestShippingClass = medium par défaut')
         return 'medium'
       }
       
-      console.log('⚖️ Calcul heaviestShippingClass - Items dans le panier:')
       const shippingClasses: ShippingClassType[] = state.items.map(item => {
         const sc = item.shipping_class as ShippingClassType || 'medium'
-        console.log(`  - ${item.name}: shipping_class="${item.shipping_class}", weight=${item.weight}, resolved="${sc}"`)
         return sc
       })
       
       const heaviest = getHeaviestShippingClass(shippingClasses)
-      console.log(`🎯 Shipping class le plus lourd: ${heaviest}`)
       
       return heaviest
     }
@@ -70,26 +66,13 @@ export const useCartStore = defineStore('cart', {
 
   actions: {
     addItem(product: any, quantity: number = 1) {
-      console.log('➕ Ajout produit au panier:', {
-        name: product.name,
-        shipping_class: product.shipping_class,
-        weight: product.weight
-      })
-      
       const existingItem = this.items.find(item => item.id === product.id)
       
       if (existingItem) {
         existingItem.quantity += quantity
-        console.log('✅ Quantité mise à jour:', existingItem.quantity)
       } else {
         // Déterminer le shipping_class en utilisant la fonction utilitaire
         const shippingClass = determineShippingClass(product.shipping_class, product.weight)
-        
-        console.log('📊 Détermination shipping_class:', {
-          shipping_class_original: product.shipping_class,
-          poids: product.weight,
-          shipping_class_final: shippingClass
-        })
         
         const cartItem: CartItem = {
           id: product.id,
@@ -106,7 +89,6 @@ export const useCartStore = defineStore('cart', {
           weight: product.weight
         }
         
-        console.log('✅ Produit ajouté au panier avec shipping_class:', shippingClass)
         this.items.push(cartItem)
       }
       
@@ -114,7 +96,6 @@ export const useCartStore = defineStore('cart', {
       this.saveToStorage()
       
       // Afficher le shipping_class le plus lourd
-      console.log('🎯 Shipping class le plus lourd actuel:', this.heaviestShippingClass)
     },
 
     removeItem(productId: number) {
@@ -169,13 +150,7 @@ export const useCartStore = defineStore('cart', {
               item.shipping_class = determineShippingClass(item.shipping_class, item.weight)
               return item
             })
-            console.log('🛒 Panier chargé depuis localStorage:', this.items.map(item => ({
-              name: item.name,
-              shipping_class: item.shipping_class,
-              weight: item.weight
-            })))
           } catch (error) {
-            console.error('Erreur lors du chargement du panier:', error)
             this.items = []
           }
         }

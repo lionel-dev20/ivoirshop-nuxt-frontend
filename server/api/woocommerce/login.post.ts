@@ -23,7 +23,6 @@ export default defineEventHandler(async (event) => {
       return { success: false, error: data.message || 'Identifiants incorrects' }
     }
   } catch (err) {
-    console.error(err)
     return { success: false, error: 'Connexion impossible. Vérifiez votre WordPress et le plugin JWT.' }
   }
 })

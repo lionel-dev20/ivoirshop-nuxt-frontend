@@ -308,7 +308,6 @@ onMounted(() => {
     try {
       orderData.value = JSON.parse(decodeURIComponent(route.query.data as string))
     } catch (e) {
-      console.error('Erreur parsing order data:', e)
     }
   }
   
@@ -321,7 +320,6 @@ onMounted(() => {
         // Nettoie après récupération
         sessionStorage.removeItem('lastOrder')
       } catch (e) {
-        console.error('Erreur parsing saved order data:', e)
       }
     }
   }
@@ -352,12 +350,6 @@ onMounted(() => {
       }
     })
     
-    console.log('✅ Événement purchase envoyé à Google Analytics:', {
-      transaction_id: orderData.value.order_id || orderData.value.order_number,
-      value: totalValue,
-      items_count: gaItems.value.length
-    })
-    
     // Envoyer l'événement Purchase à Facebook Pixel
     if (process.client && typeof (window as any).fbq !== 'undefined' && orderData.value) {
       // Récupérer le montant total de la commande
@@ -366,11 +358,6 @@ onMounted(() => {
         : parseFloat(String(orderData.value.total)) || 0
       
       ;(window as any).fbq('track', 'Purchase', {
-        value: totalAmount,
-        currency: 'XOF'
-      })
-      
-      console.log('✅ Événement Purchase envoyé à Facebook Pixel:', {
         value: totalAmount,
         currency: 'XOF'
       })

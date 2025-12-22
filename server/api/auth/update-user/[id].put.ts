@@ -24,11 +24,6 @@ export default defineEventHandler(async (event) => {
     // Récupérer les données du body
     const body = await readBody(event)
     
-    console.log('==========================================')
-    console.log('👤 MISE À JOUR PROFIL UTILISATEUR')
-    console.log('==========================================')
-    console.log('User ID:', userId)
-    console.log('Données reçues:', body)
 
     // Validation de base
     if (!body.email || !body.first_name || !body.last_name) {
@@ -72,7 +67,6 @@ export default defineEventHandler(async (event) => {
       }
     }
 
-    console.log('📦 Données préparées pour WooCommerce:', customerData)
 
     // Créer le client WooCommerce
     const api = await createWooCommerceClient({
@@ -83,11 +77,8 @@ export default defineEventHandler(async (event) => {
     })
 
     // Mettre à jour le client
-    console.log('🔄 Mise à jour dans WooCommerce...')
     const { data: updatedCustomer } = await api.put(`customers/${userId}`, customerData)
 
-    console.log('✅ Profil mis à jour avec succès')
-    console.log('==========================================')
 
     return {
       success: true,
@@ -104,13 +95,6 @@ export default defineEventHandler(async (event) => {
     }
 
   } catch (err: any) {
-    console.error('==========================================')
-    console.error('❌ ERREUR MISE À JOUR PROFIL')
-    console.error('==========================================')
-    console.error('Message:', err.message)
-    console.error('Status:', err.response?.status)
-    console.error('Data:', err.response?.data)
-    console.error('==========================================')
     
     let errorMessage = 'Erreur lors de la mise à jour du profil'
     

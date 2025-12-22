@@ -292,7 +292,6 @@ const submitPhoneNumber = async () => {
     
   } catch (error: any) {
     phoneError.value = error.data?.statusMessage || error.message || 'Erreur lors de l\'enregistrement. Veuillez réessayer.'
-    console.error('Erreur:', error)
   } finally {
     loading.value = false
   }

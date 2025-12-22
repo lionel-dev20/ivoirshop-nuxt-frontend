@@ -11,7 +11,6 @@ export default defineEventHandler(async () => {
 
     // Vérification de l'URL
     if (!WC_STORE_URL) {
-      console.error('Variable d\'environnement WC_STORE_URL manquante')
       throw createError({ 
         statusCode: 500, 
         statusMessage: 'Configuration manquante' 
@@ -27,7 +26,6 @@ export default defineEventHandler(async () => {
       }
     }
 
-    console.log('Récupération des catégories via endpoint personnalisé...')
     
     try {
       // Essayer d'abord l'endpoint personnalisé WordPress
@@ -36,16 +34,9 @@ export default defineEventHandler(async () => {
         axiosConfig
       )
 
-      console.log(`${categoriesList.length} catégories trouvées via endpoint personnalisé`)
-      console.log('Categories from custom endpoint:', categoriesList.map(cat => ({ id: cat.id, slug: cat.slug, name: cat.name })));
       return categoriesList
       
     } catch (customError: any) {
-      console.warn('Endpoint personnalisé non accessible, tentative avec WooCommerce standard...', {
-        message: customError.message,
-        status: customError.response?.status
-      })
-      
       // Fallback vers l'API WooCommerce standard
       try {
         const wcConfig = {
@@ -71,18 +62,10 @@ export default defineEventHandler(async () => {
           parent: cat.parent
         }))
 
-        console.log(`${formattedCategories.length} catégories trouvées via WooCommerce standard`)
-        console.log('Categories from WooCommerce standard:', formattedCategories.map(cat => ({ id: cat.id, slug: cat.slug, name: cat.name })));
         return formattedCategories
         
       } catch (wcError: any) {
-        console.error('Erreur avec WooCommerce standard:', {
-          message: wcError.message,
-          status: wcError.response?.status
-        })
-        
         // Dernier fallback : données de test
-        console.log('Utilisation de données de test...')
         return [
           {
             id: 1,
@@ -105,12 +88,6 @@ export default defineEventHandler(async () => {
     }
     
   } catch (err: any) {
-    console.error('Erreur lors de la récupération des catégories:', {
-      message: err.message,
-      response: err.response?.data,
-      status: err.response?.status,
-      url: err.config?.url
-    })
     
     throw createError({ 
       statusCode: 500, 

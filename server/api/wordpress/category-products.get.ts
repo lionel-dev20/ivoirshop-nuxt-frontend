@@ -5,14 +5,8 @@ export default defineEventHandler(async (event) => {
   
   const { categorySlug, category_id, limit = '100', page = '1' } = query // Augmenté de 12 à 100
 
-  console.log('=== API Category Products Debug ===')
-  console.log('Query params:', query)
-  console.log('Category slug:', categorySlug)
-  console.log('Category ID:', category_id)
-  console.log('WORDPRESS_URL:', config.WORDPRESS_URL ? 'Defined' : 'Not defined')
 
   if (!categorySlug && !category_id) {
-    console.error('Category slug or category_id is missing')
     throw createError({
       statusCode: 400,
       statusMessage: 'Category slug or category_id is required'
@@ -21,7 +15,6 @@ export default defineEventHandler(async (event) => {
 
   // Si pas de config WordPress, retourner les produits de fallback
   if (!config.WORDPRESS_URL) {
-    console.warn('WORDPRESS_URL non défini, utilisation des produits de fallback')
     return getFallbackProducts(categorySlug as string)
   }
 
@@ -31,7 +24,6 @@ export default defineEventHandler(async (event) => {
     
     // Sinon, essayer de récupérer l'ID de la catégorie à partir du slug
     if (!categoryId && categorySlug) {
-      console.log(`Recherche des produits pour la catégorie (slug): ${categorySlug}`)
       try {
         const categories = await $fetch(`${config.WORDPRESS_URL}/wp-json/wc/v3/products/categories`, {
           params: {
@@ -43,13 +35,10 @@ export default defineEventHandler(async (event) => {
         
         if (categories && Array.isArray(categories) && categories.length > 0) {
           categoryId = categories[0].id
-          console.log(`Catégorie trouvée - ID: ${categoryId}, Nom: ${categories[0].name}`)
         }
       } catch (catError: any) {
-        console.warn('Erreur lors de la récupération de la catégorie:', catError.message)
       }
     } else if (categoryId) {
-      console.log(`Recherche des produits pour la catégorie (ID): ${categoryId}`)
     }
 
     // Récupérer les produits de la catégorie
@@ -69,17 +58,14 @@ export default defineEventHandler(async (event) => {
       productsParams.category = categorySlug
     }
 
-    console.log('Paramètres de recherche produits:', { ...productsParams, consumer_key: '[HIDDEN]', consumer_secret: '[HIDDEN]' })
 
     const products = await $fetch(`${config.WORDPRESS_URL}/wp-json/wc/v3/products`, {
       params: productsParams
     })
 
-    console.log('Réponse API produits:', products ? `${Array.isArray(products) ? products.length : 'Non-array'} produits` : 'Aucune réponse')
 
     if (products && Array.isArray(products)) {
       const categoryIdentifier = categoryId || categorySlug
-      console.log(`Récupération de ${products.length} produits pour la catégorie ${categoryIdentifier}`)
       
       // Transformer les produits pour le format attendu
       const transformedProducts = products.map(product => ({
@@ -111,11 +97,8 @@ export default defineEventHandler(async (event) => {
     }
 
   } catch (error: any) {
-    console.error('Erreur lors de la récupération des produits:', error.message)
-    console.error('Stack trace:', error.stack)
   }
 
-  console.warn('Aucun produit trouvé, utilisation des produits de fallback')
   return getFallbackProducts(categorySlug as string)
 })
 
@@ -274,7 +257,6 @@ function getFallbackProducts(categorySlug?: string) {
     ? fallbackProductsByCategory[categorySlug] 
     : defaultProducts
 
-  console.log(`Retour de ${products.length} produits de fallback pour la catégorie: ${categorySlug || 'default'}`)
 
   return {
     products,

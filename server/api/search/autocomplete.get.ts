@@ -24,11 +24,9 @@ export default defineEventHandler(async (event) => {
       version: 'wc/v3',
     })
 
-    console.log('🔍 Autocomplétion WooCommerce pour:', searchTerm, '| Limite:', limit)
 
     try {
       // Recherche des produits pour l'autocomplétion (optimisée)
-      console.log('📡 Recherche de produits dans WooCommerce...')
       const { data: products } = await api.get('products', {
         search: searchTerm.trim(),
         per_page: Math.min(limit, 5), // Limité à 5 produits pour plus de vitesse
@@ -40,10 +38,8 @@ export default defineEventHandler(async (event) => {
         _fields: 'id,name,slug,price,regular_price,sale_price,images'
       })
 
-      console.log(`✅ ${products.length} produits trouvés`)
       
       // Recherche des catégories (optimisée)
-      console.log('📡 Recherche de catégories dans WooCommerce...')
       const { data: categories } = await api.get('products/categories', {
         search: searchTerm.trim(),
         per_page: 3, // Limité à 3 catégories pour plus de vitesse
@@ -53,7 +49,6 @@ export default defineEventHandler(async (event) => {
         _fields: 'id,name,slug,count' // Seulement les champs nécessaires
       })
       
-      console.log(`✅ ${categories.length} catégories trouvées`)
 
       // Formater les suggestions
       const suggestions = []
@@ -100,22 +95,11 @@ export default defineEventHandler(async (event) => {
       // Limiter le nombre de suggestions
       const limitedSuggestions = suggestions.slice(0, limit)
 
-      console.log(`📝 ${limitedSuggestions.length} suggestions générées:`, {
-        produits: limitedSuggestions.filter(s => s.type === 'product').length,
-        categories: limitedSuggestions.filter(s => s.type === 'category').length,
-        generiques: limitedSuggestions.filter(s => s.type === 'generic').length
-      })
-
       return {
         suggestions: limitedSuggestions
       }
 
     } catch (wcError: any) {
-      console.error('Erreur WooCommerce autocomplétion:', {
-        message: wcError.message,
-        status: wcError.response?.status
-      })
-
       // Fallback : suggestions de base
       const fallbackSuggestions = [
         {
@@ -138,11 +122,6 @@ export default defineEventHandler(async (event) => {
     }
     
   } catch (err: any) {
-    console.error('Erreur lors de l\'autocomplétion:', {
-      message: err.message,
-      stack: err.stack
-    })
-    
     throw createError({ 
       statusCode: 500, 
       statusMessage: `Erreur lors de l'autocomplétion: ${err.message}` 

@@ -98,10 +98,8 @@ const { data: categories, pending, error } = await useLazyAsyncData(
   async () => {
     try {
       const cats = await $fetch('/api/api/v1/categories')
-      console.log('✅ Catégories récupérées:', cats)
       return cats
     } catch (err) {
-      console.error('❌ Erreur:', err)
       throw err
     }
   }

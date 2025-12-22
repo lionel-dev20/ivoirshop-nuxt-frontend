@@ -43,7 +43,6 @@ export default defineEventHandler(async (event) => {
       error: null 
     }
   } catch (err: any) {
-    console.error('Erreur mise à jour profil:', err)
     return { 
       data: null,
       error: err.message || 'Impossible de mettre à jour le profil' 

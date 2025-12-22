@@ -5,7 +5,7 @@
       <HerosectionMyCarousel />
       <RightDoubleAds class="hidden md:block" />
     </div>
-    <div class="md:h-4 h-4"></div>
+    <div class="md:h-8 h-4"></div>
     <!-- <ListPartner />
     <div class="md:h-6 h-4"></div>     -->
       <!-- <div class="h-8"></div> -->
@@ -25,7 +25,7 @@
         @wishlist-toggle="handleWishlistToggle"
       />
     </div>
-
+    
     <div class="md:h-8 h-4"></div>
     <ProductCarousel 
       :category-id="353"
@@ -47,12 +47,12 @@
       @wishlist-toggle="handleWishlistToggle"
     />
 
-    <div class="md:h-8 h-4"></div>
+    <div class="md:h-4 h-4"></div>
 
     <AcheterEnLigne />
     
 
-    <div class="md:h-8 h-4"></div>
+    <div class="md:h-4 h-4"></div>
 
     <ProductCarousel 
       :category-id="347"
@@ -93,10 +93,10 @@
       @wishlist-toggle="handleWishlistToggle"
     />
 
-    <div class="md:h-8 h-4"></div>
+    <div class="md:h-4 h-4"></div>
     <CollectionHomepageDoubleBanner :banners="doubleBanners[0]" />
 
-    <div class="md:h-8 h-4"></div>
+    <div class="md:h-4 h-4"></div>
     <ProductCarousel 
       :category-id="355"
       :grid-columns="bannerImageUrl ? 4 : 5"
@@ -157,9 +157,9 @@
       @wishlist-toggle="handleWishlistToggle"
     />
 
-    <div class="md:h-8 h-4"></div>
+    <div class="md:h-4 h-4"></div>
     <CollectionHomepageDoubleBanner :banners="doubleBanners[1]" />
-    <div class="md:h-8 h-4"></div>
+    <div class="md:h-4 h-4"></div>
 
     <ProductCarousel 
       :category-id="358"
@@ -183,7 +183,7 @@
     <div class="md:h-8 h-4"></div>
     <ProductCarousel 
       :category-id="359"
-      :grid-columns="bannerImageUrl ? 4 : 5"
+      :grid-columns="bannerImageUrl ? 4 : 4"
       :max-products="20"
       :autoplay="true"
       :autoplay-delay="300"
@@ -221,9 +221,9 @@
       @wishlist-toggle="handleWishlistToggle"
     />
 
-    <div class="md:h-8 h-4"></div>
+    <div class="md:h-4 h-4"></div>
     <CollectionHomepageDoubleBanner :banners="doubleBanners[2]" />
-    <div class="md:h-8 h-4"></div>
+    <div class="md:h-4 h-4"></div>
 
     <ProductCarousel 
       :category-id="360"
@@ -245,7 +245,6 @@
     />
 
     <div class="md:h-8 h-4"></div>
-
     <ProductCarousel 
       :category-id="361"
       :grid-columns="bannerImageUrl ? 4 : 5"
@@ -267,8 +266,6 @@
     />
 
     <div class="md:h-8 h-4"></div>
-    <div class="md:h-8 h-4"></div>
-
     <ProductCarousel 
       :category-id="362"
       :grid-columns="bannerImageUrl ? 4 : 5"

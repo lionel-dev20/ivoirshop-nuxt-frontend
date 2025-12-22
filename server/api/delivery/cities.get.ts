@@ -10,7 +10,6 @@ export default defineEventHandler(async (event) => {
       
       return response
     } catch (error) {
-      console.error('Error fetching cities:', error)
       throw createError({
         statusCode: 500,
         message: 'Erreur lors du chargement des villes'

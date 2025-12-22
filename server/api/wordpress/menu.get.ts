@@ -3,12 +3,10 @@ export default defineEventHandler(async () => {
   const config = useRuntimeConfig()
   
   if (!config.WORDPRESS_URL) {
-    console.warn('WORDPRESS_URL non défini, utilisation du menu de fallback')
     return getFallbackMenu()
   }
 
   try {
-    console.log('Tentative de récupération du menu depuis WordPress...')
     
     // Essayer l'endpoint menu-items en premier, car il est conçu pour la hiérarchie
     try {
@@ -17,15 +15,12 @@ export default defineEventHandler(async () => {
       })
 
       if (menuResponse && menuResponse.success && menuResponse.items?.length > 0) {
-        console.log(`Menu WordPress trouvé via menu-items: ${menuResponse.items.length} éléments`)
         return buildMenuHierarchy(menuResponse.items)
       }
     } catch (menuItemsError) {
-      console.log('Endpoint menu-items non disponible ou vide:', menuItemsError.message)
     }
 
     // Puis, les catégories WooCommerce (qui ont une structure hiérarchique définie dans buildMenuFromCategories)
-    console.log('Tentative avec les catégories WooCommerce...')
     try {
       const categories = await $fetch(`${config.WORDPRESS_URL}/wp-json/wc/v3/products/categories`, {
         params: {
@@ -39,11 +34,9 @@ export default defineEventHandler(async () => {
       })
 
       if (categories && Array.isArray(categories) && categories.length > 0) {
-        console.log(`Menu créé à partir de ${categories.length} catégories WooCommerce`)
         return buildMenuFromCategories(categories)
       }
     } catch (wcCategoriesError) {
-      console.log('Endpoint catégories WooCommerce non disponible:', wcCategoriesError.message)
     }
 
     // Enfin, les catégories personnalisées (qui créent un menu plat) comme dernier recours
@@ -51,18 +44,14 @@ export default defineEventHandler(async () => {
       const categories = await $fetch(`${config.WORDPRESS_URL}/wp-json/custom/v1/categories`)
       
       if (categories && Array.isArray(categories) && categories.length > 0) {
-        console.log(`Menu créé à partir de ${categories.length} catégories personnalisées`)
         return buildMenuFromCustomCategories(categories)
       }
     } catch (customCategoriesError) {
-      console.log('Endpoint catégories personnalisées non disponible:', customCategoriesError.message)
     }
 
   } catch (error: any) {
-    console.error('Erreur lors de la récupération du menu:', error.message)
   }
 
-  console.warn('Aucun menu WordPress trouvé, utilisation du menu de fallback')
   return getFallbackMenu()
 })
 

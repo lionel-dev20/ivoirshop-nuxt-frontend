@@ -33,7 +33,6 @@ export default defineEventHandler(async (event) => {
     const WORDPRESS_URL = runtimeConfig.WORDPRESS_URL || runtimeConfig.public?.WORDPRESS_URL
     // Récupération des slugs depuis l'URL
     const params = getRouterParams(event)
-    console.log('Params reçus:', params)
     
     // Gestion du slug (peut être string ou string[])
     let slugPath: string
@@ -48,11 +47,9 @@ export default defineEventHandler(async (event) => {
     const slugParts = slugPath.split('/')
     const lastSlug = slugParts[slugParts.length - 1]
 
-    console.log('Slug recherché:', lastSlug)
 
     // Vérification de l'URL
     if (!WORDPRESS_URL) {
-      console.error('Variable d\'environnement WORDPRESS_URL manquante')
       throw createError({ 
         statusCode: 500, 
         statusMessage: 'Configuration manquante' 
@@ -68,7 +65,6 @@ export default defineEventHandler(async (event) => {
       }
     }
 
-    console.log('Récupération des catégories via endpoint personnalisé...')
     
     // Utilise l'endpoint personnalisé au lieu de l'API WooCommerce standard
     const { data: categories } = await axios.get(
@@ -76,7 +72,6 @@ export default defineEventHandler(async (event) => {
       axiosConfig
     )
 
-    console.log('Status WooCommerce:', categories)
 
     // Si le test fonctionne, utilise l'endpoint des catégories
     const { data: categoriesList } = await axios.get(
@@ -84,21 +79,16 @@ export default defineEventHandler(async (event) => {
       axiosConfig
     )
 
-    console.log(`${categoriesList.length} catégories trouvées`)
 
     // Recherche la catégorie correspondant au dernier slug
     const currentCategory = categoriesList.find((c: any) => c.slug === lastSlug)
     
     if (!currentCategory) {
-      console.log(`Catégorie avec slug "${lastSlug}" non trouvée`)
-      console.log('Slugs disponibles:', categoriesList.map((c: any) => c.slug))
       return { category: null, products: [] }
     }
 
-    console.log('Catégorie trouvée:', currentCategory.name, 'ID:', currentCategory.id)
 
     // Récupère TOUS les produits de cette catégorie avec pagination
-    console.log('Récupération des produits avec pagination...')
     
     let allProducts: any[] = []
     let currentPage = 1
@@ -117,7 +107,6 @@ export default defineEventHandler(async (event) => {
     // Boucle pour récupérer tous les produits page par page
     while (hasMoreProducts) {
       try {
-        console.log(`Récupération de la page ${currentPage}...`)
         const { data: pageProducts, headers } = await axios.get(
           `${WORDPRESS_URL}/wp-json/wc/v3/products`,
           {
@@ -133,7 +122,6 @@ export default defineEventHandler(async (event) => {
         
         if (pageProducts && pageProducts.length > 0) {
           allProducts = [...allProducts, ...pageProducts]
-          console.log(`Page ${currentPage}: ${pageProducts.length} produits récupérés`)
           
           // Vérifier s'il y a d'autres pages
           const totalPages = parseInt(headers['x-wp-totalpages'] || '1')
@@ -146,7 +134,6 @@ export default defineEventHandler(async (event) => {
           hasMoreProducts = false
         }
       } catch (pageError: any) {
-        console.error(`Erreur lors de la récupération de la page ${currentPage}:`, pageError.message)
         hasMoreProducts = false
       }
     }
@@ -187,13 +174,11 @@ export default defineEventHandler(async (event) => {
     // Ajouter le shipping_class à chaque produit
     const products = allProducts.map((product: any) => {
       const shipping_class = determineShippingClass(product)
-      console.log(`📦 Produit "${product.name}": shipping_class="${shipping_class}", weight=${product.weight}`)
       return {
         ...product,
         shipping_class
       }
     })
-    console.log(`✅ TOTAL: ${products.length} produits trouvés pour la catégorie ${currentCategory.name}`)
 
     // Extraire les attributs uniques des produits de cette catégorie
     const attributesMap = new Map<string, Set<string>>()
@@ -246,8 +231,6 @@ export default defineEventHandler(async (event) => {
       ).length
     }))
 
-    console.log(`${categoryAttributes.length} types d'attributs trouvés`)
-    console.log(`${categoryBrands.length} marques trouvées`)
 
     // Préparer la liste des catégories pour les filtres
     // Uniquement les sous-catégories de la catégorie actuelle et leurs enfants
@@ -277,7 +260,6 @@ export default defineEventHandler(async (event) => {
     // Ne récupérer que les sous-catégories de la catégorie actuelle
     const categoryFilters = getCategoryChildren(currentCategory.id)
     
-    console.log(`${categoryFilters.length} sous-catégories trouvées pour ${currentCategory.name}`)
 
     return { 
       category: currentCategory, 
@@ -288,13 +270,6 @@ export default defineEventHandler(async (event) => {
     }
     
   } catch (err: any) {
-    console.error('Erreur détaillée:', {
-      message: err.message,
-      response: err.response?.data,
-      status: err.response?.status,
-      url: err.config?.url
-    })
-    
     // Gestion spécifique des erreurs
     if (err.response?.status === 404) {
       throw createError({ 

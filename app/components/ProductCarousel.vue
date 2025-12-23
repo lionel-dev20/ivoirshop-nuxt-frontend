@@ -513,7 +513,7 @@ watch(() => props.categorySlug, async () => {
 }
 
 .carousel-title {
-  @apply md:text-2xl text-2xl font-bold mb-0 text-left flex-1;
+  @apply md:text-2xl text-[13px] font-bold mb-0 text-left flex-1;
 }
 
 .carousel-actions {
@@ -637,7 +637,7 @@ watch(() => props.categorySlug, async () => {
   }
   
   .carousel-title {
-    @apply text-left text-xl;
+    @apply text-left text-[15px];
   }
   
   .carousel-navigation {

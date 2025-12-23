@@ -1,5 +1,5 @@
 <template>
-  <div class="p-2.5 md:p-8 bg-white rounded-[4px]">
+  <div class="p-2.5 md:p-8 bg-white rounded-[4px] md:-mt-10">
     <h2 class="text-xl font-bold text-gray-800 mb-4">Acheter en Ligne</h2>
     <div
       class="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-8 gap-1 md:gap-2 border-t border-l border-gray-200"

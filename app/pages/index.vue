@@ -90,10 +90,10 @@
       @wishlist-toggle="handleWishlistToggle"
     />
 
-    <div class="md:h-4 h-4"></div>
+    <div class="md:h-6 h-4"></div>
     <CollectionHomepageDoubleBanner :banners="doubleBanners[0]" />
 
-    <div class="md:h-4 h-4"></div>
+    <div class="md:h-6 h-4"></div>
     <ProductCarousel 
       :category-id="355"
       :grid-columns="bannerImageUrl ? 4 : 5"
@@ -154,9 +154,9 @@
       @wishlist-toggle="handleWishlistToggle"
     />
 
-    <div class="md:h-4 h-4"></div>
+    <div class="md:h-6 h-4"></div>
     <CollectionHomepageDoubleBanner :banners="doubleBanners[1]" />
-    <div class="md:h-4 h-4"></div>
+    <div class="md:h-6 h-4"></div>
 
     <ProductCarousel 
       :category-id="358"
@@ -218,9 +218,9 @@
       @wishlist-toggle="handleWishlistToggle"
     />
 
-    <div class="md:h-4 h-4"></div>
+    <div class="md:h-6 h-4"></div>
     <CollectionHomepageDoubleBanner :banners="doubleBanners[2]" />
-    <div class="md:h-4 h-4"></div>
+    <div class="md:h-6 h-4"></div>
 
     <ProductCarousel 
       :category-id="360"

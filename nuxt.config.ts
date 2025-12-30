@@ -37,10 +37,18 @@ export default defineNuxtConfig({
   WOOCOMMERCE_CONSUMER_KEY: process.env.WOOCOMMERCE_CONSUMER_KEY,
   WOOCOMMERCE_CONSUMER_SECRET: process.env.WOOCOMMERCE_CONSUMER_SECRET,
   
+  // Configuration Mobile Money Payment
+  MOBILE_MONEY_API_KEY: process.env.MOBILE_MONEY_API_KEY,
+  MOBILE_MONEY_API_SECRET: process.env.MOBILE_MONEY_API_SECRET,
+  MOBILE_MONEY_REFERENCE: process.env.MOBILE_MONEY_REFERENCE || 'ivoirshop',
+  MOBILE_MONEY_API_URL: process.env.MOBILE_MONEY_API_URL || 'https://apidjonanko.tech',
+  
   public: {
     WOOCOMMERCE_API_URL: process.env.WOOCOMMERCE_API_URL || "https://admin.ivoirshop.ci/wp-json/wc/v3",
     WORDPRESS_URL: process.env.WORDPRESS_URL,
-    WC_STORE_URL: process.env.WC_STORE_URL || process.env.WORDPRESS_URL, // ✅ Ajoutez cette ligne
+    WC_STORE_URL: process.env.WC_STORE_URL || process.env.WORDPRESS_URL,
+    SITE_URL: process.env.NUXT_PUBLIC_SITE_URL || 'https://ivoirshop.ci', // URL du site frontend
+    PAYMENT_THRESHOLD: parseInt(process.env.PAYMENT_THRESHOLD || '150000'), // Seuil de 150 000 FCFA
   },
 },
    ssr: true,

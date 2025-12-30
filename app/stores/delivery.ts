@@ -77,6 +77,9 @@ export const useDeliveryStore = defineStore('delivery', {
             description: coupon.description,
             formatted_discount: coupon.formatted_discount
           }
+          
+          // Sauvegarder le coupon appliqué
+          this.saveToStorage()
         } else {
           throw new Error((response as any).message || 'Code coupon invalide')
         }
@@ -89,6 +92,8 @@ export const useDeliveryStore = defineStore('delivery', {
     
     removeCoupon() {
       this.appliedCoupon = null
+      // Sauvegarder l'état après suppression du coupon
+      this.saveToStorage()
     },
     
     resetDelivery() {
@@ -98,6 +103,7 @@ export const useDeliveryStore = defineStore('delivery', {
         product_type: 'medium',
         shipping_cost: 0
       }
+      this.appliedCoupon = null
     },
     
     // Sauvegarde dans localStorage
@@ -106,6 +112,7 @@ export const useDeliveryStore = defineStore('delivery', {
         try {
           const data = {
             selectedDelivery: this.selectedDelivery,
+            appliedCoupon: this.appliedCoupon
           }
           localStorage.setItem('deliveryData', JSON.stringify(data))
         } catch (error) {
@@ -121,6 +128,7 @@ export const useDeliveryStore = defineStore('delivery', {
           if (stored) {
             const data = JSON.parse(stored)
             this.selectedDelivery = data.selectedDelivery || this.selectedDelivery
+            this.appliedCoupon = data.appliedCoupon || null
           }
         } catch (error) {
         }

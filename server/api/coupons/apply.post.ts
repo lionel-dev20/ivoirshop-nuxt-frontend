@@ -5,6 +5,8 @@ export default defineEventHandler(async (event) => {
   try {
     const body = await readBody(event)
 
+    console.log('📋 Application du coupon:', body.coupon_code)
+
     if (!body.coupon_code) {
       throw createError({
         statusCode: 400,
@@ -27,11 +29,14 @@ export default defineEventHandler(async (event) => {
       }
     }
 
+    const apiUrl = `${process.env.WC_STORE_URL}/wp-json/custom/v1/coupons/${body.coupon_code}`
+    console.log('🔗 Appel à:', apiUrl)
+
     // Récupération du coupon via l'API WordPress (endpoint personnalisé)
-    const response = await axios.get(
-      `${process.env.WC_STORE_URL}/wp-json/custom/v1/coupons/${body.coupon_code}`,
-      axiosConfig
-    )
+    const response = await axios.get(apiUrl, axiosConfig)
+    
+    console.log('✅ Réponse WordPress:', response.data)
+    
     const coupons = response.data
 
     // L'API personnalisée retourne directement l'objet coupon s'il est trouvé, ou un WP_Error en cas d'échec.
@@ -83,6 +88,12 @@ export default defineEventHandler(async (event) => {
     }
 
   } catch (err: any) {
+    console.error('❌ ERREUR lors de l\'application du coupon:')
+    console.error('Message:', err.message)
+    console.error('Status:', err.response?.status)
+    console.error('Data:', err.response?.data)
+    console.error('Full error:', err)
+    
     if (err.statusCode) {
       throw err
     }

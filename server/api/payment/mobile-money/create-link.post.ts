@@ -7,25 +7,15 @@ export default defineEventHandler(async (event) => {
     const config = useRuntimeConfig()
 
     // Validation des données
-    if (!body.phone || !body.amount) {
+    if (!body.amount) {
       throw createError({
         statusCode: 400,
-        statusMessage: 'Données manquantes (phone, amount requis)'
-      })
-    }
-
-    // Validation du numéro de téléphone ivoirien
-    const phoneRegex = /^[0-9]{10}$/
-    if (!phoneRegex.test(body.phone)) {
-      throw createError({
-        statusCode: 400,
-        statusMessage: 'Numéro de téléphone invalide'
+        statusMessage: 'Données manquantes (amount requis)'
       })
     }
 
     console.log('Création du lien de paiement:', {
       amount: body.amount,
-      phone: body.phone,
       customer: body.customer_name
     })
 

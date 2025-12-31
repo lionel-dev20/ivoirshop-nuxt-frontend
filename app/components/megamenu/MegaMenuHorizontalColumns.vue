@@ -3,14 +3,14 @@
     <!-- Niveau 1 -->
     <ul
       ref="parentMenu"
-      class="lg:flex hidden flex-col w-64 bg-white border-1 border-slate-100 text-gray-800 md:px-3 md:py-4 rounded-sm shadow-md shadow-gray-50"
+      class="lg:flex hidden flex-col w-64 bg-white border-1 border-slate-100 text-gray-800 md:px-3 md:py-4.5 rounded-sm shadow-md shadow-gray-50"
     >
       <!-- Menu WordPress -->
       <template v-if="!pending && !error && menuItems.length">
         <li v-for="item in menuItems" :key="item.ID" class="relative"
             @mouseenter="showSubMenu(item.ID)"
             @mouseleave="hideSubMenuWithDelay(item.ID)">
-          <NuxtLink :to="item.url" class="block px-3.5 py-[5.3px] z-50 hover:bg-gray-50 transition-colors duration-200">
+          <NuxtLink :to="item.url" class="block px-3.5 py-[6px] z-50 hover:bg-gray-50 transition-colors duration-200">
             {{ item.title }}
           </NuxtLink>
 

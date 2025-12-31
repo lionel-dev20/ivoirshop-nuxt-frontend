@@ -11,7 +11,7 @@
         <!-- Middle here partenaires -->
         <div>
             <h2
-                class="block bg-white md:p-2.5 p-3 rounded-[4px] text-left font-extrabold text-lg md:text-xl mb-1.5 md:mb-4 border-1 border-gray-100 shadow-md shadow-gray-100">
+                class="block bg-white md:p-4 p-3 rounded-[4px] text-left font-extrabold text-lg md:text-xl mb-1.5 md:mb-4 border-1 border-gray-100 shadow-md shadow-gray-100">
                 Nos partenaires</h2>
             <div class="grid grid-cols-4 md:grid-cols-4 lg:grid-cols-5 md:gap-1.5 gap-1 h-full">
                 <NuxtLink :to="item.link" v-for="(item, index) in listParnerImg" :key="index"

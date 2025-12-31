@@ -298,7 +298,7 @@
                 <button
                   type="button"
                   @click="removeCoupon"
-                  class="w-full px-4 py-2.5 bg-orange-500 text-white rounded-sm hover:bg-red-200 transition-colors flex items-center justify-center space-x-2 font-medium"
+                  class="w-full px-4 py-2.5 cursor-pointer bg-orange-500 text-white rounded-sm hover:bg-red-600 transition-colors flex items-center justify-center space-x-2 font-medium"
                 >
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -494,11 +494,12 @@
               </div>
             </div>
 
-            <!-- Bouton de commande -->
+            <!-- Bouton de commande (masqué pour Mobile Money) -->
             <button
+              v-if="orderForm.paymentMethod !== 'mobile_money'"
               type="submit"
               :disabled="isSubmitting || !canSubmit"
-              class="w-full mt-6 bg-orange-500 hover:bg-orange-600 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-semibold py-3 px-4 rounded-sm transition-colors flex items-center justify-center space-x-2"
+              class="w-full mt-6 bg-orange-500 hover:bg-orange-600 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-semibold py-3.5 px-4 rounded-sm transition-colors flex items-center justify-center space-x-2"
               :class="{ 'cursor-pointer': canSubmit, 'cursor-not-allowed': !canSubmit }"
             >
               <span v-if="isSubmitting" class="animate-spin">⏳</span>
@@ -513,7 +514,7 @@
                 </svg>
                 <div class="flex-1">
                   <p class="text-xs text-orange-900 font-medium">
-                    📱 Utilisez le bouton "Procéder au paiement Mobile Money" ci-dessus pour finaliser votre commande.
+                    📱 Utilisez le bouton "Payer maintenant" ci-dessus pour finaliser votre commande.
                   </p>
                 </div>
               </div>
@@ -628,9 +629,19 @@ const mobileMoneyAmount = computed(() => {
 
 // Vérifier si le paiement à la livraison est disponible
 const canPayOnDelivery = computed(() => {
-  // Paiement à la livraison disponible si :
-  // - La commande est < 150 000 FCFA (dans TOUTES les régions)
-  return !requiresPartialPayment.value
+  // Paiement à la livraison NON disponible si :
+  // 1. La commande est >= 150 000 FCFA
+  // 2. La région sélectionnée est "Autres régions"
+  if (requiresPartialPayment.value) {
+    return false
+  }
+  
+  // Désactiver COD pour "Autres régions"
+  if (orderForm.value.city === 'Autres régions') {
+    return false
+  }
+  
+  return true
 })
 
 // Vérifier si toutes les informations de livraison sont remplies
@@ -1117,12 +1128,21 @@ watch([() => orderForm.value.city, () => orderForm.value.commune, () => cartStor
   if (city && commune) {
     onCommuneChange()
   }
+  
+  // Forcer Mobile Money si "Autres régions" est sélectionné
+  if (city === 'Autres régions') {
+    orderForm.value.paymentMethod = 'mobile_money'
+  }
 })
 
 // Watcher pour gérer automatiquement le changement de méthode de paiement
 watch([requiresPartialPayment, canPayOnDelivery], ([requiresPartial, canCOD]) => {
   // Si le paiement partiel est requis, forcer mobile_money
   if (requiresPartial) {
+    orderForm.value.paymentMethod = 'mobile_money'
+  }
+  // Si "Autres régions" est sélectionné, forcer mobile_money
+  else if (orderForm.value.city === 'Autres régions') {
     orderForm.value.paymentMethod = 'mobile_money'
   }
   // Si le paiement COD n'est pas disponible et qu'il est sélectionné, changer pour mobile_money

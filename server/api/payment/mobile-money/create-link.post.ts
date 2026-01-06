@@ -14,15 +14,35 @@ export default defineEventHandler(async (event) => {
       })
     }
 
+    // Validation optionnelle des métadonnées
+    if (body.metadata?.phoneNumber) {
+      const phoneRegex = /^\+225[0-9]{10}$/
+      if (!phoneRegex.test(body.metadata.phoneNumber)) {
+        console.warn('⚠️ Format de téléphone invalide dans metadata:', body.metadata.phoneNumber)
+      }
+    }
+
     console.log('Création du lien de paiement:', {
       amount: body.amount,
       customer: body.customer_name
     })
 
-    // Préparer les données pour l'API de paiement
+    // Générer les URLs de retour (automatique selon l'environnement)
+    const siteUrl = config.public.SITE_URL || config.SITE_URL || 'http://localhost:3000'
+    const returnUrl = body.return_url || `${siteUrl}/thank-you?order_id=${body.order_id || ''}`
+    const cancelUrl = body.cancel_url || `${siteUrl}/checkout?payment_failed=true&order_id=${body.order_id || ''}`
+
+    // Préparer les données pour l'API de paiement (nouveau modèle)
     const paymentData = {
       amount: parseInt(body.amount),
-      merchant_reference: body.merchant_reference || 'ivoirshop'
+      merchant_reference: body.merchant_reference || config.MOBILE_MONEY_REFERENCE || 'ivoirshop',
+      return_url: returnUrl,
+      cancel_url: cancelUrl,
+      metadata: {
+        order_id: body.order_id || body.metadata?.order_id || '',
+        email: body.customer_email || body.metadata?.email || 'customer@email.com',
+        phoneNumber: body.phone || body.metadata?.phoneNumber || ''
+      }
     }
 
     const apiUrl = config.MOBILE_MONEY_API_URL || 'https://apidjonanko.tech'

@@ -1,40 +1,34 @@
 // server/api/payment/mobile-money/success.get.ts
-import { defineEventHandler, getQuery, createError } from 'h3'
+import { defineEventHandler, getQuery, sendRedirect } from 'h3'
 
 /**
  * Endpoint appelé après un paiement réussi
- * Crée la commande dans WooCommerce et redirige vers thank-you
+ * Redirige vers la page thank-you
+ * La commande est créée par le webhook en arrière-plan
  */
 export default defineEventHandler(async (event) => {
   try {
     const query = getQuery(event)
     
-    console.log('Retour après paiement réussi, query:', query)
+    console.log('============================================')
+    console.log('✅ RETOUR APRÈS PAIEMENT RÉUSSI')
+    console.log('============================================')
+    console.log('Query params:', query)
+    console.log('Order ID:', query.order_id || 'Non fourni')
+    console.log('Transaction ID:', query.transaction_id || 'Non fourni')
+    console.log('============================================')
 
-    // Récupérer les données du checkout depuis le cookie/session
-    // Note: En production, vous devriez sécuriser cela mieux (par exemple avec un token)
-    const checkoutData = event.node.req.headers.cookie?.includes('pendingCheckout')
+    // Rediriger vers la page thank-you
+    // Les données de commande sont récupérées depuis sessionStorage
+    const redirectUrl = `/thank-you?payment_success=true&order_id=${query.order_id || ''}&transaction_id=${query.transaction_id || ''}`
     
-    // Pour l'instant, on redirige vers une page qui va gérer la création
-    // La création se fera côté client avec les données du sessionStorage
-    
-    return {
-      statusCode: 302,
-      headers: {
-        'Location': `/payment/process-success?${new URLSearchParams(query as any).toString()}`
-      }
-    }
+    return sendRedirect(event, redirectUrl, 302)
 
   } catch (err: any) {
-    console.error('Erreur lors du traitement du succès:', err)
+    console.error('❌ Erreur lors du traitement du succès:', err)
     
     // Rediriger vers checkout avec erreur
-    return {
-      statusCode: 302,
-      headers: {
-        'Location': '/checkout?payment_failed=true'
-      }
-    }
+    return sendRedirect(event, '/checkout?payment_failed=true', 302)
   }
 })
 

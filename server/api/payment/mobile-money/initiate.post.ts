@@ -1,5 +1,5 @@
 // server/api/payment/mobile-money/initiate.post.ts
-import { defineEventHandler, readBody, createError } from 'h3'
+import { defineEventHandler, readBody, createError, setResponseStatus } from 'h3'
 
 export default defineEventHandler(async (event) => {
   try {
@@ -82,6 +82,7 @@ export default defineEventHandler(async (event) => {
       
       const simulatedTransactionId = `SIM-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
       
+      setResponseStatus(event, 200)
       return {
         success: true,
         transaction_id: simulatedTransactionId,
@@ -113,6 +114,7 @@ export default defineEventHandler(async (event) => {
 
       // Vérifier la réponse
       if (result.transaction_id) {
+        setResponseStatus(event, 200)
         return {
           success: true,
           transaction_id: result.transaction_id,
@@ -132,6 +134,7 @@ export default defineEventHandler(async (event) => {
       
       const simulatedTransactionId = `SIM-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
       
+      setResponseStatus(event, 200)
       return {
         success: true,
         transaction_id: simulatedTransactionId,

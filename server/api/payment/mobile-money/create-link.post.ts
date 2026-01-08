@@ -1,5 +1,5 @@
 // server/api/payment/mobile-money/create-link.post.ts
-import { defineEventHandler, readBody, createError } from 'h3'
+import { defineEventHandler, readBody, createError, setResponseStatus } from 'h3'
 
 export default defineEventHandler(async (event) => {
   try {
@@ -39,9 +39,25 @@ export default defineEventHandler(async (event) => {
       return_url: returnUrl,
       cancel_url: cancelUrl,
       metadata: {
+        // 📝 Identifiants
         order_id: body.order_id || body.metadata?.order_id || '',
+        
+        // 👤 Informations client
+        customer_name: body.customer_name || body.metadata?.customer_name || '',
         email: body.customer_email || body.metadata?.email || 'customer@email.com',
-        phoneNumber: body.phone || body.metadata?.phoneNumber || ''
+        
+        // 📞 Contact
+        phoneNumber: body.phone || body.metadata?.phoneNumber || '',
+        customer_phone: body.customer_phone || body.metadata?.customer_phone || '',
+        
+        // 📍 Localisation
+        customer_city: body.customer_city || body.metadata?.customer_city || '',
+        customer_commune: body.customer_commune || body.metadata?.customer_commune || '',
+        customer_address_details: body.customer_address_details || body.metadata?.customer_address_details || '',
+        
+        // 🛒 PANIER : Liste des produits commandés (pour traçabilité)
+        // Format: [{ product_id, name, quantity, price, total }]
+        cart_items: body.cart_items || body.metadata?.cart_items || []
       }
     }
 
@@ -71,6 +87,7 @@ export default defineEventHandler(async (event) => {
       body: JSON.stringify(paymentData)
     })
 
+    // L'API externe retourne 201 Created, on accepte 200-299 comme succès
     if (!response.ok) {
       const errorText = await response.text()
       console.error('❌ Erreur API de paiement:', errorText)
@@ -111,6 +128,9 @@ export default defineEventHandler(async (event) => {
                           result.reference ||
                           result.paymentLink?.id || // 🎯 ID depuis paymentLink
                           result.paymentLink?.reference
+
+    // Forcer le statut à 200 OK (même si l'API externe retourne 201)
+    setResponseStatus(event, 200)
 
     // Retourner l'URL de paiement
     return {

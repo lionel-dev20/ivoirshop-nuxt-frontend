@@ -1,5 +1,5 @@
 // server/api/payment/mobile-money/set-webhook.post.ts
-import { defineEventHandler, createError } from 'h3'
+import { defineEventHandler, createError, setResponseStatus } from 'h3'
 
 /**
  * Configure l'URL du webhook auprès de l'API de paiement
@@ -71,6 +71,9 @@ export default defineEventHandler(async (event) => {
     console.log('Status:', response.status)
     console.log('Response:', JSON.stringify(result, null, 2))
     console.log('============================================')
+
+    // Forcer le statut à 200 OK
+    setResponseStatus(event, 200)
 
     return {
       success: true,

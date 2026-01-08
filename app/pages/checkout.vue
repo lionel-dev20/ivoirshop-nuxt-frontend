@@ -723,25 +723,57 @@ const handlePaymentSuccess = async (phoneNumber: string) => {
       sessionStorage.setItem('pendingCheckout', JSON.stringify(checkoutData))
     }
     
+    // Générer un numéro de commande temporaire unique
+    // Format: ORD-TIMESTAMP-RANDOM
+    const tempOrderId = `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 6).toUpperCase()}`
+    
+    console.log('📝 Numéro de commande temporaire généré:', tempOrderId)
+    
     // URLs de retour
     const baseUrl = window.location.origin
-    const successUrl = `${baseUrl}/api/payment/mobile-money/success`
-    const failedUrl = `${baseUrl}/checkout?payment_failed=true`
+    const successUrl = `${baseUrl}/api/payment/mobile-money/success?order_id=${tempOrderId}`
+    const failedUrl = `${baseUrl}/checkout?payment_failed=true&order_id=${tempOrderId}`
     const webhookUrl = `${baseUrl}/api/payment/mobile-money/callback`
+    
+    // Préparer le panier au format attendu par l'API
+    const cart_items = cartStore.items.map(item => ({
+      product_id: item.id,
+      name: item.name,
+      quantity: item.quantity,
+      price: item.price,
+      total: item.price * item.quantity
+    }))
     
     // Préparer les données pour l'API de paiement
     const paymentData = {
       amount: mobileMoneyAmount.value,
+      order_id: tempOrderId, // 📝 Numéro de commande temporaire
       merchant_reference: 'ivoirshop',
       phone: phoneNumber,
       customer_name: `${orderForm.value.firstName} ${orderForm.value.lastName}`,
       customer_email: orderForm.value.email || 'client@ivoirshop.ci',
+      customer_phone: orderForm.value.phone, // 📞 Téléphone du client
+      customer_city: orderForm.value.city, // 🏙️ Ville
+      customer_commune: orderForm.value.commune, // 📍 Région/Commune
+      customer_address_details: orderForm.value.deliveryAddressDetails || '', // 🏠 Adresse détaillée
+      cart_items: cart_items, // 🛒 Panier inclus pour traçabilité !
       successUrl,
       failedUrl,
       webhookUrl
     }
     
-    console.log('Redirection vers la page de paiement avec:', paymentData)
+    console.log('============================================')
+    console.log('📤 REDIRECTION VERS PAIEMENT')
+    console.log('============================================')
+    console.log('Order ID:', tempOrderId)
+    console.log('Client:', paymentData.customer_name)
+    console.log('Téléphone:', paymentData.customer_phone)
+    console.log('Ville:', paymentData.customer_city)
+    console.log('Commune:', paymentData.customer_commune)
+    console.log('Email:', paymentData.customer_email)
+    console.log('🛒 Panier:', cart_items.length, 'produits')
+    console.log('💰 Montant:', mobileMoneyAmount.value, 'FCFA')
+    console.log('============================================')
     
     // Appeler l'API pour créer le lien de paiement
     const response = await $fetch('/api/payment/mobile-money/create-link', {

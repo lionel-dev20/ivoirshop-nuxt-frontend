@@ -1,5 +1,5 @@
 // server/api/payment/mobile-money/verify.post.ts
-import { defineEventHandler, readBody, createError } from 'h3'
+import { defineEventHandler, readBody, createError, setResponseStatus } from 'h3'
 
 export default defineEventHandler(async (event) => {
   try {
@@ -28,6 +28,7 @@ export default defineEventHandler(async (event) => {
     if (body.transaction_id.startsWith('SIM-')) {
       console.log('⚠️ MODE SIMULATION - Transaction simulée confirmée')
       
+      setResponseStatus(event, 200)
       return {
         success: true,
         status: 'completed',
@@ -42,6 +43,7 @@ export default defineEventHandler(async (event) => {
     
     if (apiUrl === 'SIMULATION' || apiUrl.includes('SIMULATION')) {
       // Retourner succès en mode simulation
+      setResponseStatus(event, 200)
       return {
         success: true,
         status: 'completed',
@@ -69,6 +71,8 @@ export default defineEventHandler(async (event) => {
       console.log('Statut du paiement:', result)
 
       // Analyser le statut
+      setResponseStatus(event, 200)
+      
       if (result.status === 'success' || result.status === 'completed') {
         return {
           success: true,
@@ -100,6 +104,7 @@ export default defineEventHandler(async (event) => {
       // En cas d'erreur, retourner succès en mode simulation
       console.error('⚠️ API non disponible, mode simulation activé:', fetchError.message)
       
+      setResponseStatus(event, 200)
       return {
         success: true,
         status: 'completed',

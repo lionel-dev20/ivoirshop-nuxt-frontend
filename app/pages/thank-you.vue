@@ -107,12 +107,18 @@
             <h3 class="text-lg font-medium text-gray-900 mb-4">Méthode de paiement</h3>
             <div class="bg-gray-50 rounded-lg p-4">
               <div class="flex items-center">
-                <svg class="w-8 h-8 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg v-if="orderData.payment_method === 'Mobile Money'" class="w-8 h-8 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                </svg>
+                <svg v-else class="w-8 h-8 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
                 </svg>
                 <div>
-                  <p class="font-medium text-gray-900">Paiement à la livraison</p>
-                  <p class="text-sm text-gray-600">Vous paierez lors de la réception de votre commande</p>
+                  <p class="font-medium text-gray-900">{{ orderData.payment_status || 'Paiement à la livraison' }}</p>
+                  <p v-if="orderData.payment_method === 'Mobile Money'" class="text-sm text-gray-600">
+                    ✅ Votre paiement a été confirmé avec succès
+                  </p>
+                  <p v-else class="text-sm text-gray-600">Vous paierez lors de la réception de votre commande</p>
                 </div>
               </div>
             </div>
@@ -212,7 +218,12 @@
             </div>
             <div>
               <p class="text-blue-900 font-medium">Livraison</p>
-              <p class="text-blue-700 text-sm">Réception et paiement à la livraison (2-3 jours ouvrés)</p>
+              <p v-if="orderData.payment_method === 'Mobile Money'" class="text-blue-700 text-sm">
+                Réception de votre commande (2-3 jours ouvrés) - Déjà payée ✅
+              </p>
+              <p v-else class="text-blue-700 text-sm">
+                Réception et paiement à la livraison (2-3 jours ouvrés)
+              </p>
             </div>
           </div>
         </div>
@@ -302,31 +313,105 @@ const gaItems = computed(() => {
   }))
 })
 
-onMounted(() => {
-  // Essaie de récupérer depuis les paramètres de query
-  if (route.query.data) {
-    try {
-      orderData.value = JSON.parse(decodeURIComponent(route.query.data as string))
-    } catch (e) {
-    }
-  }
+const isLoading = ref(true)
+
+onMounted(async () => {
+  // Vérifier si c'est un paiement Mobile Money réussi
+  const isMobileMoneySuccess = route.query.payment_success === 'true'
+  const tempOrderId = route.query.order_id as string
   
-  // Sinon depuis sessionStorage
-  if (!orderData.value && process.client) {
-    const savedOrderData = sessionStorage.getItem('lastOrder')
-    if (savedOrderData) {
+  if (isMobileMoneySuccess && process.client) {
+    console.log('✅ Paiement Mobile Money réussi, récupération des données...')
+    
+    // Récupérer les données du checkout depuis sessionStorage
+    const pendingCheckout = sessionStorage.getItem('pendingCheckout')
+    
+    if (pendingCheckout) {
       try {
-        orderData.value = JSON.parse(savedOrderData)
-        // Nettoie après récupération
-        sessionStorage.removeItem('lastOrder')
+        const checkoutData = JSON.parse(pendingCheckout)
+        
+        // Transformer les données au format attendu par la page
+        orderData.value = {
+          order_id: tempOrderId,
+          order_number: tempOrderId, // ID temporaire
+          total: checkoutData.total || 0,
+          shipping_cost: checkoutData.shipping_cost || 0,
+          date: new Date(),
+          items: checkoutData.items || [],
+          customer: {
+            firstName: checkoutData.billing?.first_name || '',
+            lastName: checkoutData.billing?.last_name || '',
+            email: checkoutData.billing?.email || '',
+            phone: checkoutData.billing?.phone || '',
+            address: checkoutData.billing?.address_1 || '',
+            city: checkoutData.billing?.city || '',
+            postalCode: checkoutData.billing?.postcode || '',
+            country: checkoutData.billing?.country || 'CI'
+          },
+          payment_method: 'Mobile Money',
+          payment_status: 'Payé par Mobile Money' // ✅ Statut de paiement
+        }
+        
+        console.log('✅ Données de commande récupérées:', orderData.value)
+        
+        // Nettoyer le sessionStorage
+        sessionStorage.removeItem('pendingCheckout')
+        
+        // Sauvegarder dans lastOrder pour refresh de page
+        sessionStorage.setItem('lastOrder', JSON.stringify(orderData.value))
+        
+        isLoading.value = false
+        
+      } catch (e) {
+        console.error('Erreur lors de la récupération des données:', e)
+        isLoading.value = false
+      }
+    } else {
+      // Essayer de récupérer depuis lastOrder (en cas de refresh)
+      const lastOrder = sessionStorage.getItem('lastOrder')
+      if (lastOrder) {
+        try {
+          orderData.value = JSON.parse(lastOrder)
+          isLoading.value = false
+        } catch (e) {
+          console.error('Erreur:', e)
+          isLoading.value = false
+        }
+      } else {
+        isLoading.value = false
+      }
+    }
+  } else {
+    // Ancien flux (paiement à la livraison)
+    // Essaie de récupérer depuis les paramètres de query
+    if (route.query.data) {
+      try {
+        orderData.value = JSON.parse(decodeURIComponent(route.query.data as string))
       } catch (e) {
       }
     }
+    
+    // Sinon depuis sessionStorage
+    if (!orderData.value && process.client) {
+      const savedOrderData = sessionStorage.getItem('lastOrder')
+      if (savedOrderData) {
+        try {
+          orderData.value = JSON.parse(savedOrderData)
+        } catch (e) {
+        }
+      }
+    }
+    
+    isLoading.value = false
   }
   
-  // Redirection si aucune donnée
+  // Redirection si aucune donnée après 2 secondes
   if (!orderData.value) {
-    navigateTo('/')
+    setTimeout(() => {
+      if (!orderData.value) {
+        navigateTo('/')
+      }
+    }, 2000)
     return
   }
 

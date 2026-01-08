@@ -50,6 +50,10 @@
 
     <AcheterEnLigne />
     <div class="md:h-4 h-4"></div>
+    <CollectionHomepageDoubleBanner :banners="doubleBanners[0]" />
+    <div class="md:h-4 h-4"></div>
+
+
 
     <ProductCarousel 
       :category-id="347"
@@ -91,7 +95,7 @@
     />
 
     <div class="md:h-6 h-4"></div>
-    <CollectionHomepageDoubleBanner :banners="doubleBanners[0]" />
+    <CollectionHomepageDoubleBanner :banners="doubleBanners[1]" />
 
     <div class="md:h-6 h-4"></div>
     <ProductCarousel 
@@ -135,6 +139,9 @@
     />
 
     <div class="md:h-4 h-4"></div>
+    <CollectionHomepageDoubleBanner :banners="doubleBanners[2]" />
+    <div class="md:h-4 h-4"></div>
+
     <ProductCarousel 
       :category-id="357"
       :grid-columns="bannerImageUrl ? 4 : 5"
@@ -155,7 +162,7 @@
     />
 
     <div class="md:h-6 h-4"></div>
-    <CollectionHomepageDoubleBanner :banners="doubleBanners[1]" />
+    <CollectionHomepageDoubleBanner :banners="doubleBanners[3]" />
     <div class="md:h-6 h-4"></div>
 
     <ProductCarousel 
@@ -219,7 +226,7 @@
     />
 
     <div class="md:h-6 h-4"></div>
-    <CollectionHomepageDoubleBanner :banners="doubleBanners[2]" />
+    <CollectionHomepageDoubleBanner :banners="doubleBanners[4]" />
     <div class="md:h-6 h-4"></div>
 
     <ProductCarousel 
@@ -263,6 +270,9 @@
     />
 
     <div class="md:h-4 h-4"></div>
+    <CollectionHomepageDoubleBanner :banners="doubleBanners[5]" />
+    <div class="md:h-4 h-4"></div>
+
     <ProductCarousel 
       :category-id="362"
       :grid-columns="bannerImageUrl ? 4 : 5"
@@ -359,40 +369,66 @@ const doubleBanners = ref([
   // Première bannière (ligne 97)
   [
     {
-      image: '/images/slide_objet_et_prix.png',
-      link: '/',
-      alt: 'Banner 1'
+      image: '/categorieImage/Mixeur.jpg',
+      link: 'https://ivoirshop.ci/produit/ilux-blender-grinder-2-en-1-lx-358-bol-1-5-l-300w-blanc-noir',
+      alt: 'Mixeurs'
     },
     {
-      image: '/images/slide_objet_et_prix.pngvrai_1_3.png',
-      link: '/',
-      alt: 'Banner 2'
+      image: '/categorieImage/Machinbe pilé foutou.jpg',
+      link: ' https://ivoirshop.ci/produit/binatone-machine-a-piler-foutou-6l-1000w',
+      alt: 'Machinbe pilé foutou.jpg'
     }
   ],
   // Deuxième bannière (ligne 161)
   [
     {
-      image: '/images/slide_objet_et_prix.pngvrai_1_4.png',
-      link: '/',
-      alt: 'Banner 3'
+      image: '/categorieImage/Plaque gaz.jpg',
+      link: ' https://www.ivoirshop.ci/produit/ilux-cuisiniere-gaz-4-feux-lxg-40w-50x50-cm-blanc-garantie-6-mois',
+      alt: 'Plaque gaz'
     },
     {
-      image: '/images/slide_objet_et_prix.pngvrai_1_5.png',
-      link: '/',
-      alt: 'Banner 4'
+      image: '/categorieImage/Gazinière.jpg',
+      link: 'https://www.ivoirshop.ci/produit/ilux-cuisiniere-a-gaz-rechaud-3-feux-lxg-7403-sx95-bleu',
+      alt: 'Gazinière.jpg'
     }
   ],
   // Troisième bannière (ligne 225)
   [
     {
-      image: '/images/slide_objet_et_prix.pngvrai_2.png',
-      link: '/',
-      alt: 'Banner 5'
+      image: '/categorieImage/TV.jpg',
+      link: ' https://www.ivoirshop.ci/produit/ilux-tv-led-full-hd-43-pouces-decodeur-integre-hdmi-usb-vga-noir-garantie-06-mois',
+      alt: 'TV'
     },
     {
-      image: '/images/slide_objet_et_prix1.png',
-      link: '/',
-      alt: 'Banner 6'
+      image: '/categorieImage/Audio.jpg',
+      link: 'https://www.ivoirshop.ci/produit/alitop-woofer-chaine-hifi-bluetooth-usb-fm-tvsd-noir-garantie-01-mois',
+      alt: 'Audio'
+    }
+  ],
+  // Troisième bannière (ligne 225)
+  [
+    {
+      image: '/categorieImage/Micro onde.jpg',
+      link: 'https://www.ivoirshop.ci/produit/ilux-micro-onde-lxm-2090b-20-litres-700w-noir',
+      alt: 'Micro onde'
+    },
+    {
+      image: '/categorieImage/refrigerateur.jpg',
+      link: ' https://www.ivoirshop.ci/produit/ilux-refrigerateur-2-battants-118-l-ilr118-gris-garantie-6-mois',
+      alt: 'efrigerateur'
+    }
+  ],
+  // Troisième bannière (ligne 225)
+  [
+    {
+      image: '/categorieImage/Ventilateur.jpg',
+      link: ' https://www.ivoirshop.ci/produit/ilux-2-ventilateurs-18-pouces-lxf-823-7-helices-copie',
+      alt: 'Ventilateur'
+    },
+    {
+      image: '/categorieImage/Climatiseur.jpg',
+      link: ' https://www.ivoirshop.ci/produit/split-1-cv-smart-fonctionnant-en-mode-on-off-r410-sts-09_ultra-blanc-garantie-12-mois',
+      alt: 'Climatiseur'
     }
   ]
 ]);
@@ -401,9 +437,9 @@ const doubleBanners = ref([
 <style scoped>
 a.view-more-link {
   padding: 10px !important;
-    border-radius: 4px !important;
-    margin-left: 12px !important;
-    color: #000 !important;
+  border-radius: 4px !important;
+  margin-left: 12px !important;
+  color: #000 !important;
 }
 </style>
 

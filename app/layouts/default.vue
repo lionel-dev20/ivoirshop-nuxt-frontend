@@ -1,6 +1,6 @@
 <!-- layouts/default.vue -->
 <template>
-  <!-- <div :class="['min-h-screen flex flex-col', isIndexPage ? 'bg-red-500' : 'bg-gray-50']"> -->
+  <!-- <div :class="['min-h-screen flex flex-col', isIndexPage ? 'homepage-bg' : 'bg-gray-50']"> -->
     <div class="min-h-screen flex flex-col">
     <TopBanner />
     <AppHeader />
@@ -16,3 +16,15 @@
 const route = useRoute()
 const isIndexPage = computed(() => route.path === '/')
 </script>
+
+<style>
+.homepage-bg {
+  background-image: url('/images/BG-ivoirshop.jpg');
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  min-height: 100vh;
+  width: 100%;
+}
+</style>

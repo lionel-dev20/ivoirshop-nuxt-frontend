@@ -20,7 +20,7 @@
           <div class="h-full md:mt-3 w-full rounded-md flex items-center justify-center">
             <NuxtLink to="/" class="object-cover h-full w-full rounded-md">
             <img
-              src="https://web.archive.org/web/20240216010846im_/https://www.ivoirshop.ci/wp-content/uploads/2023/10/IVS_ET_woofer-LEADDER.gif"
+              src="/images/IVS_ET_LIVRAISON-GRATUITE.gif"
               alt="Publicité 1"
               loading="lazy"
               class="object-cover h-full w-full rounded-md shadow-gray-100" />

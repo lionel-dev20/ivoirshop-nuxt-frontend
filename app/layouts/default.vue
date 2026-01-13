@@ -1,6 +1,9 @@
 <!-- layouts/default.vue -->
 <template>
-  <div :class="['min-h-screen flex flex-col', isIndexPage ? 'homepage-bg' : 'bg-gray-50']">
+  <div 
+    :class="['min-h-screen flex flex-col', isIndexPage ? 'homepage-bg' : 'bg-gray-50']"
+    :style="isIndexPage ? homepageBgStyle : {}"
+  >
     <!-- <div class="min-h-screen flex flex-col"> -->
     <TopBanner />
     <AppHeader />
@@ -15,16 +18,29 @@
 <script setup lang="ts">
 const route = useRoute()
 const isIndexPage = computed(() => route.path === '/')
+
+// Style dynamique pour l'image de fond qui fonctionne en production
+// Utilisation d'un style inline pour éviter les problèmes de résolution de chemins CSS en production
+const homepageBgStyle = computed(() => {
+  // Chemin de l'image - les fichiers dans public/ sont servis depuis la racine en production
+  // En utilisant un style inline, le navigateur résout correctement le chemin
+  const imagePath = '/images/bg-ivoirshop.jpg'
+  
+  return {
+    backgroundImage: `url('${imagePath}')`,
+    backgroundPosition: 'center center',
+    backgroundRepeat: 'no-repeat',
+    backgroundAttachment: 'fixed',
+    minHeight: '100vh',
+    width: '100%',
+    backgroundSize: 'cover'
+  }
+})
 </script>
 
 <style>
 .homepage-bg {
-  background-image: url('/images/bg-ivoirshop.jpg');
-  /* background-size: fill; */
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  min-height: 100vh;
-  width: 100%;
+  /* Les styles sont maintenant appliqués via :style dans le template */
+  background-size: cover;
 }
 </style>

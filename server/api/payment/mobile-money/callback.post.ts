@@ -66,7 +66,7 @@ export default defineEventHandler(async (event) => {
         payment_method: 'mobile_money',
         payment_method_title: 'Mobile Money',
         set_paid: true, // Marquer comme payé
-        status: 'processing', // Statut: en cours de traitement
+        status: 'paye-par-mobile-money', // Statut: Payé par mobile money
         transaction_id: payload.transaction_id || payload.id, // ID de transaction
         customer_note: `✅ Payé par Mobile Money - Transaction: ${payload.transaction_id || payload.id}`,
         billing: {
@@ -129,6 +129,7 @@ export default defineEventHandler(async (event) => {
         console.log('Order ID WooCommerce:', woocommerceOrderId)
         console.log('Order ID Temporaire:', payload.metadata.order_id)
         console.log('Transaction ID:', payload.transaction_id || payload.id)
+        console.log('Statut: Payé par mobile money')
         console.log('Montant:', payload.amount, 'FCFA')
         console.log('============================================')
       } else {

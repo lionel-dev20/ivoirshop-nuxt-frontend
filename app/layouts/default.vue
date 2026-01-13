@@ -1,7 +1,7 @@
 <!-- layouts/default.vue -->
 <template>
-  <!-- <div :class="['min-h-screen flex flex-col', isIndexPage ? 'homepage-bg' : 'bg-gray-50']"> -->
-    <div class="min-h-screen flex flex-col">
+  <div :class="['min-h-screen flex flex-col', isIndexPage ? 'homepage-bg' : 'bg-gray-50']">
+    <!-- <div class="min-h-screen flex flex-col"> -->
     <TopBanner />
     <AppHeader />
     <main class="flex-1">
@@ -19,8 +19,8 @@ const isIndexPage = computed(() => route.path === '/')
 
 <style>
 .homepage-bg {
-  background-image: url('/images/BG-ivoirshop.jpg');
-  background-size: cover;
+  background-image: url('/images/bg-ivoirshop.jpg');
+  /* background-size: fill; */
   background-position: center center;
   background-repeat: no-repeat;
   background-attachment: fixed;

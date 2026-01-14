@@ -22,7 +22,7 @@ const homepageBgStyle = computed(() => {
   if (!isIndexPage.value) return {}
   
   return {
-    backgroundImage: `url('/images/bg-ivoirshop.jpg')`,
+    backgroundImage: `url('/images/bgivoirshop.jpg')`,
     backgroundPosition: 'center center',
     backgroundRepeat: 'no-repeat',
     backgroundAttachment: 'fixed',

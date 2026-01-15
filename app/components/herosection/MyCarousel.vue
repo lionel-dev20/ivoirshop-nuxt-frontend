@@ -61,7 +61,7 @@ const showNavigation = computed(() => {
 });
 
 const slides = [
-  { image: '/sliders/1_Generic_Campagne.png', link: 'https://ivoirshop.ci/meilleures-ventes' },
+  { image: '/sliders/1_Generic_Campagne.png', link: 'https://ivoirshop.ci/categorie/meilleures-ventes' },
   { image: '/sliders/2_Mixeur.jpg', link: 'https://ivoirshop.ci/categorie/electromenager' },
   { image: '/sliders/3_Gaz_Plaque.png', link: 'https://ivoirshop.ci/categorie/electromenager/appareils-de-cuisson' },
   { image: '/sliders/4_Ventilateur & CLIM.jpg', link: 'https://ivoirshop.ci/categorie/chauffage-ventilation' },

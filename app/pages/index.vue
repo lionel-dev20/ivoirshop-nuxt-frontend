@@ -383,12 +383,12 @@ const doubleBanners = ref([
   [
     {
       image: '/categorieImage/Plaque gaz.jpg',
-      link: ' https://www.ivoirshop.ci/produit/ilux-cuisiniere-gaz-4-feux-lxg-40w-50x50-cm-blanc-garantie-6-mois',
+      link: 'https://www.ivoirshop.ci/produit/ilux-cuisiniere-a-gaz-rechaud-3-feux-lxg-7403-sx95-bleu',
       alt: 'Plaque gaz'
     },
     {
       image: '/categorieImage/Gazinière.jpg',
-      link: 'https://www.ivoirshop.ci/produit/ilux-cuisiniere-a-gaz-rechaud-3-feux-lxg-7403-sx95-bleu',
+      link: ' https://www.ivoirshop.ci/produit/ilux-cuisiniere-gaz-4-feux-lxg-40w-50x50-cm-blanc-garantie-6-mois',
       alt: 'Gazinière.jpg'
     }
   ],

@@ -172,9 +172,9 @@ export default defineEventHandler(async (event) => {
       console.log('📤 Création de la commande WooCommerce...')
       console.log('Données envoyées:', JSON.stringify(orderData, null, 2))
       
-      // Appeler l'API WooCommerce pour créer la commande
+      // Appeler l'API WooCommerce pour créer la commande MOBILE MONEY
       const WORDPRESS_API = config.public.WC_STORE_URL || 'https://admin.ivoirshop.ci'
-      const response = await fetch(`${WORDPRESS_API}/wp-json/custom/v1/create-order`, {
+      const response = await fetch(`${WORDPRESS_API}/wp-json/custom/v1/create-order-mobile-money`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

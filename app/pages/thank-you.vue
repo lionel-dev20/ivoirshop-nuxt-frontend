@@ -107,18 +107,30 @@
             <h3 class="text-lg font-medium text-gray-900 mb-4">Méthode de paiement</h3>
             <div class="bg-gray-50 rounded-lg p-4">
               <div class="flex items-center">
-                <svg v-if="orderData?.payment_method === 'Mobile Money'" class="w-8 h-8 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <!-- Icône Mobile Money -->
+                <svg v-if="orderData?.payment_method === 'Mobile Money' || orderData?.payment_method === 'mobile_money'" class="w-8 h-8 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                 </svg>
-                <svg v-else class="w-8 h-8 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <!-- Icône Paiement à la livraison -->
+                <svg v-else class="w-8 h-8 text-blue-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
                 </svg>
                 <div>
-                  <p class="font-medium text-gray-900">{{ orderData?.payment_status || 'Paiement à la livraison' }}</p>
-                  <p v-if="orderData?.payment_method === 'Mobile Money'" class="text-sm text-gray-600">
+                  <!-- Titre selon le type de paiement -->
+                  <p v-if="orderData?.payment_method === 'Mobile Money' || orderData?.payment_method === 'mobile_money'" class="font-medium text-gray-900">
+                    Payé par Mobile Money
+                  </p>
+                  <p v-else class="font-medium text-gray-900">
+                    Paiement à la livraison
+                  </p>
+                  
+                  <!-- Description selon le type de paiement -->
+                  <p v-if="orderData?.payment_method === 'Mobile Money' || orderData?.payment_method === 'mobile_money'" class="text-sm text-gray-600">
                     ✅ Votre paiement a été confirmé avec succès
                   </p>
-                  <p v-else class="text-sm text-gray-600">Vous paierez lors de la réception de votre commande</p>
+                  <p v-else class="text-sm text-gray-600">
+                    Vous paierez lors de la réception de votre commande
+                  </p>
                 </div>
               </div>
             </div>

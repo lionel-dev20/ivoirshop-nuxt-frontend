@@ -10,10 +10,10 @@
         <h2 class="mt-4 text-xl font-semibold text-gray-900">Votre panier est vide</h2>
         <p class="mt-2 text-gray-600">Ajoutez des produits pour passer commande.</p>
         <NuxtLink
-          to="/categorie"
+          to="/"
           class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
         >
-          Voir les produits
+          Continuer vos achats
         </NuxtLink>
       </div>
     </div>

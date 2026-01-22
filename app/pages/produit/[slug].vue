@@ -136,22 +136,27 @@
 
           <!-- Prix -->
           <div class="space-y-2">
-            <div v-if="product.on_sale" class="flex md:items-center items-end space-x-3">
+            <!-- Afficher le prix de la variante si sélectionnée, sinon le prix du produit -->
+            <div v-if="displayData.on_sale || displayData.sale_price" class="flex md:items-center items-end space-x-3">
               <span class="md:text-2xl text-xl font-bold text-gray-800">
-                {{ formatPrice(product.sale_price) }}
+                {{ formatPrice(displayData.sale_price || displayData.price) }}
               </span>
               <span class="md:text-lg text-md text-gray-500 line-through">
-                {{ formatPrice(product.regular_price) }}
+                {{ formatPrice(displayData.regular_price) }}
               </span>
               <span class="bg-red-100 text-red-800 md:text-sm text-[12px] font-medium px-2 py-1 rounded">
-                -{{ Math.round((1 - product.sale_price / product.regular_price) * 100) }}%
+                -{{ Math.round((1 - (displayData.sale_price || displayData.price) / displayData.regular_price) * 100) }}%
               </span>
             </div>
             <div v-else>
               <span class="text-3xl font-bold text-gray-900">
-                {{ formatPrice(product.price) }}
+                {{ formatPrice(displayData.price || displayData.regular_price) }}
               </span>
             </div>
+            <!-- Message si produit variable sans sélection -->
+            <p v-if="isVariableProduct && !selectedVariant" class="text-sm text-gray-500 italic">
+              Sélectionnez des options pour voir le prix
+            </p>
           </div>
 
           <!-- Description courte -->
@@ -163,20 +168,29 @@
           <div class="flex items-center space-x-4">
             <span :class="[
               'px-3 py-1 rounded-full md:text-sm text-[12px] font-medium',
-              getStockStatusClass(product.stock_status)
+              getStockStatusClass(displayData.stock_status)
             ]">
-              {{ getStockStatusText(product.stock_status) }}
+              {{ getStockStatusText(displayData.stock_status) }}
             </span>
-            <span v-if="product.sku" class="md:text-sm text-[12px] text-gray-500">
-              SKU: {{ product.sku }}
+            <span v-if="displayData.sku" class="md:text-sm text-[12px] text-gray-500">
+              SKU: {{ displayData.sku }}
             </span>
           </div>
 
-          <!-- Attributs du produit -->
-          <div v-if="visibleAttributes.length > 0" class="space-y-3">
+          <!-- ✨ Sélecteur de variantes (si produit variable) -->
+          <ProductVariantSelector
+            v-if="isVariableProduct"
+            :variations="product.variations || []"
+            :attributes="variationAttributes"
+            @variant-selected="handleVariantSelected"
+            class="border-t pt-6"
+          />
+
+          <!-- Attributs du produit (caractéristiques non variables) -->
+          <div v-if="nonVariableAttributes.length > 0" class="space-y-3 border-t pt-6">
             <h3 class="font-semibold text-gray-900">Caractéristiques</h3>
             <dl class="grid grid-cols-1 gap-2">
-              <div v-for="attribute in visibleAttributes" :key="attribute.slug" class="flex">
+              <div v-for="attribute in nonVariableAttributes" :key="attribute.slug" class="flex">
                 <dt class="font-medium text-gray-700 w-1/3">{{ attribute.name }}:</dt>
                 <dd class="text-gray-600">{{ Array.isArray(attribute.values) ? attribute.values.join(', ') :
                   attribute.values }}</dd>
@@ -201,7 +215,10 @@
             <div class="w-full md:flex items-center md:-mt-4 justify-between gap-x-2.5">
               <!-- ajouter au panier  -->
               <div class="w-full">
-                <button v-if="product.in_stock" @click="addToCart"
+                <!-- Bouton si produit en stock (ou variante sélectionnée en stock) -->
+                <button 
+                  v-if="(isVariableProduct && selectedVariant && selectedVariant.stock_status === 'instock') || (!isVariableProduct && product.in_stock)"
+                  @click="addToCart"
                   class="flex w-full h-13 cursor-pointer bg-[#f19100] hover:bg-[#ff9900]/80 text-white font-semibold py-3 px-4 rounded-[4px] transition-colors items-center justify-center space-x-2">
                   <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -210,7 +227,24 @@
                   </svg>
                   <span class="cursor-pointer">Achetez maintenant</span>
                 </button>
-                <button v-else disabled
+                
+                <!-- Bouton si produit variable mais aucune variante sélectionnée -->
+                <button 
+                  v-else-if="isVariableProduct && !selectedVariant"
+                  @click="addToCart"
+                  class="flex w-full h-13 cursor-pointer bg-amber-500 hover:bg-amber-600 text-white font-semibold py-3 px-4 rounded-[4px] transition-colors items-center justify-center space-x-2">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13l-1.5 6m0 0h9M17 21v-2a2 2 0 00-2-2H9a2 2 0 00-2 2v2">
+                    </path>
+                  </svg>
+                  <span class="cursor-pointer">Sélectionner les options</span>
+                </button>
+                
+                <!-- Bouton désactivé si hors stock -->
+                <button 
+                  v-else 
+                  disabled
                   class="w-full bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg cursor-not-allowed">
                   Produit indisponible
                 </button>
@@ -394,6 +428,7 @@ const error = computed(() => fetchError.value?.data?.message || fetchError.value
 const quantity = ref(1)
 const selectedImageIndex = ref(0)
 const lightboxOpen = ref(false)
+const selectedVariant = ref<any>(null)
 
 
 // SEO Meta
@@ -411,10 +446,49 @@ const selectedImage = computed(() => {
   return product.value?.images?.[selectedImageIndex.value] || null
 })
 
-// Attributs visibles
-const visibleAttributes = computed(() => {
-  return product.value?.attributes?.filter((attr: any) => attr.visible) || []
+// Vérifier si c'est un produit variable
+const isVariableProduct = computed(() => {
+  return product.value?.type === 'variable' && product.value?.variations && product.value.variations.length > 0
 })
+
+// Attributs de variation (pour le sélecteur)
+const variationAttributes = computed(() => {
+  if (!isVariableProduct.value) return []
+  
+  return product.value?.attributes
+    ?.filter((attr: any) => attr.variation === true)
+    .map((attr: any) => ({
+      name: attr.name,
+      label: attr.name.replace('pa_', '').replace(/_/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase()),
+      options: attr.options || []
+    })) || []
+})
+
+// Attributs non-variables (caractéristiques du produit)
+const nonVariableAttributes = computed(() => {
+  return product.value?.attributes?.filter((attr: any) => attr.visible && attr.variation !== true) || []
+})
+
+// Données à afficher (produit simple ou variante sélectionnée)
+const displayData = computed(() => {
+  if (selectedVariant.value) {
+    return selectedVariant.value
+  }
+  return product.value
+})
+
+// Handler pour la sélection de variante
+const handleVariantSelected = (variant: any) => {
+  selectedVariant.value = variant
+  
+  // Mettre à jour l'image si la variante a une image
+  if (variant?.image && product.value?.images) {
+    const variantImageIndex = product.value.images.findIndex((img: any) => img.id === variant.image.id)
+    if (variantImageIndex !== -1) {
+      selectedImageIndex.value = variantImageIndex
+    }
+  }
+}
 
 // Formatage du prix
 const formatPrice = (price: string | number) => {
@@ -456,12 +530,42 @@ const getStockStatusText = (status: string) => {
 const addToCart = () => {
   if (!product.value) return
 
+  // Vérifier si c'est un produit variable et qu'une variante est requise
+  if (isVariableProduct.value && !selectedVariant.value) {
+    alert('Veuillez sélectionner les options du produit avant de l\'ajouter au panier.')
+    return
+  }
+
   const cartStore = useCartStore()
 
-  // Préparer les données du produit pour le panier, en incluant l'image correctement formatée
-  const cartProduct = {
-    ...product.value,
-    image: getProductImageData(product.value)
+  // Préparer les données du produit pour le panier
+  let cartProduct: any
+  
+  if (selectedVariant.value) {
+    // Produit variable avec variante sélectionnée
+    cartProduct = {
+      ...product.value,
+      // Écraser avec les données de la variante
+      id: selectedVariant.value.id,
+      variation_id: selectedVariant.value.id,
+      parent_id: product.value.id,
+      sku: selectedVariant.value.sku || product.value.sku,
+      price: selectedVariant.value.price || selectedVariant.value.regular_price,
+      regular_price: selectedVariant.value.regular_price,
+      sale_price: selectedVariant.value.sale_price,
+      stock_status: selectedVariant.value.stock_status,
+      stock_quantity: selectedVariant.value.stock_quantity,
+      // Ajouter les attributs de la variante pour l'affichage
+      selected_attributes: selectedVariant.value.attributes,
+      // Image de la variante si disponible
+      image: selectedVariant.value.image ? selectedVariant.value.image : getProductImageData(product.value)
+    }
+  } else {
+    // Produit simple
+    cartProduct = {
+      ...product.value,
+      image: getProductImageData(product.value)
+    }
   }
 
   cartStore.addItem(cartProduct, quantity.value)

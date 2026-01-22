@@ -135,7 +135,7 @@ export default defineEventHandler(async (event) => {
         
         // 🛒 Articles commandés
         line_items: payload.metadata.cart_items.map((item: any) => ({
-          product_id: item.product_id,
+          product_id: item.product_id || item.id, // Fallback sur 'id' si 'product_id' n'existe pas
           quantity: item.quantity,
           price: item.price
         })),

@@ -52,24 +52,47 @@
 
       <!-- Prix -->
       <div class="mt-2 flex-col flex items-start">
-        <span class="text-gray-800 text-lg font-semibold">{{ formatPrice(product.salePrice || product.sale_price) }}</span>
-
-        <!-- <span v-if="product.on_sale || product.onSale" class="text-red-600 text-lg font-semibold">
-          {{ formatPrice(product.salePrice || product.sale_price || 0) }}
-        </span> -->
-        <span
-          :class="[
-            (product.on_sale || product.onSale) ? 'line-through text-gray-400 text-sm' : 'text-gray-500 text-[14px] line-through font-semibold'
-          ]"
-        >
-          {{ formatPrice(product.regularPrice || product.regular_price || 0) }}
-        </span>
+        <!-- Produit variable : afficher fourchette de prix -->
+        <div v-if="isVariableProduct">
+          <div class="flex items-baseline gap-1">
+            <span class="text-xs text-gray-500">À partir de</span>
+            <span class="text-gray-800 text-lg font-semibold">{{ displayPrice }}</span>
+          </div>
+          <span class="text-xs text-blue-600 mt-1">{{ variationsCount }} options disponibles</span>
+        </div>
+        
+        <!-- Produit simple : affichage normal -->
+        <div v-else>
+          <span class="text-gray-800 text-lg font-semibold">{{ formatPrice(product.salePrice || product.sale_price) }}</span>
+          <span
+            :class="[
+              (product.on_sale || product.onSale) ? 'line-through text-gray-400 text-sm' : 'text-gray-500 text-[14px] line-through font-semibold'
+            ]"
+          >
+            {{ formatPrice(product.regularPrice || product.regular_price || 0) }}
+          </span>
+        </div>
       </div>
     </div>
 
     <!-- Bouton "Ajouter au panier" (visible uniquement sur pages catégories/recherche) -->
+    <NuxtLink
+      v-if="showAddToCart && isVariableProduct"
+      :to="`/produit/${product.slug}`"
+      :class="[
+        'mt-3 w-full text-sm py-2.5 rounded-[4px] transition flex items-center justify-center gap-2',
+        'bg-blue-600 text-white hover:bg-blue-700'
+      ]"
+    >
+      <svg class="h-4 w-4 hidden md:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+      </svg>
+      Voir les options
+    </NuxtLink>
+    
     <button
-      v-if="showAddToCart"
+      v-else-if="showAddToCart"
       @click="addToCart"
       :disabled="!canAddToCart"
       :class="[
@@ -97,6 +120,7 @@ interface Product {
   id: number
   name: string
   slug: string
+  type?: string  // 'simple' | 'variable'
   thumbnail?: string
   image?: string
   images?: Array<{
@@ -108,10 +132,17 @@ interface Product {
   regular_price?: number
   salePrice?: number
   sale_price?: number
+  price?: number | string
+  price_html?: string
+  min_price?: number | string
+  max_price?: number | string
+  variations?: any[]
   isNew?: boolean
   on_sale?: boolean
   stock_status?: string
   sku?: string
+  shipping_class?: string
+  weight?: string | number
   showCountdownInfo?: boolean
   countdownRemaining?: number
   countdownTotal?: number
@@ -138,8 +169,50 @@ const emit = defineEmits<{
   imageLoaded: []
 }>()
 
+// Vérifier si c'est un produit variable
+const isVariableProduct = computed(() => {
+  return props.product.type === 'variable' && (props.product.variations?.length || 0) > 0
+})
+
+// Nombre de variations
+const variationsCount = computed(() => {
+  if (!isVariableProduct.value) return 0
+  return props.product.variations?.length || 0
+})
+
+// Prix à afficher pour produit variable
+const displayPrice = computed(() => {
+  if (!isVariableProduct.value) {
+    return formatPrice(props.product.salePrice || props.product.sale_price || 0)
+  }
+  
+  // Pour produit variable, utiliser min_price si disponible
+  if (props.product.min_price) {
+    const minPrice = typeof props.product.min_price === 'string' 
+      ? parseFloat(props.product.min_price) 
+      : props.product.min_price
+    
+    const maxPrice = props.product.max_price 
+      ? (typeof props.product.max_price === 'string' ? parseFloat(props.product.max_price) : props.product.max_price)
+      : minPrice
+    
+    // Si prix identiques, afficher un seul prix
+    if (minPrice === maxPrice) {
+      return formatPrice(minPrice)
+    }
+    
+    // Sinon afficher la fourchette
+    return `${formatPrice(minPrice)} - ${formatPrice(maxPrice)}`
+  }
+  
+  // Fallback sur le prix normal
+  return formatPrice(props.product.price || props.product.sale_price || 0)
+})
+
 // Vérifier si promo
 const discountPercent = computed(() => {
+  if (isVariableProduct.value) return 0  // Pas de badge promo pour les produits variables
+  
   const salePrice = props.product.salePrice || props.product.sale_price
   const regularPrice = props.product.regularPrice || props.product.regular_price
   
@@ -221,6 +294,12 @@ const buttonText = computed(() => {
 // Ajouter au panier
 const addToCart = async () => {
   if (!canAddToCart.value || isAdding.value) return
+  
+  // Si produit variable, rediriger vers la fiche produit
+  if (isVariableProduct.value) {
+    navigateTo(`/produit/${props.product.slug}`)
+    return
+  }
   
   isAdding.value = true
   

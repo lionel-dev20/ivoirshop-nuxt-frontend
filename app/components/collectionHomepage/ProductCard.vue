@@ -90,8 +90,17 @@
       <!-- Prix -->
       <div class="product-pricing">
         <div class="price-container">
+          <!-- Produit variable -->
+          <template v-if="isVariableProduct">
+            <div class="flex flex-col items-start gap-1">
+              <span class="text-xs text-gray-500">À partir de</span>
+              <span class="current-price">{{ displayPrice }}</span>
+              <span class="text-xs text-blue-600">{{ variationsCount }} options</span>
+            </div>
+          </template>
+          
           <!-- Prix en promotion -->
-          <template v-if="product.on_sale && product.sale_price">
+          <template v-else-if="product.on_sale && product.sale_price">
             <span class="current-price sale-price">
               {{ formatPrice(product.sale_price) }}
             </span>
@@ -99,6 +108,7 @@
               {{ formatPrice(product.regular_price) }}
             </span>
           </template>
+          
           <!-- Prix normal -->
           <template v-else>
             <span class="current-price">
@@ -119,7 +129,20 @@
 
       <!-- Actions -->
       <div class="product-actions" v-if="cardStyle !== 'compact'">
+        <!-- Bouton pour produit variable -->
+        <NuxtLink
+          v-if="isVariableProduct"
+          :to="`/produit/${product.slug}`"
+          @click.stop
+          class="add-to-cart-btn"
+        >
+          <Icon name="eye" />
+          <span>Voir les options</span>
+        </NuxtLink>
+        
+        <!-- Bouton pour produit simple -->
         <button 
+          v-else
           @click.stop="handleAddToCart"
           :disabled="!isInStock"
           class="add-to-cart-btn"
@@ -166,7 +189,49 @@ const emit = defineEmits(['product-click', 'add-to-cart', 'quick-view', 'wishlis
 const isInWishlist = ref(false)
 
 // Propriétés calculées
+// Vérifier si c'est un produit variable
+const isVariableProduct = computed(() => {
+  return props.product.type === 'variable' && (props.product.variations?.length || 0) > 0
+})
+
+// Nombre de variations
+const variationsCount = computed(() => {
+  if (!isVariableProduct.value) return 0
+  return props.product.variations?.length || 0
+})
+
+// Prix à afficher pour produit variable
+const displayPrice = computed(() => {
+  if (!isVariableProduct.value) {
+    return formatPrice(props.product.sale_price || props.product.price || 0)
+  }
+  
+  // Pour produit variable, utiliser min_price si disponible
+  if (props.product.min_price) {
+    const minPrice = typeof props.product.min_price === 'string' 
+      ? parseFloat(props.product.min_price) 
+      : props.product.min_price
+    
+    const maxPrice = props.product.max_price 
+      ? (typeof props.product.max_price === 'string' ? parseFloat(props.product.max_price) : props.product.max_price)
+      : minPrice
+    
+    // Si prix identiques, afficher un seul prix
+    if (minPrice === maxPrice) {
+      return formatPrice(minPrice)
+    }
+    
+    // Sinon afficher la fourchette
+    return `${formatPrice(minPrice)} - ${formatPrice(maxPrice)}`
+  }
+  
+  // Fallback sur le prix normal
+  return formatPrice(props.product.price || props.product.sale_price || 0)
+})
+
 const salePercentage = computed(() => {
+  if (isVariableProduct.value) return 0  // Pas de badge promo pour les produits variables
+  
   if (!props.product.on_sale || !props.product.regular_price || !props.product.sale_price) {
     return 0
   }

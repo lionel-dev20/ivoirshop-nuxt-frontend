@@ -70,15 +70,15 @@
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
               <p class="text-sm font-medium text-gray-500">Numéro de commande</p>
-              <p class="text-lg font-semibold text-gray-900">#{{ orderData.order_number }}</p>
+              <p class="text-lg font-semibold text-gray-900">#{{ orderData?.order_number || 'N/A' }}</p>
             </div>
             <div>
               <p class="text-sm font-medium text-gray-500">Date</p>
-              <p class="text-gray-900">{{ formatDate(orderData.date || new Date()) }}</p>
+              <p class="text-gray-900">{{ formatDate(orderData?.date || new Date()) }}</p>
             </div>
             <div>
               <p class="text-sm font-medium text-gray-500">Total</p>
-              <p class="text-lg font-semibold text-gray-900">{{ formatPrice(orderData.total) }}</p>
+              <p class="text-lg font-semibold text-gray-900">{{ formatPrice(orderData?.total || 0) }}</p>
             </div>
           </div>
         </div>
@@ -88,10 +88,10 @@
           <div>
             <h3 class="text-lg font-medium text-gray-900 mb-4">Informations de livraison</h3>
             <div class="bg-gray-50 rounded-lg p-4">
-              <p class="font-medium">{{ orderData.customer?.firstName }} {{ orderData.customer?.lastName }}</p>
-              <p class="text-gray-600 mt-1">{{ orderData.customer?.address }}</p>
-              <p class="text-gray-600">{{ orderData.customer?.postalCode }} {{ orderData.customer?.city }}</p>
-              <p class="text-gray-600">{{ getCountryName(orderData.customer?.country) }}</p>
+              <p class="font-medium">{{ orderData?.customer?.firstName || '' }} {{ orderData?.customer?.lastName || '' }}</p>
+              <p class="text-gray-600 mt-1">{{ orderData?.customer?.address || '' }}</p>
+              <p class="text-gray-600">{{ orderData?.customer?.postalCode || '' }} {{ orderData?.customer?.city || '' }}</p>
+              <p class="text-gray-600">{{ getCountryName(orderData?.customer?.country || '') }}</p>
               <div class="mt-3 pt-3 border-t border-gray-200">
                 <p class="text-sm text-gray-600">
                   <span class="font-medium">Email:</span> {{ orderData.customer?.email }}
@@ -107,15 +107,15 @@
             <h3 class="text-lg font-medium text-gray-900 mb-4">Méthode de paiement</h3>
             <div class="bg-gray-50 rounded-lg p-4">
               <div class="flex items-center">
-                <svg v-if="orderData.payment_method === 'Mobile Money'" class="w-8 h-8 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg v-if="orderData?.payment_method === 'Mobile Money'" class="w-8 h-8 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                 </svg>
                 <svg v-else class="w-8 h-8 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
                 </svg>
                 <div>
-                  <p class="font-medium text-gray-900">{{ orderData.payment_status || 'Paiement à la livraison' }}</p>
-                  <p v-if="orderData.payment_method === 'Mobile Money'" class="text-sm text-gray-600">
+                  <p class="font-medium text-gray-900">{{ orderData?.payment_status || 'Paiement à la livraison' }}</p>
+                  <p v-if="orderData?.payment_method === 'Mobile Money'" class="text-sm text-gray-600">
                     ✅ Votre paiement a été confirmé avec succès
                   </p>
                   <p v-else class="text-sm text-gray-600">Vous paierez lors de la réception de votre commande</p>
@@ -138,7 +138,7 @@
               </div>
             </div>
             <div class="divide-y divide-gray-200">
-              <div v-for="item in orderData.items" :key="item.product_id" class="px-6 py-4">
+              <div v-for="item in (orderData?.items || [])" :key="item.product_id" class="px-6 py-4">
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
                   <div class="flex items-center space-x-3">
                     <div class="flex-shrink-0 w-12 h-12 bg-gray-100 rounded-md overflow-hidden">
@@ -176,13 +176,13 @@
                   <span>Sous-total</span>
                   <span>{{ formatPrice(subtotal) }}</span>
                 </div>
-                <div v-if="orderData.shipping_cost > 0" class="flex justify-between text-sm text-gray-600">
+                <div v-if="(orderData?.shipping_cost || 0) > 0" class="flex justify-between text-sm text-gray-600">
                   <span>Livraison</span>
-                  <span>{{ formatPrice(orderData.shipping_cost) }}</span>
+                  <span>{{ formatPrice(orderData?.shipping_cost || 0) }}</span>
                 </div>
                 <div class="flex justify-between text-lg font-semibold text-gray-900 pt-2 border-t border-gray-200">
                   <span>Total</span>
-                  <span>{{ formatPrice(orderData.total) }}</span>
+                  <span>{{ formatPrice(orderData?.total || 0) }}</span>
                 </div>
               </div>
             </div>
@@ -218,7 +218,7 @@
             </div>
             <div>
               <p class="text-blue-900 font-medium">Livraison</p>
-              <p v-if="orderData.payment_method === 'Mobile Money'" class="text-blue-700 text-sm">
+              <p v-if="orderData?.payment_method === 'Mobile Money'" class="text-blue-700 text-sm">
                 Réception de votre commande (2-3 jours ouvrés) - Déjà payée ✅
               </p>
               <p v-else class="text-blue-700 text-sm">
@@ -319,6 +319,7 @@ onMounted(async () => {
   // Vérifier si c'est un paiement Mobile Money réussi
   const isMobileMoneySuccess = route.query.payment_success === 'true'
   const tempOrderId = route.query.order_id as string
+  const transactionId = route.query.transaction_id as string
   
   if (isMobileMoneySuccess && process.client) {
     console.log('✅ Paiement Mobile Money réussi, récupération des données...')
@@ -329,6 +330,37 @@ onMounted(async () => {
     if (pendingCheckout) {
       try {
         const checkoutData = JSON.parse(pendingCheckout)
+        
+        // 🚀 CRÉER LA COMMANDE DIRECTEMENT (Fallback si webhook ne fonctionne pas)
+        console.log('📦 Création de la commande dans WooCommerce...')
+        try {
+          await $fetch('/api/payment/mobile-money/create-order-directly', {
+            method: 'POST',
+            body: {
+              order_id: tempOrderId,
+              transaction_id: transactionId || 'PENDING',
+              customer_name: `${checkoutData.billing?.first_name || ''} ${checkoutData.billing?.last_name || ''}`.trim(),
+              customer_email: checkoutData.billing?.email || 'client@ivoirshop.ci',
+              customer_phone: checkoutData.billing?.phone || '',
+              customer_city: checkoutData.billing?.city || '',
+              customer_commune: checkoutData.billing?.address_1 || '',
+              customer_address_details: checkoutData.shipping?.address_2 || '',
+              customer_id: checkoutData.customer_id || 0,
+              cart_items: checkoutData.items || [],
+              total: checkoutData.total || 0,
+              shipping_cost: checkoutData.shipping_cost || 0,
+              delivery_info: checkoutData.delivery_info || {},
+              coupon: checkoutData.coupon || null,
+              is_partial_payment: checkoutData.is_partial_payment || false,
+              partial_payment_amount: checkoutData.partial_payment_amount || null,
+              amount: checkoutData.total || 0
+            }
+          })
+          console.log('✅ Commande créée avec succès dans WooCommerce !')
+        } catch (createOrderError) {
+          console.error('⚠️ Erreur création commande (le webhook devrait la créer):', createOrderError)
+          // Continue anyway - le webhook pourrait l'avoir déjà créée
+        }
         
         // Transformer les données au format attendu par la page
         orderData.value = {
@@ -452,8 +484,8 @@ onMounted(async () => {
 
 // Calculs
 const subtotal = computed(() => {
-  if (!orderData.value?.items) return 0
-  return orderData.value.items.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+  if (!orderData.value?.items || !Array.isArray(orderData.value.items)) return 0
+  return orderData.value.items.reduce((sum, item) => sum + ((item.price || 0) * (item.quantity || 0)), 0)
 })
 
 // Fonctions utilitaires

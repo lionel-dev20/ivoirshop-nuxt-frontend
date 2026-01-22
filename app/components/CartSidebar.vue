@@ -69,6 +69,12 @@
                             </h3>
                             <p class="ml-4 text-[12px] md:text-[15px]">{{ cartStore.formatPrice(item.sale_price || item.price) }}</p>
                           </div>
+                          <!-- Attributs de variante sélectionnée -->
+                          <div v-if="item.selected_attributes && item.selected_attributes.length > 0" class="mt-1 space-y-0.5">
+                            <p v-for="attr in item.selected_attributes" :key="attr.name" class="text-xs text-gray-600">
+                              <span class="font-medium">{{ formatAttributeName(attr.name) }}:</span> {{ attr.option }}
+                            </p>
+                          </div>
                           <p v-if="item.sku" class="mt-1 text-sm text-gray-500">SKU: {{ item.sku }}</p>
                         </div>
                         <div class="flex-1 flex items-end justify-between text-sm">
@@ -142,5 +148,13 @@ const updateQuantity = (productId: number, event: Event) => {
   const target = event.target as HTMLSelectElement
   const quantity = parseInt(target.value)
   cartStore.updateQuantity(productId, quantity)
+}
+
+// Formater le nom des attributs (pa_couleur -> Couleur)
+const formatAttributeName = (name: string) => {
+  return name
+    .replace('pa_', '')
+    .replace(/_/g, ' ')
+    .replace(/\b\w/g, (l: string) => l.toUpperCase())
 }
 </script>

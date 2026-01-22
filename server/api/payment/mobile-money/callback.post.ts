@@ -30,6 +30,7 @@ export default defineEventHandler(async (event) => {
     console.log('---')
     console.log('🛒 DÉTAILS DE LA COMMANDE:')
     console.log('Order ID Temporaire:', payload.metadata.order_id)
+    console.log('Customer ID:', payload.metadata.customer_id || 'Invité')
     console.log('Client:', payload.metadata.customer_name)
     console.log('Email:', payload.metadata.email)
     console.log('Téléphone Client:', payload.metadata.customer_phone)
@@ -38,12 +39,38 @@ export default defineEventHandler(async (event) => {
     console.log('Commune:', payload.metadata.customer_commune)
     console.log('Adresse:', payload.metadata.customer_address_details)
     
+    console.log('---')
+    console.log('💵 INFORMATIONS DE PRIX:')
+    console.log('Total commande:', payload.metadata.total || 'N/A', 'FCFA')
+    console.log('Frais de livraison:', payload.metadata.shipping_cost || 0, 'FCFA')
+    console.log('Montant payé:', payload.amount, 'FCFA')
+    
+    if (payload.metadata.is_partial_payment) {
+      console.log('💳 Paiement partiel:', payload.metadata.partial_payment_amount, 'FCFA')
+      console.log('Reste à payer:', (payload.metadata.total - payload.metadata.partial_payment_amount), 'FCFA')
+    }
+    
+    if (payload.metadata.coupon) {
+      console.log('---')
+      console.log('🎟️ COUPON APPLIQUÉ:')
+      console.log('Code:', payload.metadata.coupon.code)
+      console.log('Réduction:', payload.metadata.coupon.discount, 'FCFA')
+    }
+    
+    if (payload.metadata.delivery_info) {
+      console.log('---')
+      console.log('📦 INFORMATIONS DE LIVRAISON:')
+      console.log('Ville:', payload.metadata.delivery_info.city_name)
+      console.log('Commune:', payload.metadata.delivery_info.commune_name)
+      console.log('Type de produit:', payload.metadata.delivery_info.product_type)
+    }
+    
     // Afficher le panier si disponible
     if (payload.metadata.cart_items && payload.metadata.cart_items.length > 0) {
       console.log('---')
       console.log('📦 PANIER (' + payload.metadata.cart_items.length + ' produits):')
       payload.metadata.cart_items.forEach((item: any, index: number) => {
-        console.log(`  ${index + 1}. ${item.name} x${item.quantity} - ${item.price} FCFA`)
+        console.log(`  ${index + 1}. ${item.name} x${item.quantity} - ${item.price} FCFA (Total: ${item.total || item.price * item.quantity} FCFA)`)
       })
     }
   }
@@ -62,13 +89,25 @@ export default defineEventHandler(async (event) => {
       const [firstName, ...lastNameParts] = payload.metadata.customer_name.split(' ')
       const lastName = lastNameParts.join(' ') || firstName
       
+      // 🔧 Construire la note de commande complète
+      let customerNote = `✅ Payé par Mobile Money - Transaction: ${payload.transaction_id || payload.id}`
+      if (payload.metadata.is_partial_payment) {
+        customerNote += `\n💳 Paiement partiel: ${payload.metadata.partial_payment_amount} FCFA sur ${payload.metadata.total} FCFA`
+      }
+      if (payload.metadata.coupon) {
+        customerNote += `\n🎟️ Coupon appliqué: ${payload.metadata.coupon.code} (-${payload.metadata.coupon.discount} FCFA)`
+      }
+      
       const orderData = {
         payment_method: 'mobile_money',
         payment_method_title: 'Mobile Money',
         set_paid: true, // Marquer comme payé
         status: 'paye-par-mobile-money', // Statut: Payé par mobile money
         transaction_id: payload.transaction_id || payload.id, // ID de transaction
-        customer_note: `✅ Payé par Mobile Money - Transaction: ${payload.transaction_id || payload.id}`,
+        customer_id: payload.metadata.customer_id || 0, // ID client si connecté
+        customer_note: customerNote,
+        
+        // 📍 Informations de facturation
         billing: {
           first_name: firstName,
           last_name: lastName,
@@ -81,6 +120,8 @@ export default defineEventHandler(async (event) => {
           postcode: '',
           country: 'CI'
         },
+        
+        // 📦 Informations de livraison
         shipping: {
           first_name: firstName,
           last_name: lastName,
@@ -91,17 +132,40 @@ export default defineEventHandler(async (event) => {
           postcode: '',
           country: 'CI'
         },
+        
+        // 🛒 Articles commandés
         line_items: payload.metadata.cart_items.map((item: any) => ({
           product_id: item.product_id,
           quantity: item.quantity,
           price: item.price
         })),
+        
+        // 💵 Informations de prix
+        shipping_cost: payload.metadata.shipping_cost || 0,
+        total: payload.metadata.total || payload.amount,
+        
+        // 📋 Métadonnées complètes
         meta_data: [
+          // Transaction & Paiement
           { key: '_transaction_id', value: payload.transaction_id || payload.id },
           { key: '_payment_provider', value: 'DjoNanko' },
           { key: '_temp_order_id', value: payload.metadata.order_id },
           { key: '_mobile_money_phone', value: payload.metadata.phoneNumber },
-          { key: '_payment_amount', value: payload.amount }
+          { key: '_payment_amount', value: payload.amount },
+          
+          // Livraison
+          { key: '_shipping_cost', value: payload.metadata.shipping_cost || 0 },
+          { key: '_delivery_city', value: payload.metadata.delivery_info?.city_name || '' },
+          { key: '_delivery_commune', value: payload.metadata.delivery_info?.commune_name || '' },
+          { key: '_delivery_product_type', value: payload.metadata.delivery_info?.product_type || '' },
+          
+          // Coupon
+          { key: '_coupon_code', value: payload.metadata.coupon?.code || '' },
+          { key: '_coupon_discount', value: payload.metadata.coupon?.discount || 0 },
+          
+          // Paiement partiel
+          { key: '_is_partial_payment', value: payload.metadata.is_partial_payment ? 'yes' : 'no' },
+          { key: '_partial_payment_amount', value: payload.metadata.partial_payment_amount || 0 }
         ]
       }
       
@@ -128,9 +192,19 @@ export default defineEventHandler(async (event) => {
         console.log('============================================')
         console.log('Order ID WooCommerce:', woocommerceOrderId)
         console.log('Order ID Temporaire:', payload.metadata.order_id)
+        console.log('Customer ID:', payload.metadata.customer_id || 'Invité')
         console.log('Transaction ID:', payload.transaction_id || payload.id)
         console.log('Statut: Payé par mobile money')
-        console.log('Montant:', payload.amount, 'FCFA')
+        console.log('Montant payé:', payload.amount, 'FCFA')
+        console.log('Total commande:', payload.metadata.total || payload.amount, 'FCFA')
+        console.log('Frais de livraison:', payload.metadata.shipping_cost || 0, 'FCFA')
+        if (payload.metadata.coupon) {
+          console.log('Coupon:', payload.metadata.coupon.code, '(-' + payload.metadata.coupon.discount + ' FCFA)')
+        }
+        if (payload.metadata.is_partial_payment) {
+          console.log('Type: Paiement partiel')
+          console.log('Reste à payer:', (payload.metadata.total - payload.metadata.partial_payment_amount), 'FCFA')
+        }
         console.log('============================================')
       } else {
         const errorText = await response.text()

@@ -32,7 +32,7 @@ export default defineEventHandler(async (event) => {
     const returnUrl = body.return_url || `${siteUrl}/thank-you?order_id=${body.order_id || ''}`
     const cancelUrl = body.cancel_url || `${siteUrl}/checkout?payment_failed=true&order_id=${body.order_id || ''}`
 
-    // Préparer les données pour l'API de paiement (nouveau modèle)
+    // Préparer les données pour l'API de paiement (PAYLOAD COMPLET ENRICHI)
     const paymentData = {
       amount: parseInt(body.amount),
       merchant_reference: body.merchant_reference || config.MOBILE_MONEY_REFERENCE || 'ivoirshop',
@@ -41,6 +41,7 @@ export default defineEventHandler(async (event) => {
       metadata: {
         // 📝 Identifiants
         order_id: body.order_id || body.metadata?.order_id || '',
+        customer_id: body.customer_id || body.metadata?.customer_id || 0,
         
         // 👤 Informations client
         customer_name: body.customer_name || body.metadata?.customer_name || '',
@@ -57,23 +58,68 @@ export default defineEventHandler(async (event) => {
         
         // 🛒 PANIER : Liste des produits commandés (pour traçabilité)
         // Format: [{ product_id, name, quantity, price, total }]
-        cart_items: body.cart_items || body.metadata?.cart_items || []
+        cart_items: body.cart_items || body.metadata?.cart_items || [],
+        
+        // 💵 Informations de prix
+        total: body.total || body.metadata?.total || 0,
+        shipping_cost: body.shipping_cost || body.metadata?.shipping_cost || 0,
+        
+        // 📦 Informations de livraison
+        delivery_info: body.delivery_info || body.metadata?.delivery_info || {
+          city_name: '',
+          commune_name: '',
+          product_type: ''
+        },
+        
+        // 🎟️ Coupon (si appliqué)
+        coupon: body.coupon || body.metadata?.coupon || null,
+        
+        // 💳 Paiement partiel
+        is_partial_payment: body.is_partial_payment || body.metadata?.is_partial_payment || false,
+        partial_payment_amount: body.partial_payment_amount || body.metadata?.partial_payment_amount || null
       }
     }
 
     const apiUrl = config.MOBILE_MONEY_API_URL || 'https://apidjonanko.tech'
     
-    // 📋 AFFICHER LE PAYLOAD COMPLET
+    // 📋 AFFICHER LE PAYLOAD COMPLET ENRICHI
     console.log('============================================')
-    console.log('📤 PAYLOAD ENVOYÉ À L\'API DE PAIEMENT:')
+    console.log('📤 PAYLOAD ENRICHI ENVOYÉ À L\'API DE PAIEMENT:')
+    console.log('============================================')
     console.log('URL:', `${apiUrl}/web-merchant/create-web-payment-link`)
     console.log('Method: POST')
-    console.log('Headers:', {
-      'x-api-key': config.MOBILE_MONEY_API_KEY,
-      'x-api-secret': '***' + config.MOBILE_MONEY_API_SECRET.slice(-4),
-      'Content-Type': 'application/json'
-    })
-    console.log('Body:', JSON.stringify(paymentData, null, 2))
+    console.log('---')
+    console.log('🎯 INFORMATIONS DE BASE:')
+    console.log('Order ID:', paymentData.metadata.order_id)
+    console.log('Customer ID:', paymentData.metadata.customer_id || 'Invité')
+    console.log('Montant:', paymentData.amount, 'FCFA')
+    console.log('---')
+    console.log('👤 CLIENT:')
+    console.log('Nom:', paymentData.metadata.customer_name)
+    console.log('Email:', paymentData.metadata.email)
+    console.log('Téléphone:', paymentData.metadata.customer_phone)
+    console.log('Ville:', paymentData.metadata.customer_city)
+    console.log('Commune:', paymentData.metadata.customer_commune)
+    console.log('---')
+    console.log('💵 PRIX:')
+    console.log('Total commande:', paymentData.metadata.total, 'FCFA')
+    console.log('Frais de livraison:', paymentData.metadata.shipping_cost, 'FCFA')
+    if (paymentData.metadata.coupon) {
+      console.log('Coupon:', paymentData.metadata.coupon.code, '(-' + paymentData.metadata.coupon.discount + ' FCFA)')
+    }
+    if (paymentData.metadata.is_partial_payment) {
+      console.log('Paiement partiel:', paymentData.metadata.partial_payment_amount, 'FCFA')
+    }
+    console.log('---')
+    console.log('📦 LIVRAISON:')
+    console.log('Ville:', paymentData.metadata.delivery_info?.city_name || 'N/A')
+    console.log('Commune:', paymentData.metadata.delivery_info?.commune_name || 'N/A')
+    console.log('Type produit:', paymentData.metadata.delivery_info?.product_type || 'N/A')
+    console.log('---')
+    console.log('🛒 PANIER:', paymentData.metadata.cart_items?.length || 0, 'produits')
+    console.log('---')
+    console.log('📋 PAYLOAD JSON COMPLET:')
+    console.log(JSON.stringify(paymentData, null, 2))
     console.log('============================================')
     
     // Appeler l'API de paiement (POST)

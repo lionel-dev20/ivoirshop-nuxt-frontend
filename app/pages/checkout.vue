@@ -744,19 +744,48 @@ const handlePaymentSuccess = async (phoneNumber: string) => {
       total: item.price * item.quantity
     }))
     
-    // Préparer les données pour l'API de paiement
+    // Préparer les données pour l'API de paiement (PAYLOAD COMPLET)
     const paymentData = {
+      // 💰 Informations de paiement
       amount: mobileMoneyAmount.value,
       order_id: tempOrderId, // 📝 Numéro de commande temporaire
       merchant_reference: 'ivoirshop',
       phone: phoneNumber,
+      
+      // 👤 Informations client
+      customer_id: authUser.value?.id || 0, // ID utilisateur si connecté
       customer_name: `${orderForm.value.firstName} ${orderForm.value.lastName}`,
       customer_email: orderForm.value.email || 'client@ivoirshop.ci',
       customer_phone: orderForm.value.phone, // 📞 Téléphone du client
       customer_city: orderForm.value.city, // 🏙️ Ville
       customer_commune: orderForm.value.commune, // 📍 Région/Commune
       customer_address_details: orderForm.value.deliveryAddressDetails || '', // 🏠 Adresse détaillée
-      cart_items: cart_items, // 🛒 Panier inclus pour traçabilité !
+      
+      // 🛒 Panier complet
+      cart_items: cart_items, // Liste des produits commandés
+      
+      // 💵 Informations de prix et livraison
+      total: finalTotal.value, // Total de la commande
+      shipping_cost: deliveryStore.selectedDelivery.shipping_cost, // Frais de livraison
+      
+      // 📦 Informations de livraison
+      delivery_info: {
+        city_name: orderForm.value.city, // Région
+        commune_name: orderForm.value.commune, // Commune/Quartier
+        product_type: deliveryStore.selectedDelivery.product_type // Type de produit (standard/fragile/volumineux)
+      },
+      
+      // 🎟️ Coupon (si appliqué)
+      coupon: deliveryStore.appliedCoupon ? {
+        code: deliveryStore.appliedCoupon.code,
+        discount: deliveryStore.appliedCoupon.discount
+      } : null,
+      
+      // 💳 Paiement partiel (si applicable)
+      is_partial_payment: requiresPartialPayment.value,
+      partial_payment_amount: requiresPartialPayment.value ? partialPaymentAmount.value : null,
+      
+      // 🔗 URLs de retour
       successUrl,
       failedUrl,
       webhookUrl

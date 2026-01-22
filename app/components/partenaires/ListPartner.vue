@@ -9,7 +9,7 @@
 
 
         <!-- Middle here partenaires -->
-        <div>
+        <div class="w-full">
             <h2
                 class="block bg-white md:p-4 p-3 rounded-[4px] text-left font-extrabold text-lg md:text-xl mb-1.5 md:mb-4 border-1 border-gray-100 shadow-md shadow-gray-100">
                 Nos partenaires</h2>

@@ -118,15 +118,37 @@ export default defineNuxtConfig({
           innerHTML: `
             window.OneSignalDeferred = window.OneSignalDeferred || [];
             OneSignalDeferred.push(async function(OneSignal) {
-              await OneSignal.init({
-                appId: "c16c70ab-fa4c-429b-9cd0-84ed90343914",
-              });
+              // Vérifier que nous sommes sur le domaine autorisé
+              if (window.location.hostname === 'www.ivoirshop.ci' || window.location.hostname === 'ivoirshop.ci') {
+                try {
+                  await OneSignal.init({
+                    appId: "c16c70ab-fa4c-429b-9cd0-84ed90343914",
+                  });
+                } catch (error) {
+                  console.warn('OneSignal initialization skipped:', error);
+                }
+              }
             });
           `,
           type: 'text/javascript'
         },
+        {
+          innerHTML: `
+            var oct8ne = document.createElement("script");
+            oct8ne.server = "backoffice.oct8ne.com/";
+            oct8ne.type = "text/javascript";
+            oct8ne.async = true;
+            oct8ne.license = "4C07BCB6B93E50DBE02D9A061BAE86FB";
+            oct8ne.src = (document.location.protocol == "https:" ? "https://" : "http://") + "static.oct8ne.com/api/v2/oct8ne.js?" + (Math.round(new Date().getTime() / 86400000));
+            oct8ne.locale = "fr-FR";
+            oct8ne.baseUrl = "//www.ivoirshop.ci";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(oct8ne, s);
+          `,
+          type: 'text/javascript'
+        },
         // {
-        //   src: 'https://www.googletagmanager.com/gtag/js?id=G-SRMB4DV3VY',
+          //   src: 'https://www.googletagmanager.com/gtag/js?id=G-SRMB4DV3VY',
         //   async: true,
         //   type: 'text/javascript'
         // },

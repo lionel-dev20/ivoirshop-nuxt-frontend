@@ -61,6 +61,7 @@ const showNavigation = computed(() => {
 });
 
 const slides = [
+{ image: '/sliders/SLIDERS-IVOIR-SHOP-valentinf-1.png', link: 'https://ivoirshop.ci/categorie/saint-valentin' },
   { image: '/sliders/1_Generic_Campagne.png', link: 'https://ivoirshop.ci/categorie/meilleures-ventes' },
   { image: '/sliders/2_Mixeur.jpg', link: 'https://ivoirshop.ci/categorie/electromenager' },
   { image: '/sliders/3_Gaz_Plaque.png', link: 'https://ivoirshop.ci/categorie/electromenager/appareils-de-cuisson' },

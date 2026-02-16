@@ -334,8 +334,6 @@ onMounted(async () => {
   const transactionId = route.query.transaction_id as string
   
   if (isMobileMoneySuccess && process.client) {
-    console.log('✅ Paiement Mobile Money réussi, récupération des données...')
-    
     // Récupérer les données du checkout depuis sessionStorage
     const pendingCheckout = sessionStorage.getItem('pendingCheckout')
     
@@ -344,7 +342,6 @@ onMounted(async () => {
         const checkoutData = JSON.parse(pendingCheckout)
         
         // 🚀 CRÉER LA COMMANDE DIRECTEMENT (Fallback si webhook ne fonctionne pas)
-        console.log('📦 Création de la commande dans WooCommerce...')
         try {
           await $fetch('/api/payment/mobile-money/create-order-directly', {
             method: 'POST',
@@ -368,9 +365,7 @@ onMounted(async () => {
               amount: checkoutData.total || 0
             }
           })
-          console.log('✅ Commande créée avec succès dans WooCommerce !')
         } catch (createOrderError) {
-          console.error('⚠️ Erreur création commande (le webhook devrait la créer):', createOrderError)
           // Continue anyway - le webhook pourrait l'avoir déjà créée
         }
         
@@ -396,8 +391,6 @@ onMounted(async () => {
           payment_status: 'Payé par Mobile Money' // ✅ Statut de paiement
         }
         
-        console.log('✅ Données de commande récupérées:', orderData.value)
-        
         // Nettoyer le sessionStorage
         sessionStorage.removeItem('pendingCheckout')
         
@@ -407,7 +400,6 @@ onMounted(async () => {
         isLoading.value = false
         
       } catch (e) {
-        console.error('Erreur lors de la récupération des données:', e)
         isLoading.value = false
       }
     } else {
@@ -418,7 +410,6 @@ onMounted(async () => {
           orderData.value = JSON.parse(lastOrder)
           isLoading.value = false
         } catch (e) {
-          console.error('Erreur:', e)
           isLoading.value = false
         }
       } else {

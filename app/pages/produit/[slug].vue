@@ -199,7 +199,7 @@
           </div>
 
           <!-- Actions -->
-          <div class="flex space-x-2 md:space-x-4 space-y-4 pt-6 border-t">
+          <div ref="buySectionRef" class="flex space-x-2 md:space-x-4 space-y-4 pt-6 border-t">
             <div class="flex items-center space-x-4">
               <div class="flex items-center">
                 <label for="quantity" class="block text-[12px] md:text-sm font-medium text-gray-700 mr-2">
@@ -212,7 +212,7 @@
             </div>
 
 
-            <div class="w-full md:flex items-center md:-mt-4 justify-between gap-x-2.5">
+            <div class="w-full md:flex items-center md:-mt-4 justify-between  gap-x-2.5">
               <!-- ajouter au panier  -->
               <div class="w-full">
                 <!-- Bouton si produit en stock (ou variante sélectionnée en stock) -->
@@ -225,7 +225,7 @@
                       d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13l-1.5 6m0 0h9M17 21v-2a2 2 0 00-2-2H9a2 2 0 00-2 2v2">
                     </path>
                   </svg>
-                  <span class="cursor-pointer">Achetez maintenant</span>
+                  <span class="cursor-pointer text-base">Achetez maintenant</span>
                 </button>
                 
                 <!-- Bouton si produit variable mais aucune variante sélectionnée -->
@@ -250,14 +250,6 @@
                 </button>
               </div>
                <h4 class="text-md md:text-lg font-bold hidden">Ou</h4>
-              <!-- commander par whatsapp -->
-              <div class="hidden w-full overflow-x-auto">
-                <button @click="orderViaWhatsapp"
-                  class="flex max-w-[270px] md:w-full h-13 min-w-[210px] cursor-pointer bg-[#1aaa0f] hover:bg-[#138c0ade] text-white text-sm md:text-[12px] font-medium md:font-semibold md:py-3 md:px-2 rounded-[4px] transition-colors items-center justify-center space-x-2">
-                  <img src="/logo/whatsapp-order.png" class="w-5 h-5 md:w-6 md:h-6" width="24" height="24"/>
-                  <span class="text-center text-[12px] md:text-[14px]">Commander par WhatsApp</span>
-                </button>
-              </div>
             </div>
           </div>
 
@@ -272,6 +264,16 @@
                   <span class="cursor-pointer">Achetez maintenant</span>
                 </button> -->
 
+
+
+                <!-- commander par whatsapp -->
+            <!-- <div class="w-full overflow-x-auto">
+                <button @click="orderViaWhatsapp"
+                  class="flex max-w-[270px] md:w-full h-13 min-w-[210px] cursor-pointer bg-[#1aaa0f] hover:bg-[#138c0ade] text-white text-sm md:text-[12px] font-medium md:font-semibold md:py-3 md:px-2 rounded-[4px] transition-colors items-center justify-center space-x-2">
+                  <img src="/logo/whatsapp-order.png" class="w-5 h-5 md:w-6 md:h-6" width="24" height="24"/>
+                  <span class="text-center text-[10px] md:text-[14px]">Commander par WhatsApp</span>
+                </button>
+              </div> -->
 
           <div class="flex flex-col lg:flex-row md:gap-x-2 items-center justify-between">
 
@@ -293,6 +295,11 @@
                 </ul>
               </div>
             </div>
+
+
+
+            
+
 
             <!--besoin d'aide-->
             <div class="flex w-full md:w-full gap-x-2.5 mt-3 md:mt-0  items-center bg-slate-50 p-4 rounded-sm">
@@ -404,6 +411,93 @@
       </div>
     </div>
   </div>
+
+  <!-- Barre sticky WhatsApp -->
+  <div
+    v-if="product"
+    class="fixed inset-x-0 bottom-0 z-40"
+  >
+    <!-- Version mobile : seulement après avoir dépassé le bouton "Achetez maintenant" -->
+    <div
+      v-if="showWhatsappBarMobile"
+      class="md:hidden bg-white/95 backdrop-blur border-t border-gray-200 shadow-[0_-2px_8px_rgba(15,23,42,0.12)]"
+    >
+      <div
+        class="max-w-[1440px] mx-auto px-3 py-2 flex flex-col items-center justify-between gap-2"
+      >
+        <!-- Texte -->
+        <div class="flex items-center gap-2 text-center">
+          <p class="text-[11px] text-gray-800 font-medium">
+            Désormais, vous pouvez aussi directement commander sur
+            <span class="font-bold text-[#f19100]">IvoirShop</span>
+            en cliquant ici
+          </p>
+        </div>
+
+        <!-- Bouton WhatsApp + flèche vers le haut -->
+        <div class="flex items-center justify-center gap-2">
+          <span class="inline-block text-xl text-[#1aaa0f] leading-none">
+            ↑
+          </span>
+          <button
+            @click="orderViaWhatsapp"
+            class="flex h-11 min-w-[210px] cursor-pointer bg-[#1aaa0f] hover:bg-[#138c0a] text-white text-sm font-semibold px-3 rounded-[4px] transition-colors items-center justify-center space-x-2"
+          >
+            <img
+              src="/logo/whatsapp-order.png"
+              class="w-5 h-5"
+              width="24"
+              height="24"
+              alt="Commander par WhatsApp"
+            />
+            <span class="text-center text-[12px]">
+              Commander par WhatsApp
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Version desktop / tablette : toujours visible (inchangée) -->
+    <div
+      class="hidden md:block bg-white/95 backdrop-blur border-t border-gray-200 shadow-[0_-2px_8px_rgba(15,23,42,0.12)]"
+    >
+      <div
+        class="max-w-[1440px] mx-auto px-6 py-3 flex flex-row items-center justify-between gap-2"
+      >
+        <!-- Texte à gauche -->
+        <div class="flex items-center gap-2">
+          <p class="text-sm text-gray-800 font-medium">
+            Désormais, vous pouvez aussi directement commander sur
+            <span class="font-bold text-[#f19100]">IvoirShop</span>
+            en cliquant ici
+          </p>
+          <span class="inline-block text-2xl text-[#1aaa0f] leading-none">
+            ➜
+          </span>
+        </div>
+
+        <!-- Bouton WhatsApp à droite -->
+        <div class="flex items-center justify-end gap-2">
+          <button
+            @click="orderViaWhatsapp"
+            class="flex h-12 min-w-[220px] cursor-pointer bg-[#1aaa0f] hover:bg-[#138c0a] text-white text-[13px] font-semibold px-4 rounded-[4px] transition-colors items-center justify-center space-x-2"
+          >
+            <img
+              src="/logo/whatsapp-order.png"
+              class="w-6 h-6"
+              width="24"
+              height="24"
+              alt="Commander par WhatsApp"
+            />
+            <span class="text-center text-[14px]">
+              Commander par WhatsApp
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -430,6 +524,12 @@ const selectedImageIndex = ref(0)
 const lightboxOpen = ref(false)
 const selectedVariant = ref<any>(null)
 
+// Référence à la section du bouton "Achetez maintenant"
+const buySectionRef = ref<HTMLElement | null>(null)
+
+// Contrôle de l'affichage de la barre sticky sur mobile
+const showWhatsappBarMobile = ref(false)
+
 
 // SEO Meta
 useSeoMeta({
@@ -440,6 +540,32 @@ useSeoMeta({
   ogImage: () => product.value?.images?.[0]?.src
 })
 
+
+// Observer pour afficher la barre WhatsApp sur mobile
+onMounted(() => {
+  if (process.client && window && 'IntersectionObserver' in window && buySectionRef.value) {
+    const isMobile = () => window.innerWidth < 768 // breakpoint Tailwind md
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0]
+        if (!entry) return
+        if (!isMobile()) {
+          // On ne touche pas au desktop/tablette
+          showWhatsappBarMobile.value = false
+          return
+        }
+        // Si la section "Achetez maintenant" n'est plus visible, on affiche la barre
+        showWhatsappBarMobile.value = !entry.isIntersecting
+      },
+      {
+        threshold: 0.0,
+      },
+    )
+
+    observer.observe(buySectionRef.value)
+  }
+})
 
 // Images
 const selectedImage = computed(() => {

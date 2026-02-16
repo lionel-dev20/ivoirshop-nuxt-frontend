@@ -657,8 +657,6 @@ const isDeliveryInfoComplete = computed(() => {
 
 // Handlers pour le paiement Mobile Money
 const handlePaymentSuccess = async (phoneNumber: string) => {
-  console.log('Initiation du paiement avec le numéro:', phoneNumber)
-  
   isSubmitting.value = true
   
   try {
@@ -727,8 +725,6 @@ const handlePaymentSuccess = async (phoneNumber: string) => {
     // Format: ORD-TIMESTAMP-RANDOM
     const tempOrderId = `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 6).toUpperCase()}`
     
-    console.log('📝 Numéro de commande temporaire généré:', tempOrderId)
-    
     // URLs de retour
     const baseUrl = window.location.origin
     const successUrl = `${baseUrl}/api/payment/mobile-money/success?order_id=${tempOrderId}`
@@ -791,19 +787,6 @@ const handlePaymentSuccess = async (phoneNumber: string) => {
       webhookUrl
     }
     
-    console.log('============================================')
-    console.log('📤 REDIRECTION VERS PAIEMENT')
-    console.log('============================================')
-    console.log('Order ID:', tempOrderId)
-    console.log('Client:', paymentData.customer_name)
-    console.log('Téléphone:', paymentData.customer_phone)
-    console.log('Ville:', paymentData.customer_city)
-    console.log('Commune:', paymentData.customer_commune)
-    console.log('Email:', paymentData.customer_email)
-    console.log('🛒 Panier:', cart_items.length, 'produits')
-    console.log('💰 Montant:', mobileMoneyAmount.value, 'FCFA')
-    console.log('============================================')
-    
     // Appeler l'API pour créer le lien de paiement
     const response = await $fetch('/api/payment/mobile-money/create-link', {
       method: 'POST',
@@ -818,14 +801,12 @@ const handlePaymentSuccess = async (phoneNumber: string) => {
     }
     
   } catch (error: any) {
-    console.error('Erreur lors de l\'initiation du paiement:', error)
     alert('Erreur lors de l\'initiation du paiement: ' + (error.data?.message || error.message))
     isSubmitting.value = false
   }
 }
 
 const handlePaymentFailed = (error: string) => {
-  console.error('Paiement échoué:', error)
   alert('Le paiement a échoué. Veuillez réessayer.')
 }
 

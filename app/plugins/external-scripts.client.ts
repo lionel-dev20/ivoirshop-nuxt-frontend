@@ -29,7 +29,7 @@ export default defineNuxtPlugin(() => {
                   appId: "c16c70ab-fa4c-429b-9cd0-84ed90343914",
                 });
               } catch (error) {
-                console.warn('OneSignal initialization skipped:', error);
+                // Silencieux volontairement (évite les logs côté navigateur)
               }
             }
           });

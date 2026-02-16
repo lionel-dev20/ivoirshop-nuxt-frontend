@@ -5,7 +5,6 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: false }, // Désactivé en production
   css: ['~/assets/css/tailwind.css'],
-
   vite: {
     plugins: [
       tailwindcss(),
@@ -15,21 +14,31 @@ export default defineNuxtConfig({
     },
   },
  
-  modules: ['@pinia/nuxt', [
-    'shadcn-nuxt',
-    {
-      /**
-       * Prefix for all the imported component
-       */
-      prefix: '',
-      /**
-       * Directory that the component lives in.
-       * @default "./shadcn/ui"
-       */
-      componentDir: './shadcn/ui'
-    },
-  ], '@nuxt/fonts'
-],
+  modules: [
+    '@pinia/nuxt',
+    [
+      'shadcn-nuxt',
+      {
+        /**
+         * Prefix for all the imported component
+         */
+        prefix: '',
+        /**
+         * Directory that the component lives in.
+         * @default "./shadcn/ui"
+         */
+        componentDir: './shadcn/ui'
+      },
+    ],
+    '@nuxt/fonts',
+    [
+      '@nuxtjs/sitemap',
+      {
+        sources: ['/api/urls'],
+      },
+    ],
+  ],
+
 
    runtimeConfig: {
   WORDPRESS_URL: process.env.WORDPRESS_URL,
@@ -49,6 +58,8 @@ export default defineNuxtConfig({
     WC_STORE_URL: process.env.WC_STORE_URL || process.env.WORDPRESS_URL,
     SITE_URL: process.env.NUXT_PUBLIC_SITE_URL || 'https://ivoirshop.ci', // URL du site frontend
     PAYMENT_THRESHOLD: parseInt(process.env.PAYMENT_THRESHOLD || '150000'), // Seuil de 150 000 FCFA
+    // Si true, aucun log n'apparaît dans la console navigateur (utile en dev aussi).
+    DISABLE_BROWSER_LOGS: process.env.NUXT_PUBLIC_DISABLE_BROWSER_LOGS === 'true',
   },
 },
    ssr: true,
@@ -125,7 +136,7 @@ export default defineNuxtConfig({
                     appId: "c16c70ab-fa4c-429b-9cd0-84ed90343914",
                   });
                 } catch (error) {
-                  console.warn('OneSignal initialization skipped:', error);
+                  // Silencieux volontairement (évite les logs côté navigateur)
                 }
               }
             });

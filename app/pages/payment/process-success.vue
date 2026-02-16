@@ -46,8 +46,6 @@ onMounted(async () => {
     }
 
     const checkoutData = JSON.parse(checkoutDataStr)
-    
-    console.log('Création de la commande après paiement réussi:', checkoutData)
 
     // Créer la commande dans WooCommerce
     const response = await $fetch('/api/orders/create', {
@@ -58,8 +56,6 @@ onMounted(async () => {
     if (response.success) {
       const orderId = (response as any).order_id
       const orderNumber = (response as any).order_number
-      
-      console.log('Commande créée avec succès:', orderId)
       
       // Préparer les données pour la page thank-you
       const thankYouData = {
@@ -96,7 +92,6 @@ onMounted(async () => {
     }
     
   } catch (err: any) {
-    console.error('Erreur:', err)
     error.value = err.message || 'Une erreur est survenue'
     isProcessing.value = false
     

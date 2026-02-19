@@ -1,0 +1,49 @@
+> nuxt prepare
+
+
+ WARN  Component directory does not exist: /Users/user/ivoirshop-nuxt-frontend/shadcn/ui                                                                                           4:58:12 PM
+
+
+ WARN  Two component files resolving to the same name CollectionHomepageDoubleBanner:                                                                                         nuxt 4:58:13 PM
+
+ - /Users/user/ivoirshop-nuxt-frontend/app/components/collectionHomepage/DoubleBanner.vue
+ - /Users/user/ivoirshop-nuxt-frontend/app/components/collectionHomepage/CollectionHomepageDoubleBanner.vue
+
+
+ WARN  Two component files resolving to the same name UiButton:                                                                                                               nuxt 4:58:13 PM
+
+ - /Users/user/ivoirshop-nuxt-frontend/app/components/ui/button/index.ts
+ - /Users/user/ivoirshop-nuxt-frontend/app/components/ui/button/Button.vue
+
+✔ Types nerated in .nuxt                                                                                                                                                   nuxi 4:58:13 PM
+
+up to date, audited 839 packages in 33s
+
+190 packages are looking for funding
+  run `npm fund` for details
+
+16 vulnerabilities (1 low, 4 moderate, 11 high)
+
+To address all issues, run:
+  npm audit fix
+
+Run `npm audit` for details.
+✔ Types nerated in .nuxt                        zsh: command not found: cuser@MacBook-Pro-de-userclear
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

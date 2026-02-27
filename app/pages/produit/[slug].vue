@@ -542,29 +542,37 @@ useSeoMeta({
 
 
 // Observer pour afficher la barre WhatsApp sur mobile
-onMounted(() => {
-  if (process.client && window && 'IntersectionObserver' in window && buySectionRef.value) {
-    const isMobile = () => window.innerWidth < 768 // breakpoint Tailwind md
+// On utilise watch car buySectionRef est null tant que le produit n'est pas chargé (useLazyFetch)
+let whatsappObserver: IntersectionObserver | null = null
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0]
-        if (!entry) return
-        if (!isMobile()) {
-          // On ne touche pas au desktop/tablette
-          showWhatsappBarMobile.value = false
-          return
-        }
-        // Si la section "Achetez maintenant" n'est plus visible, on affiche la barre
-        showWhatsappBarMobile.value = !entry.isIntersecting
-      },
-      {
-        threshold: 0.0,
-      },
-    )
-
-    observer.observe(buySectionRef.value)
+watch(buySectionRef, (el: HTMLElement | null) => {
+  // Nettoyer l'ancien observer si existant
+  if (whatsappObserver) {
+    whatsappObserver.disconnect()
+    whatsappObserver = null
   }
+
+  if (!el || !process.client || !('IntersectionObserver' in window)) return
+
+  const isMobile = () => window.innerWidth < 768 // breakpoint Tailwind md
+
+  whatsappObserver = new IntersectionObserver(
+    (entries) => {
+      const entry = entries[0]
+      if (!entry) return
+      if (!isMobile()) {
+        showWhatsappBarMobile.value = false
+        return
+      }
+      // Si la section "Achetez maintenant" n'est plus visible, on affiche la barre
+      showWhatsappBarMobile.value = !entry.isIntersecting
+    },
+    {
+      threshold: 0.0,
+    },
+  )
+
+  whatsappObserver.observe(el)
 })
 
 // Images

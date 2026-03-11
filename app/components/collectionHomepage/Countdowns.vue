@@ -445,6 +445,7 @@ watch(() => props.categorySlug, () => {
   }
   .pagination-controls {
     @apply flex-col gap-4;
+    background-color: #fff;
   }
   .pagination-numbers {
     @apply order-first;

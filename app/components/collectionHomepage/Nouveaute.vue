@@ -615,6 +615,7 @@ if (categoryData.value) {
 @media (max-width: 640px) {
   .pagination-controls {
     @apply flex-col gap-3;
+    background: #fff
   }
   
   .pagination-numbers {

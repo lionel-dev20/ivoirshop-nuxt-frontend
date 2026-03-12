@@ -1,9 +1,9 @@
 <!-- layouts/default.vue -->
 <template>
-  <!-- <div 
-    :class="['min-h-screen flex flex-col', isIndexPage ? 'bg-[#ff0000]' : 'bg-gray-50']"
-  > -->
-  <div class="min-h-screen flex flex-col bg-[#f56100]"> 
+  <div 
+    :class="['min-h-screen flex flex-col', isIndexPage ? 'bg-[#f56100]' : 'bg-gray-50']"
+  >
+  <!-- <div class="min-h-screen flex flex-col bg-[#f56100]">  -->
     <TopBanner />
     <AppHeader />
     <main class="flex-1">

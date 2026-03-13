@@ -60,6 +60,14 @@ export default defineNuxtConfig({
     PAYMENT_THRESHOLD: parseInt(process.env.PAYMENT_THRESHOLD || '150000'), // Seuil de 150 000 FCFA
     // Si true, aucun log n'apparaît dans la console navigateur (utile en dev aussi).
     DISABLE_BROWSER_LOGS: process.env.NUXT_PUBLIC_DISABLE_BROWSER_LOGS === 'true',
+    // Firebase OTP
+    FIREBASE_API_KEY: process.env.NUXT_PUBLIC_FIREBASE_API_KEY,
+    FIREBASE_AUTH_DOMAIN: process.env.NUXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+    FIREBASE_PROJECT_ID: process.env.NUXT_PUBLIC_FIREBASE_PROJECT_ID,
+    FIREBASE_STORAGE_BUCKET: process.env.NUXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+    FIREBASE_MESSAGING_SENDER_ID: process.env.NUXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+    FIREBASE_APP_ID: process.env.NUXT_PUBLIC_FIREBASE_APP_ID,
+    FIREBASE_MEASUREMENT_ID: process.env.NUXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
   },
 },
    ssr: true,
@@ -71,7 +79,7 @@ export default defineNuxtConfig({
   
   // Optimisations de build
   build: {
-    transpile: ['@headlessui/vue']
+    transpile: ['@headlessui/vue', 'firebase']
   },
   
   // Optimisations de performance

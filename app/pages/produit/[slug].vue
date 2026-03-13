@@ -356,33 +356,62 @@
         </div>
       </div>
 
-      <!-- Produits associés -->
+      <!-- Produits similaires - Carousel -->
       <div v-if="relatedProducts.length > 0" class="mb-16">
-        <h2 class="text-2xl font-bold text-gray-900 mb-6">Produits similaires</h2>
-        <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-1 md:gap-4">
-          <div v-for="relatedProduct in relatedProducts" :key="relatedProduct.id"
-            class="border rounded-md bg-white overflow-hidden shadow-sm shadow-slate-100 hover:shadow-md transition-shadow">
-            <NuxtLink :to="`/produit/${relatedProduct.slug}`">
-              <div class="aspect-square bg-white">
-                <img v-if="relatedProduct.image" :src="relatedProduct.image.src"
-                  :alt="relatedProduct.image.alt || relatedProduct.name" class="w-full h-full object-cover" />
-                <div v-else class="w-full h-full flex items-center justify-center text-gray-400">
-                  <span>Aucune image</span>
-                </div>
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl font-bold text-gray-900">Produits similaires</h2>
+          <div class="flex items-center space-x-2">
+            <button
+              @click="relatedSwiperPrev"
+              class="w-9 h-9 flex items-center justify-center bg-white border border-gray-300 rounded-full shadow-sm hover:bg-gray-50 hover:border-gray-400 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              :disabled="relatedSwiperAtStart"
+            >
+              <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <button
+              @click="relatedSwiperNext"
+              class="w-9 h-9 flex items-center justify-center bg-white border border-gray-300 rounded-full shadow-sm hover:bg-gray-50 hover:border-gray-400 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              :disabled="relatedSwiperAtEnd"
+            >
+              <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div ref="relatedSwiperContainer" class="swiper overflow-hidden">
+          <div class="swiper-wrapper">
+            <div
+              v-for="relatedProduct in relatedProducts"
+              :key="relatedProduct.id"
+              class="swiper-slide"
+            >
+              <div class="border rounded-md bg-white overflow-hidden shadow-sm shadow-slate-100 hover:shadow-md transition-shadow">
+                <NuxtLink :to="`/produit/${relatedProduct.slug}`">
+                  <div class="aspect-square bg-white">
+                    <img v-if="relatedProduct.image" :src="relatedProduct.image.src"
+                      :alt="relatedProduct.image.alt || relatedProduct.name" class="w-full h-full object-cover" />
+                    <div v-else class="w-full h-full flex items-center justify-center text-gray-400">
+                      <span>Aucune image</span>
+                    </div>
+                  </div>
+                  <div class="p-4">
+                    <h3 class="font-semibold text-gray-900 mb-2 line-clamp-2">{{ relatedProduct.name }}</h3>
+                    <div class="flex flex-col items-start">
+                      <span v-if="relatedProduct.sale_price" class="text-red-600 font-bold">
+                        {{ formatPrice(relatedProduct.sale_price) }}
+                      </span>
+                      <span
+                        :class="relatedProduct.sale_price ? 'line-through text-gray-500 text-sm' : 'text-gray-700 font-semibold'">
+                        {{ formatPrice(relatedProduct.regular_price || relatedProduct.price) }}
+                      </span>
+                    </div>
+                  </div>
+                </NuxtLink>
               </div>
-              <div class="p-4">
-                <h3 class="font-semibold text-gray-900 mb-2 line-clamp-2">{{ relatedProduct.name }}</h3>
-                <div class="flex flex-col items-start">
-                  <span v-if="relatedProduct.sale_price" class="text-red-600 font-bold">
-                    {{ formatPrice(relatedProduct.sale_price) }}
-                  </span>
-                  <span
-                    :class="relatedProduct.sale_price ? 'line-through text-gray-500 text-sm' : 'text-gray-700 font-semibold'">
-                    {{ formatPrice(relatedProduct.regular_price || relatedProduct.price) }}
-                  </span>
-                </div>
-              </div>
-            </NuxtLink>
+            </div>
           </div>
         </div>
       </div>
@@ -501,8 +530,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted, watch } from 'vue'
+import { computed, ref, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
+import { Swiper } from 'swiper'
+import { Navigation, Autoplay } from 'swiper/modules'
+import 'swiper/css'
+import 'swiper/css/navigation'
 
 const route = useRoute()
 const productSlug = route.params.slug as string
@@ -515,8 +548,21 @@ const { data, pending: loading, error: fetchError } = await useLazyFetch(`/api/w
 })
 
 const product = computed(() => (data.value as any)?.product)
-const relatedProducts = computed(() => (data.value as any)?.relatedProducts || [])
+const allRelatedProducts = computed(() => (data.value as any)?.relatedProducts || [])
 const error = computed(() => fetchError.value?.data?.message || fetchError.value?.message)
+
+// Nombre de produits similaires selon la taille d'écran
+const screenWidth = ref(0)
+const updateScreenWidth = () => {
+  if (typeof window !== 'undefined') screenWidth.value = window.innerWidth
+}
+const relatedProducts = computed(() => {
+  const all = allRelatedProducts.value
+  let limit = 10 // desktop
+  if (screenWidth.value < 768) limit = 6        // mobile
+  else if (screenWidth.value < 1024) limit = 8  // tablette
+  return all.slice(0, limit)
+})
 
 // État local
 const quantity = ref(1)
@@ -526,6 +572,73 @@ const selectedVariant = ref<any>(null)
 
 // Référence à la section du bouton "Achetez maintenant"
 const buySectionRef = ref<HTMLElement | null>(null)
+
+// Carousel produits similaires
+const relatedSwiperContainer = ref<HTMLElement | null>(null)
+let relatedSwiper: Swiper | null = null
+const relatedSwiperAtStart = ref(true)
+const relatedSwiperAtEnd = ref(false)
+
+const initRelatedSwiper = () => {
+  if (!relatedSwiperContainer.value) return
+  relatedSwiper = new Swiper(relatedSwiperContainer.value, {
+    modules: [Navigation, Autoplay],
+    slidesPerView: 2,
+    slidesPerGroup: 1,
+    spaceBetween: 6,
+    loop: false,
+    grabCursor: true,
+    autoplay: {
+      delay: 4000,
+      disableOnInteraction: false,
+      pauseOnMouseEnter: true,
+    },
+    breakpoints: {
+      0: { slidesPerView: 2, spaceBetween: 6 },
+      768: { slidesPerView: 3, spaceBetween: 10 },
+      1024: { slidesPerView: 5, spaceBetween: 12 },
+    },
+    speed: 600,
+    on: {
+      slideChange: (s: Swiper) => {
+        relatedSwiperAtStart.value = s.isBeginning
+        relatedSwiperAtEnd.value = s.isEnd
+      },
+      reachBeginning: () => { relatedSwiperAtStart.value = true },
+      reachEnd: () => { relatedSwiperAtEnd.value = true },
+    },
+  })
+}
+
+const relatedSwiperNext = () => relatedSwiper?.slideNext()
+const relatedSwiperPrev = () => relatedSwiper?.slidePrev()
+
+// Init screen width + carousel produits similaires
+if (typeof window !== 'undefined') {
+  updateScreenWidth()
+  window.addEventListener('resize', updateScreenWidth)
+}
+
+watch(relatedProducts, async (products: any[]) => {
+  if (products && products.length > 0) {
+    await nextTick()
+    if (relatedSwiper) {
+      relatedSwiper.destroy(true, true)
+      relatedSwiper = null
+    }
+    setTimeout(() => initRelatedSwiper(), 100)
+  }
+})
+
+onUnmounted(() => {
+  if (relatedSwiper) {
+    relatedSwiper.destroy(true, true)
+    relatedSwiper = null
+  }
+  if (typeof window !== 'undefined') {
+    window.removeEventListener('resize', updateScreenWidth)
+  }
+})
 
 // Contrôle de l'affichage de la barre sticky sur mobile
 const showWhatsappBarMobile = ref(false)

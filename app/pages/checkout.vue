@@ -51,60 +51,93 @@
         <div class="space-y-6">
           <div class="bg-white rounded-lg shadow p-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-4">Informations de livraison</h2>
-            
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label for="firstName" class="block text-sm font-medium text-gray-700 mb-1">
-                  Prénom <span class="text-red-600">*</span>
-                </label>
-                <input
-                  id="firstName"
-                  v-model="orderForm.firstName"
-                  type="text"
-                  required
-                  class="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-              
-              <div>
-                <label for="lastName" class="block text-sm font-medium text-gray-700 mb-1">
-                  Nom <span class="text-red-600">*</span>
-                </label>
-                <input
-                  id="lastName"
-                  v-model="orderForm.lastName"
-                  type="text"
-                  required
-                  class="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
+
+            <!-- Utilisateur connecté : afficher un résumé de ses infos -->
+            <div v-if="isLoggedIn" class="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+              <div class="flex items-center">
+                <svg class="w-5 h-5 text-green-600 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                <div>
+                  <p class="text-sm font-medium text-green-900">
+                    Connecté en tant que <span class="font-semibold">{{ authUser?.first_name || authUser?.username }} {{ authUser?.last_name || '' }}</span>
+                  </p>
+                  <p v-if="authUser?.email" class="text-xs text-green-700 mt-0.5">{{ authUser.email }}</p>
+                </div>
               </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-              <div>
-                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
-                  Email (optionnel)
-                </label>
-                <input
-                  id="email"
-                  v-model="orderForm.email"
-                  type="email"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
+            <!-- Champs personnels : visibles uniquement si NON connecté -->
+            <div v-if="!isLoggedIn">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label for="firstName" class="block text-sm font-medium text-gray-700 mb-1">
+                    Prénom <span class="text-red-600">*</span>
+                  </label>
+                  <input
+                    id="firstName"
+                    v-model="orderForm.firstName"
+                    type="text"
+                    required
+                    class="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+
+                <div>
+                  <label for="lastName" class="block text-sm font-medium text-gray-700 mb-1">
+                    Nom <span class="text-red-600">*</span>
+                  </label>
+                  <input
+                    id="lastName"
+                    v-model="orderForm.lastName"
+                    type="text"
+                    required
+                    class="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
               </div>
 
-              <div>
-                <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">
-                  Téléphone <span class="text-red-600">*</span>
-                </label>
-                <input
-                  id="phone"
-                  v-model="orderForm.phone"
-                  type="tel"
-                  required
-                  class="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                <div>
+                  <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
+                    Email (optionnel)
+                  </label>
+                  <input
+                    id="email"
+                    v-model="orderForm.email"
+                    type="email"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+
+                <div>
+                  <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">
+                    Téléphone <span class="text-red-600">*</span>
+                  </label>
+                  <input
+                    id="phone"
+                    v-model="orderForm.phone"
+                    type="tel"
+                    required
+                    class="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
               </div>
+            </div>
+
+            <!-- Téléphone toujours visible pour l'utilisateur connecté (pas stocké dans le profil) -->
+            <div v-if="isLoggedIn" class="mt-0">
+              <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">
+                Téléphone <span class="text-red-600">*</span>
+              </label>
+              <input
+                id="phone"
+                v-model="orderForm.phone"
+                type="tel"
+                required
+                placeholder="Numéro de téléphone pour la livraison"
+                class="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
             </div>
 
             <div class="bg-orange-50 border border-orange-200 rounded-lg p-4 mt-4">
@@ -327,10 +360,10 @@
                     Veuillez remplir toutes les informations de livraison ci-dessus pour accéder aux modes de paiement.
                   </p>
                   <ul class="text-xs text-blue-700 mt-2 space-y-1 ml-4">
-                    <li v-if="!orderForm.firstName.trim()" class="flex items-center">
+                    <li v-if="!isLoggedIn && !orderForm.firstName.trim()" class="flex items-center">
                       <span class="text-red-600 mr-1">✗</span> Prénom
                     </li>
-                    <li v-if="!orderForm.lastName.trim()" class="flex items-center">
+                    <li v-if="!isLoggedIn && !orderForm.lastName.trim()" class="flex items-center">
                       <span class="text-red-600 mr-1">✗</span> Nom
                     </li>
                     <li v-if="!orderForm.phone.trim()" class="flex items-center">
@@ -431,8 +464,8 @@
                   :total-amount="finalTotal"
                   :is-partial-payment="requiresPartialPayment"
                   :order-id="0"
-                  :customer-name="`${orderForm.firstName} ${orderForm.lastName}`"
-                  :customer-email="orderForm.email"
+                  :customer-name="`${effectiveFirstName} ${effectiveLastName}`"
+                  :customer-email="effectiveEmail"
                   :customer-id="authUser?.id || 0"
                   @payment-success="handlePaymentSuccess"
                   @payment-failed="handlePaymentFailed"
@@ -566,7 +599,7 @@ import { useAuth } from '~/composables/useAuth'
 
 const cartStore = useCartStore()
 const deliveryStore = useDeliveryStore()
-const { user: authUser } = useAuth() // Récupérer l'utilisateur connecté
+const { user: authUser, isLoggedIn } = useAuth() // Récupérer l'utilisateur connecté
 
 // SEO
 useSeoMeta({
@@ -593,6 +626,11 @@ const orderForm = ref({
   commune: '',
   deliveryAddressDetails: ''
 })
+
+// Computed : nom/prénom/email effectifs (priorité auth si connecté)
+const effectiveFirstName = computed(() => isLoggedIn.value ? (authUser.value?.first_name || authUser.value?.username || '') : orderForm.value.firstName)
+const effectiveLastName = computed(() => isLoggedIn.value ? (authUser.value?.last_name || '') : orderForm.value.lastName)
+const effectiveEmail = computed(() => isLoggedIn.value ? (authUser.value?.email || '') : orderForm.value.email)
 
 const isSubmitting = ref(false)
 const config = useRuntimeConfig()
@@ -646,8 +684,11 @@ const canPayOnDelivery = computed(() => {
 
 // Vérifier si toutes les informations de livraison sont remplies
 const isDeliveryInfoComplete = computed(() => {
-  return orderForm.value.firstName.trim() !== '' &&
-         orderForm.value.lastName.trim() !== '' &&
+  const hasPersonalInfo = isLoggedIn.value
+    ? true // L'utilisateur connecté a déjà ses infos
+    : orderForm.value.firstName.trim() !== '' && orderForm.value.lastName.trim() !== ''
+
+  return hasPersonalInfo &&
          orderForm.value.phone.trim() !== '' &&
          orderForm.value.city.trim() !== '' &&
          orderForm.value.commune.trim() !== '' &&
@@ -662,7 +703,7 @@ const handlePaymentSuccess = async (phoneNumber: string) => {
   try {
     // Préparer les données de la commande (SANS la créer encore)
     const checkoutData = {
-      customer: orderForm.value,
+      customer: { ...orderForm.value, firstName: effectiveFirstName.value, lastName: effectiveLastName.value, email: effectiveEmail.value },
       customer_id: authUser.value?.id || 0,
       items: cartStore.items.map(item => ({
         id: item.id,
@@ -683,9 +724,9 @@ const handlePaymentSuccess = async (phoneNumber: string) => {
       is_partial_payment: requiresPartialPayment.value,
       partial_payment_amount: requiresPartialPayment.value ? partialPaymentAmount.value : null,
       billing: {
-        first_name: orderForm.value.firstName,
-        last_name: orderForm.value.lastName,
-        email: orderForm.value.email,
+        first_name: effectiveFirstName.value,
+        last_name: effectiveLastName.value,
+        email: effectiveEmail.value,
         phone: orderForm.value.phone,
         address_1: orderForm.value.commune,
         city: orderForm.value.city,
@@ -694,9 +735,9 @@ const handlePaymentSuccess = async (phoneNumber: string) => {
         country: 'CI'
       },
       shipping: {
-        first_name: orderForm.value.firstName,
-        last_name: orderForm.value.lastName,
-        email: orderForm.value.email,
+        first_name: effectiveFirstName.value,
+        last_name: effectiveLastName.value,
+        email: effectiveEmail.value,
         phone: orderForm.value.phone,
         address_1: orderForm.value.commune,
         city: orderForm.value.city,
@@ -750,8 +791,8 @@ const handlePaymentSuccess = async (phoneNumber: string) => {
       
       // 👤 Informations client
       customer_id: authUser.value?.id || 0, // ID utilisateur si connecté
-      customer_name: `${orderForm.value.firstName} ${orderForm.value.lastName}`,
-      customer_email: orderForm.value.email || 'client@ivoirshop.ci',
+      customer_name: `${effectiveFirstName.value} ${effectiveLastName.value}`,
+      customer_email: effectiveEmail.value || 'client@ivoirshop.ci',
       customer_phone: orderForm.value.phone, // 📞 Téléphone du client
       customer_city: orderForm.value.city, // 🏙️ Ville
       customer_commune: orderForm.value.commune, // 📍 Région/Commune
@@ -854,17 +895,18 @@ const finalTotal = computed(() => {
 
 const canSubmit = computed(() => {
   // Le bouton "Confirmer la commande" est activé UNIQUEMENT pour le paiement à la livraison (COD)
-  // Pour Mobile Money, on passe toujours par le flux de redirection via handlePaymentSuccess
-  const baseConditions = deliveryStore.hasSelectedDelivery && 
-                         orderForm.value.firstName && 
-                         orderForm.value.lastName && 
-                         orderForm.value.phone && 
-                         orderForm.value.city && 
-                         orderForm.value.commune && 
+  const hasPersonalInfo = isLoggedIn.value
+    ? true
+    : !!(orderForm.value.firstName && orderForm.value.lastName)
+
+  const baseConditions = deliveryStore.hasSelectedDelivery &&
+                         hasPersonalInfo &&
+                         orderForm.value.phone &&
+                         orderForm.value.city &&
+                         orderForm.value.commune &&
                          orderForm.value.deliveryAddressDetails &&
                          !isSubmitting.value
-  
-  // Activer le bouton SEULEMENT pour le paiement à la livraison (COD)
+
   return baseConditions && orderForm.value.paymentMethod === 'cod'
 })
 
@@ -993,8 +1035,8 @@ const submitOrder = async () => {
   
   try {
     const orderData = {
-      customer: orderForm.value,
-      customer_id: authUser.value?.id || 0, // Ajouter l'ID de l'utilisateur connecté
+      customer: { ...orderForm.value, firstName: effectiveFirstName.value, lastName: effectiveLastName.value, email: effectiveEmail.value },
+      customer_id: authUser.value?.id || 0,
       items: cartStore.items,
       total: finalTotal.value,
       shipping_cost: deliveryStore.selectedDelivery.shipping_cost,
@@ -1003,27 +1045,27 @@ const submitOrder = async () => {
       is_partial_payment: requiresPartialPayment.value,
       partial_payment_amount: requiresPartialPayment.value ? partialPaymentAmount.value : null,
       billing: {
-        first_name: orderForm.value.firstName,
-        last_name: orderForm.value.lastName,
-        email: orderForm.value.email,
+        first_name: effectiveFirstName.value,
+        last_name: effectiveLastName.value,
+        email: effectiveEmail.value,
         phone: orderForm.value.phone,
-        address_1: orderForm.value.commune, // Commune/Quartier
-        city: orderForm.value.city, // Région
+        address_1: orderForm.value.commune,
+        city: orderForm.value.city,
         state: '',
         postcode: '',
         country: 'CI'
       },
       shipping: {
-        first_name: orderForm.value.firstName,
-        last_name: orderForm.value.lastName,
-        email: orderForm.value.email,
+        first_name: effectiveFirstName.value,
+        last_name: effectiveLastName.value,
+        email: effectiveEmail.value,
         phone: orderForm.value.phone,
-        address_1: orderForm.value.commune, // Commune/Quartier pour address_1
-        city: orderForm.value.city, // Région pour city
+        address_1: orderForm.value.commune,
+        city: orderForm.value.city,
         state: '',
         postcode: '',
         country: 'CI',
-        address_2: orderForm.value.deliveryAddressDetails // Détails supplémentaires
+        address_2: orderForm.value.deliveryAddressDetails
       },
       delivery_info: {
         city_name: orderForm.value.city, // Région
@@ -1048,7 +1090,7 @@ const submitOrder = async () => {
         order_status: (response as any).order_status,
         total: finalTotal.value,
         date: new Date().toISOString(),
-        customer: { ...orderForm.value },
+        customer: { ...orderForm.value, firstName: effectiveFirstName.value, lastName: effectiveLastName.value, email: effectiveEmail.value },
         items: cartStore.items.map(item => ({
           product_id: item.id,
           name: item.name,

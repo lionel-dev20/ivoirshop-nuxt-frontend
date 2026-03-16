@@ -23,17 +23,26 @@ export default defineEventHandler(async (event) => {
     // Utiliser le numéro de téléphone comme username pour permettre la connexion par téléphone
     const phoneUsername = body.phone ? body.phone.replace(/[\s\-]/g, '') : body.username
 
+    // Séparer le nom complet si first_name/last_name ne sont pas fournis
+    let firstName = body.first_name || ''
+    let lastName = body.last_name || ''
+    if (!firstName && body.username) {
+      const parts = body.username.trim().split(/\s+/)
+      firstName = parts[0] || ''
+      lastName = parts.slice(1).join(' ') || ''
+    }
+
     // Créer un nouveau client WooCommerce
     const customerData = {
       email: body.email,
-      first_name: body.first_name || body.username,
-      last_name: body.last_name || '',
+      first_name: firstName,
+      last_name: lastName,
       username: phoneUsername,
       password: body.password,
       billing: {
         phone: body.phone || '',
-        first_name: body.first_name || body.username,
-        last_name: body.last_name || '',
+        first_name: firstName,
+        last_name: lastName,
         email: body.email,
       },
     }

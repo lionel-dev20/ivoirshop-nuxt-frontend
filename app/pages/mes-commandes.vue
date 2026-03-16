@@ -105,7 +105,7 @@
                 <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Date</th>
                 <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Statut</th>
                 <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Montant total</th>
-                <th class="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">Facture</th>
+                <th class="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">Action</th>
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
@@ -138,16 +138,16 @@
                   {{ formatPrice(order.total) }} FCFA
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-center">
-                  <a
-                    :href="`/api/orders/invoice/${order.id}`"
-                    target="_blank"
-                    class="inline-flex items-center gap-1.5 text-[#ff9900] hover:text-[#e68a00] font-medium text-sm transition-colors"
+                  <button
+                    @click="openOrderDetail(order)"
+                    class="inline-flex items-center gap-1.5 text-[#ff9900] hover:text-[#e68a00] font-medium text-sm transition-colors cursor-pointer"
                   >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                     </svg>
-                    PDF
-                  </a>
+                    Voir
+                  </button>
                 </td>
               </tr>
             </tbody>
@@ -178,16 +178,16 @@
               <span class="text-gray-500">{{ formatDate(order.date_created) }}</span>
               <span class="font-semibold text-gray-900">{{ formatPrice(order.total) }} FCFA</span>
             </div>
-            <a
-              :href="`/api/orders/invoice/${order.id}`"
-              target="_blank"
-              class="inline-flex items-center gap-1.5 text-[#ff9900] hover:text-[#e68a00] font-medium text-sm transition-colors"
+            <button
+              @click="openOrderDetail(order)"
+              class="inline-flex items-center gap-1.5 text-[#ff9900] hover:text-[#e68a00] font-medium text-sm transition-colors cursor-pointer"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
               </svg>
-              Télécharger la facture
-            </a>
+              Voir le résumé
+            </button>
           </div>
         </div>
 
@@ -256,6 +256,131 @@
         </div>
       </div>
     </div>
+
+    <!-- ========== MODAL DETAIL COMMANDE ========== -->
+    <Teleport to="body">
+      <div v-if="selectedOrder" class="fixed inset-0 z-50 flex items-center justify-center p-4" @click.self="selectedOrder = null">
+        <!-- Overlay -->
+        <div class="fixed inset-0 bg-black/50" @click="selectedOrder = null"></div>
+
+        <!-- Modal -->
+        <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto z-10">
+          <!-- Header -->
+          <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 rounded-t-2xl flex items-center justify-between">
+            <h3 class="text-lg font-bold text-gray-900">Commande #{{ selectedOrder.id }}</h3>
+            <button @click="selectedOrder = null" class="text-gray-400 hover:text-gray-600 transition-colors">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Body -->
+          <div class="px-6 py-5 space-y-5">
+            <!-- Statut + Date -->
+            <div class="flex items-center justify-between">
+              <span
+                :class="getStatusClass(selectedOrder.status)"
+                class="px-3 py-1 rounded-full text-sm font-medium"
+              >
+                {{ getStatusText(selectedOrder.status) }}
+              </span>
+              <span class="text-sm text-gray-500">{{ formatDate(selectedOrder.date_created) }}</span>
+            </div>
+
+            <!-- Articles -->
+            <div>
+              <h4 class="text-sm font-semibold text-gray-700 mb-3">Articles commandés</h4>
+              <div class="space-y-3">
+                <div
+                  v-for="item in selectedOrder.items"
+                  :key="item.product_id"
+                  class="flex items-center gap-3"
+                >
+                  <div class="w-14 h-14 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+                    <img
+                      v-if="item.image"
+                      :src="item.image"
+                      :alt="item.name"
+                      class="w-full h-full object-cover"
+                    />
+                    <div v-else class="w-full h-full flex items-center justify-center text-gray-300">
+                      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-gray-900 truncate">{{ item.name }}</p>
+                    <p class="text-xs text-gray-500">Quantité: {{ item.quantity }}</p>
+                  </div>
+                  <p class="text-sm font-semibold text-gray-900">{{ formatPrice(item.total) }} FCFA</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Infos livraison -->
+            <div v-if="selectedOrder.billing && (selectedOrder.billing.address_1 || selectedOrder.billing.city)">
+              <h4 class="text-sm font-semibold text-gray-700 mb-2">Livraison</h4>
+              <div class="bg-gray-50 rounded-lg p-3 text-sm text-gray-600 space-y-1">
+                <p v-if="selectedOrder.billing.first_name || selectedOrder.billing.last_name">
+                  {{ selectedOrder.billing.first_name }} {{ selectedOrder.billing.last_name }}
+                </p>
+                <p v-if="selectedOrder.billing.address_1">{{ selectedOrder.billing.address_1 }}</p>
+                <p v-if="selectedOrder.billing.city">{{ selectedOrder.billing.city }}</p>
+                <p v-if="selectedOrder.billing.phone">Tel: {{ selectedOrder.billing.phone }}</p>
+              </div>
+            </div>
+
+            <!-- Paiement -->
+            <div v-if="selectedOrder.payment_method_title">
+              <h4 class="text-sm font-semibold text-gray-700 mb-2">Paiement</h4>
+              <div class="bg-gray-50 rounded-lg p-3 text-sm text-gray-600 space-y-1">
+                <p>{{ selectedOrder.payment_method_title }}</p>
+                <p v-if="selectedOrder.shipping_total && parseFloat(selectedOrder.shipping_total) > 0">
+                  Frais de livraison: {{ formatPrice(selectedOrder.shipping_total) }} FCFA
+                </p>
+                <p v-if="selectedOrder.discount_total && parseFloat(selectedOrder.discount_total) > 0" class="text-green-600">
+                  Réduction: -{{ formatPrice(selectedOrder.discount_total) }} FCFA
+                </p>
+              </div>
+            </div>
+
+            <!-- Note -->
+            <div v-if="selectedOrder.customer_note">
+              <h4 class="text-sm font-semibold text-gray-700 mb-2">Note</h4>
+              <p class="text-sm text-gray-600 bg-gray-50 rounded-lg p-3">{{ selectedOrder.customer_note }}</p>
+            </div>
+
+            <!-- Total -->
+            <div class="border-t-2 border-gray-200 pt-4 flex items-center justify-between">
+              <span class="text-lg font-bold text-gray-900">Total</span>
+              <span class="text-xl font-bold text-[#ff9900]">{{ formatPrice(selectedOrder.total) }} FCFA</span>
+            </div>
+          </div>
+
+          <!-- Footer -->
+          <div class="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-6 py-4 rounded-b-2xl flex gap-3">
+            <button
+              @click="selectedOrder = null"
+              class="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-100 transition-colors"
+            >
+              Fermer
+            </button>
+            <a
+              :href="`/api/orders/invoice/${selectedOrder.id}`"
+              target="_blank"
+              class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-[#ff9900] text-white rounded-lg text-sm font-medium hover:bg-[#e68a00] transition-colors"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              Télécharger la facture
+            </a>
+          </div>
+        </div>
+      </div>
+    </Teleport>
   </div>
 </template>
 
@@ -316,6 +441,12 @@ const loading = ref(true)
 const error = ref('')
 const currentPage = ref(1)
 const perPage = 15
+const selectedOrder = ref<Order | null>(null)
+
+// Modal
+function openOrderDetail(order: Order) {
+  selectedOrder.value = order
+}
 
 // Pagination
 const totalPages = computed(() => Math.ceil(orders.value.length / perPage))

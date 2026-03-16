@@ -21,49 +21,69 @@ export default defineEventHandler(async (event) => {
       version: 'wc/v3',
     })
 
-    // 1. Chercher les commandes par customer_id
-    const { data: ordersByCustomer } = await api.get('orders', {
-      customer: parseInt(userId),
-      per_page: 100,
-      orderby: 'date',
-      order: 'desc',
-    })
+    const allOrders: any[] = []
+    const seenIds = new Set()
 
-    let allOrders = ordersByCustomer || []
-
-    // 2. Si pas de résultats et qu'on a un email, chercher aussi par email (commandes invité)
-    if (allOrders.length === 0 && userEmail) {
-      const { data: ordersByEmail } = await api.get('orders', {
-        search: userEmail,
+    // 1. Chercher par customer_id
+    try {
+      const { data } = await api.get('orders', {
+        customer: parseInt(userId),
         per_page: 100,
         orderby: 'date',
         order: 'desc',
       })
-      allOrders = ordersByEmail || []
+      for (const order of (data || [])) {
+        if (!seenIds.has(order.id)) {
+          seenIds.add(order.id)
+          allOrders.push(order)
+        }
+      }
+    } catch (e) {
+      // Continuer avec la recherche par email
     }
 
-    // 3. Si toujours rien, essayer de récupérer TOUTES les commandes récentes et filtrer par email billing
-    if (allOrders.length === 0 && userEmail) {
-      const { data: recentOrders } = await api.get('orders', {
-        per_page: 100,
-        orderby: 'date',
-        order: 'desc',
-      })
-      allOrders = (recentOrders || []).filter((order: any) =>
-        order.billing?.email?.toLowerCase() === userEmail.toLowerCase()
-      )
+    // 2. Chercher les commandes invité par email ou phone dans billing
+    if (allOrders.length === 0) {
+      try {
+        // Récupérer le profil customer pour connaître son username/phone
+        let customerPhone = ''
+        try {
+          const { data: customer } = await api.get(`customers/${parseInt(userId)}`)
+          customerPhone = customer?.username || customer?.billing?.phone || ''
+        } catch (e) {
+          // Ignorer
+        }
+
+        const { data } = await api.get('orders', {
+          per_page: 100,
+          orderby: 'date',
+          order: 'desc',
+        })
+        for (const order of (data || [])) {
+          if (seenIds.has(order.id)) continue
+
+          const billingEmail = order.billing?.email?.toLowerCase() || ''
+          const billingPhone = order.billing?.phone || ''
+          const billingName = order.billing?.first_name || ''
+
+          const matchEmail = userEmail && billingEmail === userEmail.toLowerCase()
+          const matchPhone = customerPhone && (billingPhone === customerPhone || billingName === customerPhone)
+
+          if (matchEmail || matchPhone) {
+            seenIds.add(order.id)
+            allOrders.push(order)
+          }
+        }
+      } catch (e) {
+        // Ignorer
+      }
     }
 
-    // Dédupliquer par ID
-    const seen = new Set()
-    const uniqueOrders = allOrders.filter((order: any) => {
-      if (seen.has(order.id)) return false
-      seen.add(order.id)
-      return true
-    })
+    // Trier par date décroissante
+    allOrders.sort((a, b) => new Date(b.date_created).getTime() - new Date(a.date_created).getTime())
 
-    // Mapper les données pour le frontend
-    return uniqueOrders.map((order: any) => ({
+    // Mapper pour le frontend
+    return allOrders.map((order: any) => ({
       id: order.id,
       order_number: order.number,
       status: order.status,

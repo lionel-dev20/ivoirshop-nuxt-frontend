@@ -48,7 +48,7 @@
 
             <button
               @click="logout"
-              class="self-start sm:self-end inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors"
+              class="self-start sm:self-end inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-600 bg-red-50 rounded-sm hover:bg-red-100 transition-colors"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -60,11 +60,11 @@
       </div>
 
       <!-- Onglets -->
-      <div class="flex gap-1 mb-6 bg-white rounded-xl shadow-sm border border-gray-100 p-1">
+      <div class="flex gap-1 mb-6 bg-white rounded-sm shadow-sm border border-gray-100 p-1">
         <button
           @click="activeTab = 'profile'"
           :class="[
-            'flex-1 flex items-center justify-center gap-2 py-3 rounded-lg text-sm font-semibold transition-all',
+            'flex-1 flex items-center cursor-pointer justify-center gap-2 py-3 rounded-sm text-sm font-semibold transition-all',
             activeTab === 'profile'
               ? 'bg-[#ff9900] text-white shadow-sm'
               : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
@@ -78,7 +78,7 @@
         <button
           @click="activeTab = 'orders'"
           :class="[
-            'flex-1 flex items-center justify-center gap-2 py-3 rounded-lg text-sm font-semibold transition-all',
+            'flex-1 flex items-center cursor-pointer justify-center gap-2 py-3 rounded-sm text-sm font-semibold transition-all',
             activeTab === 'orders'
               ? 'bg-[#ff9900] text-white shadow-sm'
               : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
@@ -97,13 +97,13 @@
           <h2 class="text-lg font-bold text-gray-900 mb-6">Informations personnelles</h2>
 
           <!-- Message succès / erreur -->
-          <div v-if="successMessage" class="mb-6 px-4 py-3 bg-green-50 border border-green-200 text-green-700 text-sm rounded-lg flex items-center gap-2">
+          <div v-if="successMessage" class="mb-6 px-4 py-3 bg-green-50 border border-green-200 text-green-700 text-sm rounded-sm flex items-center gap-2">
             <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             {{ successMessage }}
           </div>
-          <div v-if="errorMessage" class="mb-6 px-4 py-3 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg">
+          <div v-if="errorMessage" class="mb-6 px-4 py-3 bg-red-50 border border-red-200 text-red-700 text-sm rounded-sm">
             {{ errorMessage }}
           </div>
 
@@ -116,7 +116,7 @@
                   v-model="firstName"
                   type="text"
                   placeholder="Votre prénom"
-                  class="w-full px-4 py-3 border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ff9900]/20 focus:border-[#ff9900] transition-all"
+                  class="w-full px-4 py-3 border border-gray-200 rounded-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ff9900]/20 focus:border-[#ff9900] transition-all"
                 />
               </div>
 
@@ -127,7 +127,7 @@
                   v-model="lastName"
                   type="text"
                   placeholder="Votre nom"
-                  class="w-full px-4 py-3 border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ff9900]/20 focus:border-[#ff9900] transition-all"
+                  class="w-full px-4 py-3 border border-gray-200 rounded-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ff9900]/20 focus:border-[#ff9900] transition-all"
                 />
               </div>
             </div>
@@ -139,7 +139,7 @@
                 v-model="email"
                 type="email"
                 placeholder="exemple@email.com"
-                class="w-full px-4 py-3 border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ff9900]/20 focus:border-[#ff9900] transition-all"
+                class="w-full px-4 py-3 border border-gray-200 rounded-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ff9900]/20 focus:border-[#ff9900] transition-all"
               />
             </div>
 
@@ -148,7 +148,7 @@
               <button
                 type="submit"
                 :disabled="saving"
-                class="inline-flex items-center gap-2 bg-[#ff9900] text-white px-6 py-3 rounded-lg font-semibold text-sm hover:bg-[#e68a00] focus:outline-none focus:ring-2 focus:ring-[#ff9900]/50 focus:ring-offset-2 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+                class="inline-flex items-center gap-2 bg-[#ff9900] text-white px-6 py-3 rounded-sm font-semibold text-sm hover:bg-[#e68a00] focus:outline-none focus:ring-2 focus:ring-[#ff9900]/50 focus:ring-offset-2 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 <svg v-if="saving" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
                   <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>

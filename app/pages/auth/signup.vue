@@ -364,11 +364,18 @@ async function handleStep2() {
 
   loading.value = true
   try {
+    // Séparer le nom complet en first_name et last_name
+    const nameParts = form.name.trim().split(/\s+/)
+    const firstName = nameParts[0] || ''
+    const lastName = nameParts.slice(1).join(' ') || ''
+
     const response = await register({
       username: form.name,
       email: form.email,
       password: form.password,
       phone: form.phone,
+      first_name: firstName,
+      last_name: lastName,
     })
 
     if (response && response.success) {

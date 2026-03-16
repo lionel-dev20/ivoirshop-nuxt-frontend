@@ -31,7 +31,7 @@ export const useAuth = () => {
   /**
    * Inscription / création de compte
    */
-  const register = async (payload: { username: string; email: string; password: string; phone?: string }) => {
+  const register = async (payload: { username: string; email: string; password: string; phone?: string; first_name?: string; last_name?: string }) => {
     globalLoading.value = true;
     globalError.value = null;
 

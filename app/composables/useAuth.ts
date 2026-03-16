@@ -7,6 +7,7 @@ interface User {
   email: string;
   first_name?: string;
   last_name?: string;
+  avatar?: string | null;
 }
 
 interface AuthResponse {
@@ -21,6 +22,8 @@ const globalUser = ref<User | null>(null);
 const globalLoading = ref(false);
 const globalError = ref<string | null>(null);
 
+const stripHtml = (text: string) => text.replace(/<[^>]*>/g, '');
+
 export const useAuth = () => {
   const isLoggedIn = computed(() => !!globalUser.value);
   const isAuthenticated = computed(() => !!globalUser.value);
@@ -28,7 +31,7 @@ export const useAuth = () => {
   /**
    * Inscription / création de compte
    */
-  const register = async (payload: { username: string; email: string; password: string }) => {
+  const register = async (payload: { username: string; email: string; password: string; phone?: string }) => {
     globalLoading.value = true;
     globalError.value = null;
 
@@ -45,7 +48,7 @@ export const useAuth = () => {
       
       return res;
     } catch (err: any) {
-      const errorMsg = err?.data?.message || err?.message || "Erreur lors de l'inscription";
+      const errorMsg = stripHtml(err?.data?.message || err?.message || "Erreur lors de l'inscription");
       globalError.value = errorMsg;
       throw new Error(errorMsg);
     } finally {
@@ -70,10 +73,10 @@ export const useAuth = () => {
       if (res.user) {
         globalUser.value = res.user;
       }
-      
+
       return res;
     } catch (err: any) {
-      const errorMsg = err?.data?.message || err?.message || "Identifiants incorrects";
+      const errorMsg = stripHtml(err?.data?.message || err?.message || "Identifiants incorrects");
       globalError.value = errorMsg;
       throw new Error(errorMsg);
     } finally {
@@ -86,8 +89,12 @@ export const useAuth = () => {
    */
   const fetchUser = async () => {
     try {
+      // En SSR, $fetch ne transmet pas les cookies automatiquement.
+      // On utilise useRequestHeaders pour les forwarder.
+      const headers = import.meta.server ? useRequestHeaders(['cookie']) : {};
       const res = await $fetch<User | null>("/api/auth/me", {
         credentials: "include",
+        headers,
       });
 
       globalUser.value = res ?? null;

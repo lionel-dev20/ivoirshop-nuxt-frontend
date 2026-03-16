@@ -2,7 +2,7 @@
   <div class="min-h-screen flex items-start justify-center bg-gray-50 px-4 pt-[12vh] pb-8">
     <div class="w-full max-w-lg">
 
-      <!-- ========== STEP INDICATOR (hors du card) ========== -->
+      <!-- ========== STEP INDICATOR ========== -->
       <div class="flex items-center justify-center gap-2 mb-6">
         <!-- Step 1 -->
         <div class="flex items-center gap-2">
@@ -19,7 +19,7 @@
             'w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all',
             step >= 2 ? 'bg-[#ff9900] text-white' : 'bg-gray-200 text-gray-500'
           ]">2</div>
-          <span class="text-sm font-medium text-gray-700 hidden sm:inline">Vérification</span>
+          <span class="text-sm font-medium text-gray-700 hidden sm:inline">Confirmation</span>
         </div>
         <div :class="['w-8 h-0.5 transition-all', step >= 3 ? 'bg-[#ff9900]' : 'bg-gray-200']"></div>
         <!-- Step 3 -->
@@ -134,86 +134,76 @@
             </div>
 
             <!-- Erreur globale -->
-            <p v-if="errorMessage" class="text-sm text-red-500 bg-red-50 px-4 py-2.5 rounded-lg">
+            <p v-if="errorMessage" class="text-sm text-red-500 bg-red-50 px-4 py-2.5 rounded-lg mb-4">
               {{ errorMessage }}
             </p>
 
             <!-- Bouton Continuer -->
             <button
-              id="send-otp-button"
               type="submit"
-              :disabled="otpLoading"
-              class="w-full bg-[#ff9900] cursor-pointer text-white py-3.5 rounded-sm font-semibold text-base hover:bg-[#e68a00] focus:outline-none focus:ring-2 focus:ring-[#ff9900]/50 focus:ring-offset-2 transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              class="w-full bg-[#ff9900] cursor-pointer text-white py-3.5 rounded-sm font-semibold text-base hover:bg-[#e68a00] focus:outline-none focus:ring-2 focus:ring-[#ff9900]/50 focus:ring-offset-2 transition-all"
             >
-              <svg v-if="otpLoading" class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              <span>{{ otpLoading ? 'Envoi du code...' : 'Continuer' }}</span>
+              Continuer
             </button>
           </form>
         </div>
 
-        <!-- ========== STEP 2 : VERIFICATION OTP ========== -->
+        <!-- ========== STEP 2 : CONDITIONS D'UTILISATION ========== -->
         <div v-show="step === 2">
           <div class="mb-6 text-center">
-            <h2 class="text-2xl font-bold text-gray-900">Vérification</h2>
-            <p class="text-gray-500 mt-2">
-              Un code a été envoyé au <br>
-              <span class="font-semibold text-gray-900">{{ form.phone }}</span>
-            </p>
+            <h2 class="text-2xl font-bold text-gray-900">Confirmation</h2>
+            <p class="text-gray-500 mt-2">Veuillez accepter nos conditions avant de finaliser votre inscription</p>
           </div>
 
           <form @submit.prevent="handleStep2" class="space-y-5">
-            <!-- Champs OTP (6 digits) -->
-            <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-3 text-center">Entrez le code à 6 chiffres</label>
-              <div class="flex justify-center gap-2">
+            <!-- Card conditions -->
+            <div class="bg-gray-50 border border-gray-200 rounded-xl p-5">
+              <!-- Checkbox conditions -->
+              <label class="flex items-start gap-3 cursor-pointer">
                 <input
-                  v-for="(_, index) in 6"
-                  :key="index"
-                  ref="otpInputs"
-                  type="text"
-                  inputmode="numeric"
-                  maxlength="1"
-                  :class="[
-                    'w-12 h-14 text-center text-xl font-bold border rounded-lg focus:outline-none focus:ring-2 transition-all',
-                    otpError
-                      ? 'border-[#ff9900] focus:ring-[#ff9900]/20 focus:border-[#ff9900]'
-                      : 'border-gray-200 focus:ring-[#ff9900]/20 focus:border-[#ff9900]'
-                  ]"
-                  @input="onOtpInput(index, $event)"
-                  @keydown="onOtpKeydown(index, $event)"
-                  @paste="onOtpPaste($event)"
+                  v-model="termsAccepted"
+                  type="checkbox"
+                  class="mt-1 w-5 h-5 rounded border-gray-300 text-[#ff9900] focus:ring-[#ff9900] cursor-pointer accent-[#ff9900]"
                 />
+                <span class="text-sm text-gray-700 leading-relaxed">
+                  En continuant votre inscription, vous acceptez nos
+                  <NuxtLink to="/terms" class="text-[#ff9900] hover:text-[#e68a00] font-semibold underline">conditions d'utilisation</NuxtLink>
+                  et
+                  <NuxtLink to="/privacy" class="text-[#ff9900] hover:text-[#e68a00] font-semibold underline">politique de confidentialité</NuxtLink>.
+                </span>
+              </label>
+              <p v-if="termsError" class="text-sm text-[#ff9900] mt-2 ml-8">{{ termsError }}</p>
+
+              <!-- Séparateur -->
+              <div class="border-t border-gray-200 my-4"></div>
+
+              <!-- Info service client -->
+              <div class="text-sm text-gray-600 leading-relaxed">
+                <p class="font-semibold text-gray-700 mb-1">Besoin d'aide ?</p>
+                <p>
+                  Notre service client est disponible du lundi au samedi de 09h à 17h
+                  par appel <a href="tel:+2250701518845" class="text-[#ff9900] font-semibold hover:text-[#e68a00]">+225 07 01 51 88 45</a>
+                  ou par mail <a href="mailto:contact@ivoirshop.ci" class="text-[#ff9900] font-semibold hover:text-[#e68a00]">contact@ivoirshop.ci</a>
+                </p>
               </div>
-              <p v-if="otpError" class="text-sm text-[#ff9900] mt-2 text-center">{{ otpError }}</p>
             </div>
 
-            <!-- Renvoyer le code -->
-            <div class="text-center">
-              <button
-                type="button"
-                @click="resendOtp"
-                :disabled="resendCooldown > 0 || otpLoading"
-                class="text-sm text-[#ff9900] hover:text-[#e68a00] font-medium disabled:text-gray-400 disabled:cursor-not-allowed transition-colors"
-              >
-                <span v-if="resendCooldown > 0">Renvoyer le code dans {{ resendCooldown }}s</span>
-                <span v-else>Renvoyer le code</span>
-              </button>
-            </div>
+            <!-- Erreur globale -->
+            <p v-if="errorMessage" class="text-sm text-red-500 bg-red-50 px-4 py-2.5 rounded-lg">
+              {{ errorMessage }}
+            </p>
 
-            <!-- Bouton Vérifier -->
+            <!-- Bouton Créer mon compte -->
             <button
               type="submit"
-              :disabled="otpLoading || otpCode.length < 6"
+              :disabled="loading"
               class="w-full bg-[#ff9900] cursor-pointer text-white py-3.5 rounded-sm font-semibold text-base hover:bg-[#e68a00] focus:outline-none focus:ring-2 focus:ring-[#ff9900]/50 focus:ring-offset-2 transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
-              <svg v-if="otpLoading" class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+              <svg v-if="loading" class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
-              <span>{{ otpLoading ? 'Vérification...' : 'Vérifier le code' }}</span>
+              <span>{{ loading ? 'Création du compte...' : 'Créer mon compte' }}</span>
             </button>
 
             <!-- Retour -->
@@ -253,7 +243,7 @@
       </div>
 
       <!-- Lien vers login -->
-      <p v-if="step === 1" class="text-center mt-6 text-gray-500">
+      <p v-if="step !== 3" class="text-center mt-6 text-gray-500">
         Déjà un compte ?
         <NuxtLink to="/auth/login" class="text-[#ff9900] hover:text-[#e68a00] font-semibold transition-colors">
           Se connecter
@@ -264,32 +254,25 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, reactive, computed, onUnmounted } from 'vue'
 import { useAuth } from '@/composables/useAuth'
-import { usePhoneOtp } from '@/composables/usePhoneOtp'
 
 // ──────────────────────────────────────────────
-// AUTH & OTP
+// AUTH
 // ──────────────────────────────────────────────
 const { register } = useAuth()
-const {
-  otpSent,
-  otpLoading,
-  otpError,
-  otpVerified,
-  initRecaptcha,
-  sendOtp,
-  verifyOtp,
-  resetOtp,
-} = usePhoneOtp()
+
+const stripHtml = (text: string) => text.replace(/<[^>]*>/g, '')
 
 // ──────────────────────────────────────────────
 // STATE
 // ──────────────────────────────────────────────
-const step = ref(1)               // Étape actuelle (1, 2 ou 3)
+const step = ref(1)
 const showPassword = ref(false)
 const errorMessage = ref('')
 const loading = ref(false)
+const termsAccepted = ref(false)
+const termsError = ref('')
 
 // Formulaire
 const form = reactive({
@@ -307,18 +290,9 @@ const fieldErrors = reactive({
   password: '',
 })
 
-// OTP inputs
-const otpInputs = ref<HTMLInputElement[]>([])
-const otpDigits = reactive<string[]>(['', '', '', '', '', ''])
-const otpCode = computed(() => otpDigits.join(''))
-
-// Cooldown pour renvoyer le code
-const resendCooldown = ref(0)
-let resendTimer: ReturnType<typeof setInterval> | null = null
-
 // Redirection step 3
-const redirectCountdown = ref(5)
-const redirectProgress = computed(() => ((5 - redirectCountdown.value) / 5) * 100)
+const redirectCountdown = ref(3)
+const redirectProgress = computed(() => ((3 - redirectCountdown.value) / 3) * 100)
 let redirectTimer: ReturnType<typeof setInterval> | null = null
 
 // ──────────────────────────────────────────────
@@ -368,66 +342,43 @@ function validateStep1(): boolean {
 }
 
 // ──────────────────────────────────────────────
-// STEP 1 → Valider le formulaire + envoyer OTP
+// STEP 1 → Valider le formulaire
 // ──────────────────────────────────────────────
-async function handleStep1() {
+function handleStep1() {
   errorMessage.value = ''
-
-  // 1. Valider tous les champs
   if (!validateStep1()) return
-
-  // 2. Initialiser reCAPTCHA sur le bouton
-  initRecaptcha('send-otp-button')
-
-  // 3. Envoyer le code OTP au numéro de téléphone
-  await sendOtp(form.phone)
-
-  // 4. Si le code a été envoyé, passer au step 2
-  if (otpSent.value) {
-    step.value = 2
-    startResendCooldown()
-
-    // Focus sur le premier input OTP
-    await nextTick()
-    if (otpInputs.value[0]) {
-      otpInputs.value[0].focus()
-    }
-  }
+  step.value = 2
 }
 
 // ──────────────────────────────────────────────
-// STEP 2 → Vérifier le code OTP + créer le compte
+// STEP 2 → Accepter les conditions + créer le compte
 // ──────────────────────────────────────────────
 async function handleStep2() {
   errorMessage.value = ''
+  termsError.value = ''
 
-  // 1. Vérifier le code OTP via Firebase
-  const firebaseUser = await verifyOtp(otpCode.value)
+  if (!termsAccepted.value) {
+    termsError.value = 'Vous devez accepter les conditions d\'utilisation pour continuer'
+    return
+  }
 
-  // 2. Si le code est incorrect, on reste sur step 2
-  if (!firebaseUser) return
-
-  // 3. Le code est bon → créer le compte via l'API backend
   loading.value = true
   try {
     const response = await register({
       username: form.name,
       email: form.email,
       password: form.password,
+      phone: form.phone,
     })
 
     if (response && response.success) {
-      // 4. Compte créé → passer au step 3
       step.value = 3
       startRedirectCountdown()
     } else {
-      errorMessage.value = response?.error || 'Erreur lors de la création du compte'
-      // Revenir au step 1 pour corriger
-      step.value = 1
+      errorMessage.value = stripHtml(response?.error || 'Erreur lors de la création du compte')
     }
   } catch (err: any) {
-    errorMessage.value = err.message || 'Erreur lors de la création du compte'
-    step.value = 1
+    errorMessage.value = stripHtml(err.message || 'Erreur lors de la création du compte')
   } finally {
     loading.value = false
   }
@@ -438,106 +389,14 @@ async function handleStep2() {
 // ──────────────────────────────────────────────
 function goBackToStep1() {
   step.value = 1
-  resetOtp()
-  clearOtpDigits()
-  stopResendCooldown()
+  termsError.value = ''
 }
 
 // ──────────────────────────────────────────────
-// RENVOYER LE CODE OTP
+// TIMER REDIRECTION
 // ──────────────────────────────────────────────
-async function resendOtp() {
-  clearOtpDigits()
-  initRecaptcha('send-otp-button')
-  await sendOtp(form.phone)
-  if (otpSent.value) {
-    startResendCooldown()
-  }
-}
-
-// ──────────────────────────────────────────────
-// GESTION DES INPUTS OTP (6 cases séparées)
-// ──────────────────────────────────────────────
-function onOtpInput(index: number, event: Event) {
-  const input = event.target as HTMLInputElement
-  const value = input.value.replace(/\D/g, '') // Garder uniquement les chiffres
-
-  if (value) {
-    otpDigits[index] = value[0]
-    input.value = value[0]
-
-    // Passer au champ suivant
-    if (index < 5 && otpInputs.value[index + 1]) {
-      otpInputs.value[index + 1].focus()
-    }
-  } else {
-    otpDigits[index] = ''
-  }
-}
-
-function onOtpKeydown(index: number, event: KeyboardEvent) {
-  // Retour arrière : effacer et revenir au champ précédent
-  if (event.key === 'Backspace') {
-    if (!otpDigits[index] && index > 0) {
-      otpDigits[index - 1] = ''
-      if (otpInputs.value[index - 1]) {
-        otpInputs.value[index - 1].value = ''
-        otpInputs.value[index - 1].focus()
-      }
-    } else {
-      otpDigits[index] = ''
-    }
-  }
-}
-
-function onOtpPaste(event: ClipboardEvent) {
-  event.preventDefault()
-  const pasted = event.clipboardData?.getData('text')?.replace(/\D/g, '') || ''
-  for (let i = 0; i < 6; i++) {
-    otpDigits[i] = pasted[i] || ''
-    if (otpInputs.value[i]) {
-      otpInputs.value[i].value = pasted[i] || ''
-    }
-  }
-  // Focus sur le dernier champ rempli
-  const lastIndex = Math.min(pasted.length, 6) - 1
-  if (lastIndex >= 0 && otpInputs.value[lastIndex]) {
-    otpInputs.value[lastIndex].focus()
-  }
-}
-
-function clearOtpDigits() {
-  for (let i = 0; i < 6; i++) {
-    otpDigits[i] = ''
-    if (otpInputs.value[i]) {
-      otpInputs.value[i].value = ''
-    }
-  }
-}
-
-// ──────────────────────────────────────────────
-// TIMERS
-// ──────────────────────────────────────────────
-function startResendCooldown() {
-  resendCooldown.value = 60
-  stopResendCooldown()
-  resendTimer = setInterval(() => {
-    resendCooldown.value--
-    if (resendCooldown.value <= 0) {
-      stopResendCooldown()
-    }
-  }, 1000)
-}
-
-function stopResendCooldown() {
-  if (resendTimer) {
-    clearInterval(resendTimer)
-    resendTimer = null
-  }
-}
-
 function startRedirectCountdown() {
-  redirectCountdown.value = 5
+  redirectCountdown.value = 3
   redirectTimer = setInterval(() => {
     redirectCountdown.value--
     if (redirectCountdown.value <= 0) {
@@ -551,8 +410,6 @@ function startRedirectCountdown() {
 // CLEANUP
 // ──────────────────────────────────────────────
 onUnmounted(() => {
-  stopResendCooldown()
   if (redirectTimer) clearInterval(redirectTimer)
-  resetOtp()
 })
 </script>

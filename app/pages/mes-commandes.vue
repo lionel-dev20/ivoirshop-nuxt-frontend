@@ -8,7 +8,7 @@
 
     <!-- État de chargement -->
     <div v-if="loading" class="text-center py-16">
-      <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#ff9900]"></div>
       <p class="mt-4 text-gray-600">Chargement de vos commandes...</p>
     </div>
 
@@ -22,7 +22,7 @@
         <p class="mt-2 text-red-600">{{ error }}</p>
         <button
           @click="loadOrders"
-          class="mt-4 bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg transition-colors"
+          class="mt-4 bg-[#ff9900] hover:bg-[#e68a00] text-white px-6 py-2 rounded-lg transition-colors"
         >
           Réessayer
         </button>
@@ -39,21 +39,21 @@
         <p class="mt-2 text-gray-600">Vous n'avez pas encore passé de commande.</p>
         <NuxtLink
           to="/"
-          class="mt-4 inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
+          class="mt-4 inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-[#ff9900] hover:bg-[#e68a00]"
         >
-          Commencer mes achats 
+          Commencer mes achats
         </NuxtLink>
       </div>
     </div>
 
     <!-- Liste des commandes -->
-    <div v-else class="space-y-6">
+    <div v-else>
       <!-- Statistiques rapides -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div class="bg-white rounded-lg shadow p-6">
           <div class="flex items-center">
-            <div class="flex-shrink-0 bg-blue-100 rounded-md p-3">
-              <svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="flex-shrink-0 bg-orange-100 rounded-md p-3">
+              <svg class="h-6 w-6 text-[#ff9900]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
               </svg>
             </div>
@@ -93,123 +93,164 @@
         </div>
       </div>
 
-      <!-- Cartes de commandes -->
-      <div class="space-y-4">
-        <div
-          v-for="order in orders"
-          :key="order.id"
-          class="bg-white rounded-lg shadow hover:shadow-md transition-shadow"
-        >
-          <!-- En-tête de la commande -->
-          <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-              <div class="flex items-center space-x-4">
-                <div>
-                  <h3 class="text-lg font-semibold text-gray-900">
-                    Commande #{{ order.id }}
-                  </h3>
-                  <p class="text-sm text-gray-500">
-                    {{ formatDate(order.date_created) }}
-                  </p>
-                </div>
-              </div>
-              <div class="mt-4 sm:mt-0 flex items-center space-x-4">
-                <span
-                  :class="getStatusClass(order.status)"
-                  class="px-3 py-1 rounded-full text-sm font-medium"
-                >
-                  {{ getStatusText(order.status) }}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Corps de la commande -->
-          <div class="px-6 py-4">
-            <!-- Articles -->
-            <div class="space-y-3 mb-4">
-              <h4 class="text-sm font-medium text-gray-700">Articles commandés</h4>
-              <div class="space-y-2">
-                <div
-                  v-for="item in order.items"
-                  :key="item.product_id"
-                  class="flex items-center space-x-4 py-2 border-b border-gray-100 last:border-0"
-                >
-                  <div class="flex-shrink-0 w-16 h-16 bg-gray-100 rounded-md overflow-hidden">
-                    <img
-                      v-if="item.image"
-                      :src="item.image"
-                      :alt="item.name"
-                      class="w-full h-full object-cover"
-                    />
-                    <div v-else class="w-full h-full flex items-center justify-center text-gray-400">
-                      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
-                    </div>
+      <!-- Tableau des commandes -->
+      <div class="bg-white rounded-lg shadow overflow-hidden">
+        <!-- Desktop table -->
+        <div class="hidden md:block overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">N°</th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Produit(s)</th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Date</th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Statut</th>
+                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Montant total</th>
+                <th class="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">Facture</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <tr v-for="order in paginatedOrders" :key="order.id" class="hover:bg-gray-50 transition-colors">
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  #{{ order.id }}
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-700">
+                  <div class="max-w-xs">
+                    <p v-for="(item, i) in order.items" :key="item.product_id" class="truncate">
+                      <span v-if="i < 2">{{ item.name }} <span class="text-gray-400">x{{ item.quantity }}</span></span>
+                    </p>
+                    <p v-if="order.items.length > 2" class="text-xs text-gray-400 mt-0.5">
+                      + {{ order.items.length - 2 }} autre(s) article(s)
+                    </p>
                   </div>
-                  <div class="flex-1 min-w-0">
-                    <p class="text-sm font-medium text-gray-900 truncate">{{ item.name }}</p>
-                    <p class="text-sm text-gray-500">Quantité: {{ item.quantity }}</p>
-                  </div>
-                  <div class="text-sm font-medium text-gray-900">
-                    {{ formatPrice(item.total) }}
-                  </div>
-                </div>
-              </div>
-            </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ formatDate(order.date_created) }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span
+                    :class="getStatusClass(order.status)"
+                    class="px-2.5 py-1 rounded-full text-xs font-medium"
+                  >
+                    {{ getStatusText(order.status) }}
+                  </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900 text-right">
+                  {{ formatPrice(order.total) }} FCFA
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-center">
+                  <a
+                    :href="`/api/orders/invoice/${order.id}`"
+                    target="_blank"
+                    class="inline-flex items-center gap-1.5 text-[#ff9900] hover:text-[#e68a00] font-medium text-sm transition-colors"
+                  >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    PDF
+                  </a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
-            <!-- Informations de livraison et paiement -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-gray-200">
-              <!-- Livraison -->
-              <div v-if="order.billing">
-                <h4 class="text-sm font-medium text-gray-700 mb-2 flex items-center">
-                  <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  Adresse de livraison
-                </h4>
-                <div class="text-sm text-gray-600 space-y-1">
-                  <p>{{ order.billing.first_name }} {{ order.billing.last_name }}</p>
-                  <p>{{ order.billing.address_1 }}</p>
-                  <p>{{ order.billing.city }}</p>
-                  <p v-if="order.billing.phone">{{ order.billing.phone }}</p>
-                </div>
-              </div>
-
-              <!-- Paiement -->
-              <div>
-                <h4 class="text-sm font-medium text-gray-700 mb-2 flex items-center">
-                  <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                  </svg>
-                  Informations de paiement
-                </h4>
-                <div class="text-sm text-gray-600 space-y-1">
-                  <p>Méthode: {{ order.payment_method_title }}</p>
-                  <p v-if="order.shipping_total > 0">
-                    Frais de livraison: {{ formatPrice(order.shipping_total) }}
-                  </p>
-                  <p v-if="order.discount_total > 0" class="text-green-600">
-                    Réduction: -{{ formatPrice(order.discount_total) }}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Note client -->
-            <div v-if="order.customer_note" class="mt-4 pt-4 border-t border-gray-200">
-              <h4 class="text-sm font-medium text-gray-700 mb-2">Note de commande</h4>
-              <p class="text-sm text-gray-600">{{ order.customer_note }}</p>
-            </div>
-
-            <!-- Total -->
-            <div class="mt-6 pt-4 border-t-2 border-gray-200 flex justify-between items-center">
-              <span class="text-lg font-semibold text-gray-900">Total</span>
-              <span class="text-2xl font-bold text-blue-600">
-                {{ formatPrice(order.total) }} {{ order.currency }}
+        <!-- Mobile cards -->
+        <div class="md:hidden divide-y divide-gray-200">
+          <div v-for="order in paginatedOrders" :key="'m-' + order.id" class="p-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-sm font-semibold text-gray-900">#{{ order.id }}</span>
+              <span
+                :class="getStatusClass(order.status)"
+                class="px-2.5 py-1 rounded-full text-xs font-medium"
+              >
+                {{ getStatusText(order.status) }}
               </span>
+            </div>
+            <div class="text-sm text-gray-700">
+              <p v-for="(item, i) in order.items" :key="item.product_id" class="truncate">
+                <span v-if="i < 2">{{ item.name }} <span class="text-gray-400">x{{ item.quantity }}</span></span>
+              </p>
+              <p v-if="order.items.length > 2" class="text-xs text-gray-400">
+                + {{ order.items.length - 2 }} autre(s)
+              </p>
+            </div>
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-gray-500">{{ formatDate(order.date_created) }}</span>
+              <span class="font-semibold text-gray-900">{{ formatPrice(order.total) }} FCFA</span>
+            </div>
+            <a
+              :href="`/api/orders/invoice/${order.id}`"
+              target="_blank"
+              class="inline-flex items-center gap-1.5 text-[#ff9900] hover:text-[#e68a00] font-medium text-sm transition-colors"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              Télécharger la facture
+            </a>
+          </div>
+        </div>
+
+        <!-- Pagination -->
+        <div v-if="totalPages > 1" class="bg-gray-50 px-6 py-4 border-t border-gray-200">
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p class="text-sm text-gray-500">
+              Affichage de {{ (currentPage - 1) * perPage + 1 }} à {{ Math.min(currentPage * perPage, orders.length) }} sur {{ orders.length }} commandes
+            </p>
+            <div class="flex items-center gap-1">
+              <button
+                @click="currentPage = 1"
+                :disabled="currentPage === 1"
+                class="px-3 py-1.5 text-sm rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+                </svg>
+              </button>
+              <button
+                @click="currentPage--"
+                :disabled="currentPage === 1"
+                class="px-3 py-1.5 text-sm rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+
+              <template v-for="page in visiblePages" :key="page">
+                <button
+                  v-if="page !== '...'"
+                  @click="currentPage = Number(page)"
+                  :class="[
+                    'px-3 py-1.5 text-sm rounded-md border transition-colors',
+                    currentPage === page
+                      ? 'bg-[#ff9900] text-white border-[#ff9900]'
+                      : 'border-gray-300 text-gray-700 hover:bg-gray-100'
+                  ]"
+                >
+                  {{ page }}
+                </button>
+                <span v-else class="px-2 text-gray-400">...</span>
+              </template>
+
+              <button
+                @click="currentPage++"
+                :disabled="currentPage === totalPages"
+                class="px-3 py-1.5 text-sm rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+              <button
+                @click="currentPage = totalPages"
+                :disabled="currentPage === totalPages"
+                class="px-3 py-1.5 text-sm rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+                </svg>
+              </button>
             </div>
           </div>
         </div>
@@ -273,16 +314,45 @@ const { user: authUser, fetchUser } = useAuth()
 const orders = ref<Order[]>([])
 const loading = ref(true)
 const error = ref('')
+const currentPage = ref(1)
+const perPage = 15
+
+// Pagination
+const totalPages = computed(() => Math.ceil(orders.value.length / perPage))
+
+const paginatedOrders = computed(() => {
+  const start = (currentPage.value - 1) * perPage
+  return orders.value.slice(start, start + perPage)
+})
+
+const visiblePages = computed(() => {
+  const pages: (number | string)[] = []
+  const total = totalPages.value
+  const current = currentPage.value
+
+  if (total <= 7) {
+    for (let i = 1; i <= total; i++) pages.push(i)
+  } else {
+    pages.push(1)
+    if (current > 3) pages.push('...')
+    for (let i = Math.max(2, current - 1); i <= Math.min(total - 1, current + 1); i++) {
+      pages.push(i)
+    }
+    if (current < total - 2) pages.push('...')
+    pages.push(total)
+  }
+  return pages
+})
 
 // Statistiques
 const completedOrdersCount = computed(() => {
-  return orders.value.filter(order => 
+  return orders.value.filter((order: Order) =>
     ['completed', 'delivered'].includes(order.status)
   ).length
 })
 
 const pendingOrdersCount = computed(() => {
-  return orders.value.filter(order => 
+  return orders.value.filter((order: Order) =>
     ['processing', 'pending', 'on-hold'].includes(order.status)
   ).length
 })
@@ -291,20 +361,15 @@ const pendingOrdersCount = computed(() => {
 const loadOrders = async () => {
   loading.value = true
   error.value = ''
-  
+
   try {
-    
     if (!authUser.value?.id) {
       await navigateTo('/auth/login')
       return
     }
 
-    const response = await $fetch<Order[]>(`/api/orders/user/${authUser.value.id}`)
-    
-    
-    if (Array.isArray(response) && response.length > 0) {
-    }
-    
+    const email = authUser.value.email ? encodeURIComponent(authUser.value.email) : ''
+    const response = await $fetch<Order[]>(`/api/orders/user/${authUser.value.id}?email=${email}`)
     orders.value = response
   } catch (err: any) {
     error.value = err.statusMessage || err.message || 'Impossible de charger les commandes'
@@ -317,10 +382,8 @@ const loadOrders = async () => {
 const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString('fr-FR', {
     year: 'numeric',
-    month: 'long',
+    month: 'short',
     day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
   })
 }
 
@@ -341,7 +404,8 @@ const getStatusClass = (status: string) => {
     'completed': 'bg-green-100 text-green-800',
     'cancelled': 'bg-red-100 text-red-800',
     'refunded': 'bg-gray-100 text-gray-800',
-    'failed': 'bg-red-100 text-red-800'
+    'failed': 'bg-red-100 text-red-800',
+    'paye-par-mobile-money': 'bg-purple-100 text-purple-800',
   }
   return classes[status] || 'bg-gray-100 text-gray-800'
 }
@@ -349,12 +413,13 @@ const getStatusClass = (status: string) => {
 const getStatusText = (status: string) => {
   const texts: { [key: string]: string } = {
     'pending': 'En attente',
-    'processing': 'En cours de traitement',
+    'processing': 'En traitement',
     'on-hold': 'En attente',
-    'completed': 'Terminée',
+    'completed': 'Livrée',
     'cancelled': 'Annulée',
     'refunded': 'Remboursée',
-    'failed': 'Échouée'
+    'failed': 'Échouée',
+    'paye-par-mobile-money': 'Payée (Mobile Money)',
   }
   return texts[status] || status
 }
@@ -365,19 +430,3 @@ onMounted(async () => {
   await loadOrders()
 })
 </script>
-
-<style scoped>
-/* Animations */
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.animate-spin {
-  animation: spin 1s linear infinite;
-}
-</style>

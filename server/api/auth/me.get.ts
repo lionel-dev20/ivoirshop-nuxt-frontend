@@ -16,12 +16,13 @@ export default defineEventHandler(async (event) => {
       }
     )
 
-    let userDetails = {
+    let userDetails: any = {
       id: wpUser.id,
       username: wpUser.username || wpUser.name,
       email: wpUser.email || '',
       first_name: wpUser.first_name || '',
       last_name: wpUser.last_name || '',
+      avatar: null,
     }
 
     // Essayer de récupérer les détails complets depuis WooCommerce
@@ -39,12 +40,14 @@ export default defineEventHandler(async (event) => {
       const { data: customer } = await api.get(`customers/${wpUser.id}`)
       
       if (customer) {
+        const avatarMeta = customer.meta_data?.find((m: any) => m.key === 'avatar_base64')
         userDetails = {
           id: customer.id,
           username: customer.username || userDetails.username,
           email: customer.email || userDetails.email,
           first_name: customer.first_name || userDetails.first_name,
           last_name: customer.last_name || userDetails.last_name,
+          avatar: avatarMeta?.value || null,
         }
       }
     } catch (wcErr) {

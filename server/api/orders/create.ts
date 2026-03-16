@@ -24,6 +24,7 @@ export default defineEventHandler(async (event) => {
 
     // Préparation des données de commande avec structure billing et shipping WooCommerce
     const orderData = {
+      customer_id: body.customer_id || 0,
       customer: {
         firstName: body.customer.firstName || '',
         lastName: body.customer.lastName || '',

@@ -4,7 +4,7 @@ import { createWooCommerceClient } from '../../utils/woocommerce'
 
 export default defineEventHandler(async (event) => {
   try {
-    const body = await readBody(event) as { username: string; email: string; password: string; first_name?: string; last_name?: string }
+    const body = await readBody(event) as { username: string; email: string; password: string; phone?: string; first_name?: string; last_name?: string }
 
     if (!body.username || !body.email || !body.password) {
       throw createError({
@@ -20,13 +20,22 @@ export default defineEventHandler(async (event) => {
       version: 'wc/v3',
     })
 
+    // Utiliser le numéro de téléphone comme username pour permettre la connexion par téléphone
+    const phoneUsername = body.phone ? body.phone.replace(/[\s\-]/g, '') : body.username
+
     // Créer un nouveau client WooCommerce
     const customerData = {
       email: body.email,
       first_name: body.first_name || body.username,
       last_name: body.last_name || '',
-      username: body.username,
+      username: phoneUsername,
       password: body.password,
+      billing: {
+        phone: body.phone || '',
+        first_name: body.first_name || body.username,
+        last_name: body.last_name || '',
+        email: body.email,
+      },
     }
 
     const { data } = await api.post('customers', customerData)

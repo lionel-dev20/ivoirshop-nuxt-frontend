@@ -45,22 +45,40 @@
           <form @submit.prevent="handleStep1">
             <!-- Grille 2 colonnes -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-              <!-- Nom et prénom -->
+              <!-- Prénom -->
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Nom et prénom</label>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Prénom</label>
                 <input
-                  v-model="form.name"
+                  v-model="form.firstName"
                   type="text"
-                  placeholder="Ex: Kouamé Jean"
+                  placeholder="Ex: Jean"
                   :class="[
                     'w-full px-4 py-3 border rounded-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 transition-all',
-                    fieldErrors.name
+                    fieldErrors.firstName
                       ? 'border-[#ff9900] focus:ring-[#ff9900]/20 focus:border-[#ff9900]'
                       : 'border-gray-200 focus:ring-[#ff9900]/20 focus:border-[#ff9900]'
                   ]"
-                  @input="fieldErrors.name = ''"
+                  @input="fieldErrors.firstName = ''"
                 />
-                <p v-if="fieldErrors.name" class="text-sm text-[#ff9900] mt-1.5">{{ fieldErrors.name }}</p>
+                <p v-if="fieldErrors.firstName" class="text-sm text-[#ff9900] mt-1.5">{{ fieldErrors.firstName }}</p>
+              </div>
+
+              <!-- Nom -->
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Nom</label>
+                <input
+                  v-model="form.lastName"
+                  type="text"
+                  placeholder="Ex: Kouamé"
+                  :class="[
+                    'w-full px-4 py-3 border rounded-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 transition-all',
+                    fieldErrors.lastName
+                      ? 'border-[#ff9900] focus:ring-[#ff9900]/20 focus:border-[#ff9900]'
+                      : 'border-gray-200 focus:ring-[#ff9900]/20 focus:border-[#ff9900]'
+                  ]"
+                  @input="fieldErrors.lastName = ''"
+                />
+                <p v-if="fieldErrors.lastName" class="text-sm text-[#ff9900] mt-1.5">{{ fieldErrors.lastName }}</p>
               </div>
 
               <!-- Numéro de téléphone -->
@@ -99,8 +117,8 @@
                 <p v-if="fieldErrors.email" class="text-sm text-[#ff9900] mt-1.5">{{ fieldErrors.email }}</p>
               </div>
 
-              <!-- Mot de passe -->
-              <div>
+              <!-- Mot de passe (pleine largeur) -->
+              <div class="sm:col-span-2">
                 <label class="block text-sm font-semibold text-gray-700 mb-2">Mot de passe</label>
                 <div class="relative">
                   <input
@@ -276,7 +294,8 @@ const termsError = ref('')
 
 // Formulaire
 const form = reactive({
-  name: '',
+  firstName: '',
+  lastName: '',
   phone: '',
   email: '',
   password: '',
@@ -284,7 +303,8 @@ const form = reactive({
 
 // Erreurs par champ
 const fieldErrors = reactive({
-  name: '',
+  firstName: '',
+  lastName: '',
   phone: '',
   email: '',
   password: '',
@@ -302,15 +322,21 @@ const isValidEmail = (val: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)
 const isValidPhone = (val: string) => /^\+?[0-9\s\-]{8,}$/.test(val.trim())
 
 function validateStep1(): boolean {
-  fieldErrors.name = ''
+  fieldErrors.firstName = ''
+  fieldErrors.lastName = ''
   fieldErrors.phone = ''
   fieldErrors.email = ''
   fieldErrors.password = ''
 
   let valid = true
 
-  if (!form.name.trim()) {
-    fieldErrors.name = 'Veuillez entrer votre nom et prénom'
+  if (!form.firstName.trim()) {
+    fieldErrors.firstName = 'Veuillez entrer votre prénom'
+    valid = false
+  }
+
+  if (!form.lastName.trim()) {
+    fieldErrors.lastName = 'Veuillez entrer votre nom'
     valid = false
   }
 
@@ -364,18 +390,13 @@ async function handleStep2() {
 
   loading.value = true
   try {
-    // Séparer le nom complet en first_name et last_name
-    const nameParts = form.name.trim().split(/\s+/)
-    const firstName = nameParts[0] || ''
-    const lastName = nameParts.slice(1).join(' ') || ''
-
     const response = await register({
-      username: form.name,
+      username: `${form.firstName} ${form.lastName}`.trim(),
       email: form.email,
       password: form.password,
       phone: form.phone,
-      first_name: firstName,
-      last_name: lastName,
+      first_name: form.firstName.trim(),
+      last_name: form.lastName.trim(),
     })
 
     if (response && response.success) {

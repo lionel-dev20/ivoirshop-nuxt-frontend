@@ -6,6 +6,9 @@ export default defineEventHandler(async (event) => {
   try {
     const body = await readBody(event)
 
+    // Log du body reçu pour debug
+    console.log('📥 Body reçu par /api/orders/create:', JSON.stringify(body, null, 2))
+
     // Validation simple
     if (!body.customer || !body.items || body.items.length === 0) {
       throw createError({
@@ -30,6 +33,14 @@ export default defineEventHandler(async (event) => {
       }
     }
 
+    // Récupérer les infos du client (billing envoyé séparément ou depuis customer)
+    const billingFirstName = String(body.billing?.first_name || body.customer.firstName || body.customer.first_name || 'Client')
+    const billingLastName = String(body.billing?.last_name || body.customer.lastName || body.customer.last_name || '')
+    const billingEmail = String(body.billing?.email || body.customer.email || 'client@ivoirshop.ci')
+    const billingPhone = String(body.billing?.phone || body.customer.phone || '')
+    const billingAddress = String(body.billing?.address_1 || body.shipping?.address_1 || '')
+    const billingCity = String(body.billing?.city || body.shipping?.city || '')
+
     // Préparer les données pour l'API WooCommerce officielle
     const orderData: any = {
       customer_id: body.customer_id || 0,
@@ -39,23 +50,23 @@ export default defineEventHandler(async (event) => {
       status: 'processing',
       customer_note: customerNote,
       billing: {
-        first_name: body.customer.firstName || '',
-        last_name: body.customer.lastName || '',
-        email: body.customer.email || '',
-        phone: body.customer.phone || '',
-        address_1: body.billing?.address_1 || body.shipping?.address_1 || '',
-        address_2: body.billing?.address_2 || body.shipping?.address_2 || '',
-        city: body.billing?.city || body.shipping?.city || '',
+        first_name: billingFirstName,
+        last_name: billingLastName,
+        email: billingEmail,
+        phone: billingPhone,
+        address_1: billingAddress,
+        address_2: String(body.billing?.address_2 || body.shipping?.address_2 || ''),
+        city: billingCity,
         state: '',
         postcode: '',
         country: 'CI'
       },
       shipping: {
-        first_name: body.shipping?.first_name || body.customer.firstName || '',
-        last_name: body.shipping?.last_name || body.customer.lastName || '',
-        address_1: body.shipping?.address_1 || '',
-        address_2: body.shipping?.address_2 || '',
-        city: body.shipping?.city || '',
+        first_name: String(body.shipping?.first_name || billingFirstName),
+        last_name: String(body.shipping?.last_name || billingLastName),
+        address_1: String(body.shipping?.address_1 || billingAddress),
+        address_2: String(body.shipping?.address_2 || ''),
+        city: String(body.shipping?.city || billingCity),
         state: '',
         postcode: '',
         country: 'CI'
@@ -65,9 +76,9 @@ export default defineEventHandler(async (event) => {
         quantity: parseInt(item.quantity),
       })),
       meta_data: [
-        { key: '_delivery_city', value: body.delivery_info?.city_name || '' },
-        { key: '_delivery_commune', value: body.delivery_info?.commune_name || '' },
-        { key: '_shipping_cost', value: body.shipping_cost || 0 },
+        { key: '_delivery_city', value: String(body.delivery_info?.city_name || '') },
+        { key: '_delivery_commune', value: String(body.delivery_info?.commune_name || '') },
+        { key: '_shipping_cost', value: String(body.shipping_cost || 0) },
       ],
     }
 
@@ -88,6 +99,13 @@ export default defineEventHandler(async (event) => {
         { code: body.coupon.code }
       ]
     }
+
+    // Log pour debug
+    console.log('📦 Création commande WooCommerce:', JSON.stringify({
+      customer_id: orderData.customer_id,
+      billing: orderData.billing,
+      line_items_count: orderData.line_items?.length,
+    }, null, 2))
 
     // Créer la commande via l'API WooCommerce REST officielle
     const { data } = await api.post('orders', orderData)

@@ -52,92 +52,73 @@
           <div class="bg-white rounded-lg shadow p-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-4">Informations de livraison</h2>
 
-            <!-- Utilisateur connecté : afficher un résumé de ses infos -->
-            <div v-if="isLoggedIn" class="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+            <!-- Utilisateur connecté : badge -->
+            <div v-if="isLoggedIn" class="bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
               <div class="flex items-center">
                 <svg class="w-5 h-5 text-green-600 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                 </svg>
-                <div>
-                  <p class="text-sm font-medium text-green-900">
-                    Connecté en tant que <span class="font-semibold">{{ authUser?.first_name || authUser?.username }} {{ authUser?.last_name || '' }}</span>
-                  </p>
-                  <p v-if="authUser?.email" class="text-xs text-green-700 mt-0.5">{{ authUser.email }}</p>
-                </div>
+                <p class="text-sm font-medium text-green-900">
+                  Connecté — vos informations sont pré-remplies
+                </p>
               </div>
             </div>
 
-            <!-- Champs personnels : visibles uniquement si NON connecté -->
-            <div v-if="!isLoggedIn">
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label for="firstName" class="block text-sm font-medium text-gray-700 mb-1">
-                    Prénom <span class="text-red-600">*</span>
-                  </label>
-                  <input
-                    id="firstName"
-                    v-model="orderForm.firstName"
-                    type="text"
-                    required
-                    class="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
-
-                <div>
-                  <label for="lastName" class="block text-sm font-medium text-gray-700 mb-1">
-                    Nom <span class="text-red-600">*</span>
-                  </label>
-                  <input
-                    id="lastName"
-                    v-model="orderForm.lastName"
-                    type="text"
-                    required
-                    class="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
+            <!-- Champs personnels : toujours visibles, pré-remplis si connecté -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label for="firstName" class="block text-sm font-medium text-gray-700 mb-1">
+                  Prénom <span class="text-red-600">*</span>
+                </label>
+                <input
+                  id="firstName"
+                  v-model="orderForm.firstName"
+                  type="text"
+                  required
+                  class="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
               </div>
 
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-                <div>
-                  <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
-                    Email (optionnel)
-                  </label>
-                  <input
-                    id="email"
-                    v-model="orderForm.email"
-                    type="email"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
-
-                <div>
-                  <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">
-                    Téléphone <span class="text-red-600">*</span>
-                  </label>
-                  <input
-                    id="phone"
-                    v-model="orderForm.phone"
-                    type="tel"
-                    required
-                    class="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
+              <div>
+                <label for="lastName" class="block text-sm font-medium text-gray-700 mb-1">
+                  Nom <span class="text-red-600">*</span>
+                </label>
+                <input
+                  id="lastName"
+                  v-model="orderForm.lastName"
+                  type="text"
+                  required
+                  class="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
               </div>
             </div>
 
-            <!-- Téléphone toujours visible pour l'utilisateur connecté (pas stocké dans le profil) -->
-            <div v-if="isLoggedIn" class="mt-0">
-              <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">
-                Téléphone <span class="text-red-600">*</span>
-              </label>
-              <input
-                id="phone"
-                v-model="orderForm.phone"
-                type="tel"
-                required
-                placeholder="Numéro de téléphone pour la livraison"
-                class="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+              <div>
+                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
+                  Email <span class="text-red-600">*</span>
+                </label>
+                <input
+                  id="email"
+                  v-model="orderForm.email"
+                  type="email"
+                  required
+                  class="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+
+              <div>
+                <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">
+                  Téléphone <span class="text-red-600">*</span>
+                </label>
+                <input
+                  id="phone"
+                  v-model="orderForm.phone"
+                  type="tel"
+                  required
+                  class="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
             </div>
 
             <div class="bg-orange-50 border border-orange-200 rounded-lg p-4 mt-4">
@@ -599,7 +580,7 @@ import { useAuth } from '~/composables/useAuth'
 
 const cartStore = useCartStore()
 const deliveryStore = useDeliveryStore()
-const { user: authUser, isLoggedIn } = useAuth() // Récupérer l'utilisateur connecté
+const { user: authUser, isLoggedIn, fetchUser } = useAuth()
 
 // SEO
 useSeoMeta({
@@ -614,12 +595,12 @@ if (process.client && cartStore.isEmpty) {
   await navigateTo('/categorie')
 }
 
-// État du formulaire
+// État du formulaire - pré-rempli avec les données du compte si connecté
 const orderForm = ref({
   firstName: authUser.value?.first_name || '',
   lastName: authUser.value?.last_name || '',
   email: authUser.value?.email || '',
-  phone: '',
+  phone: authUser.value?.phone || '',
   notes: '',
   paymentMethod: '', // Pas de mode de paiement sélectionné par défaut
   city: '',
@@ -627,10 +608,55 @@ const orderForm = ref({
   deliveryAddressDetails: ''
 })
 
-// Computed : nom/prénom/email effectifs (priorité auth si connecté)
-const effectiveFirstName = computed(() => isLoggedIn.value ? (authUser.value?.first_name || authUser.value?.username || '') : orderForm.value.firstName)
-const effectiveLastName = computed(() => isLoggedIn.value ? (authUser.value?.last_name || '') : orderForm.value.lastName)
-const effectiveEmail = computed(() => isLoggedIn.value ? (authUser.value?.email || '') : orderForm.value.email)
+// Pré-remplir le formulaire avec les données utilisateur
+function fillFormFromUser() {
+  const user = authUser.value
+  if (!user) return
+
+  // Détecter si le username est un numéro de téléphone
+  const isPhoneUsername = user.username && /^[\+]?[0-9\s\-]{8,}$/.test(user.username.trim())
+
+  // Prénom et Nom
+  if (!orderForm.value.firstName && user.first_name) orderForm.value.firstName = user.first_name
+  if (!orderForm.value.lastName && user.last_name) orderForm.value.lastName = user.last_name
+
+  // Si first_name vide, utiliser username seulement si ce n'est PAS un numéro
+  if (!orderForm.value.firstName && user.username && !isPhoneUsername) {
+    const parts = user.username.split(' ')
+    orderForm.value.firstName = parts[0] || ''
+    if (!orderForm.value.lastName && parts.length > 1) {
+      orderForm.value.lastName = parts.slice(1).join(' ')
+    }
+  }
+
+  // Email
+  if (!orderForm.value.email && user.email) orderForm.value.email = user.email
+
+  // Téléphone : depuis phone, ou depuis username si c'est un numéro
+  if (!orderForm.value.phone) {
+    if (user.phone) {
+      orderForm.value.phone = user.phone
+    } else if (isPhoneUsername) {
+      orderForm.value.phone = user.username
+    }
+  }
+}
+
+// Observer les changements de authUser
+watch(() => authUser.value, () => fillFormFromUser(), { immediate: true })
+
+// Aussi s'assurer que fetchUser est fait au mount côté client
+onMounted(async () => {
+  if (!authUser.value) {
+    await fetchUser()
+  }
+  fillFormFromUser()
+})
+
+// Les champs effectifs sont toujours ceux du formulaire
+const effectiveFirstName = computed(() => orderForm.value.firstName)
+const effectiveLastName = computed(() => orderForm.value.lastName)
+const effectiveEmail = computed(() => orderForm.value.email)
 
 const isSubmitting = ref(false)
 const config = useRuntimeConfig()

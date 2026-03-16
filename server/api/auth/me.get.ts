@@ -47,6 +47,7 @@ export default defineEventHandler(async (event) => {
           email: customer.email || userDetails.email,
           first_name: customer.first_name || userDetails.first_name,
           last_name: customer.last_name || userDetails.last_name,
+          phone: customer.billing?.phone || '',
           avatar: avatarMeta?.value || null,
         }
       }

@@ -65,7 +65,7 @@
                 <input
                   v-model="phone"
                   type="tel"
-                  placeholder="+225 XX XX XX XX XX"
+                  placeholder="XX XX XX XX XX"
                   :class="[
                     'w-full pl-11 pr-4 py-3 border rounded-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 transition-all',
                     fieldErrors.phone

@@ -441,9 +441,9 @@
     </div>
   </div>
 
-  <!-- Barre sticky WhatsApp -->
+  <!-- Barre sticky WhatsApp (masquée si rupture de stock) -->
   <div
-    v-if="product"
+    v-if="product && product.stock_status !== 'outofstock'"
     class="fixed inset-x-0 bottom-0 z-40"
   >
     <!-- Version mobile : seulement après avoir dépassé le bouton "Achetez maintenant" -->

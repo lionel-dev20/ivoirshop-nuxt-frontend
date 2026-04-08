@@ -1,9 +1,16 @@
 <template>
   <div>
-    <NuxtLayout>
+    <!-- <NuxtLayout>
       <NuxtLoadingIndicator />
       <NuxtPage />
-    </NuxtLayout>
+    </NuxtLayout> -->
+    <div class="flex flex-col items-center justify-center h-screen">
+    <h1 class="text-3xl font-bold underline mb-4">Nous sommes en maintenance !</h1>
+    <p class="text-lg">Nous sommes en train de faire des mises à jour sur le site. Veuillez réessayer plus tard.</p>
+    <p class="text-lg">Merci pour votre patience.</p>
+    <p class="text-base">Nous vous remercions de votre compréhension.</p>
+    <p class="text-base">Nous vous remercions de votre compréhension.</p>
+    </div>
   </div>
 </template>
 

@@ -66,9 +66,9 @@
       <div class="bg-red-50 border border-red-200 rounded-lg p-8 max-w-md mx-auto">
         <h2 class="text-xl font-semibold text-red-800 mb-2">Produit non trouvé</h2>
         <p class="text-red-600 mb-4">{{ error }}</p>
-        <NuxtLink to="/categories"
+        <NuxtLink to="/"
           class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors">
-          Retour aux catégories
+          Retour à la boutique
         </NuxtLink>
       </div>
     </div>

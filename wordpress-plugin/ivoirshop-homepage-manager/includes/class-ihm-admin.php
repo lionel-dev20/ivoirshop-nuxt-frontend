@@ -194,6 +194,21 @@ class IHM_Admin {
 		<?php
 	}
 
+	/**
+	 * Case à cocher booléenne robuste.
+	 * Un champ caché poste toujours '0' ; la case cochée poste '1' (qui prime
+	 * car déclaré après le champ caché). Impossible de « perdre » la valeur.
+	 */
+	public static function checkbox( $name, $value, $label ) {
+		$checked = ( '1' === (string) $value || 1 === $value || true === $value ) ? " checked='checked'" : '';
+		printf(
+			'<label class="ihm-field ihm-field--check"><input type="hidden" name="%1$s" value="0" /><input type="checkbox" name="%1$s" value="1"%2$s /> <span>%3$s</span></label>',
+			esc_attr( $name ),
+			$checked,
+			esc_html( $label )
+		);
+	}
+
 	/** Sélecteur simple (options clé => libellé). */
 	public static function select( $name, $value, $label, $options ) {
 		printf( '<label class="ihm-field"><span>%s</span><select name="%s">', esc_html( $label ), esc_attr( $name ) );

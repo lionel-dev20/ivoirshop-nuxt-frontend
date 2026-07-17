@@ -51,6 +51,18 @@
 .ihm-field--full {
 	max-width: 100%;
 }
+.ihm-field--check {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+.ihm-field--check > span {
+	display: inline;
+	margin-bottom: 0;
+}
+.ihm-field--check input[type="checkbox"] {
+	width: auto;
+}
 
 /* Champ image */
 .ihm-image-field {

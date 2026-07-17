@@ -137,10 +137,7 @@ $active_tab = isset( $_GET['tab'] ) ? sanitize_key( $_GET['tab'] ) : 'background
 			<h2>Bandeau d’en-tête</h2>
 			<p class="description">Le bandeau publicitaire tout en haut du site (au-dessus du menu). Cliquable, avec une couleur de fond.</p>
 			<?php
-			IHM_Admin::select( 'ihm[topBanner][enabled]', $cfg['topBanner']['enabled'], 'Affichage', array(
-				'1' => 'Affiché',
-				'0' => 'Masqué',
-			) );
+			IHM_Admin::checkbox( 'ihm[topBanner][enabled]', $cfg['topBanner']['enabled'], 'Afficher le bandeau d’en-tête' );
 			IHM_Admin::image( 'ihm[topBanner][image]', $cfg['topBanner']['image'], 'Image du bandeau (gif/png/jpg)' );
 			IHM_Admin::text( 'ihm[topBanner][link]', $cfg['topBanner']['link'], 'Lien au clic', '/ ou https://ivoirshop.ci/...' );
 			IHM_Admin::text( 'ihm[topBanner][bgColor]', $cfg['topBanner']['bgColor'], 'Couleur de fond (hex)', '#ff5a00' );

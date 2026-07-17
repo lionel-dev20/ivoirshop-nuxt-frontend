@@ -24,7 +24,7 @@ body {
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
-  font-size: 0.8rem;
+  font-size: 0.85srem;
   padding: 0;
   min-height: 100vh;
 }

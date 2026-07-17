@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-[1440px] mx-auto my-4" :style="backgroundStyle">
+  <div class="max-w-[1440px] mx-auto my-4">
     <div class="flex gap-x-1.5 items-center max-h-[480px]">
       <MegamenuMegaMenuHorizontalColumns />
       <HerosectionMyCarousel />
@@ -224,26 +224,6 @@ const nouveauteCfg = computed(() => {
     productsPerPage: Number(c.productsPerPage ?? DEFAULT_NOUVEAUTE.productsPerPage),
     productsLimit: Number(c.productsLimit ?? DEFAULT_NOUVEAUTE.productsLimit),
   }
-})
-
-// --------------------------------------------------------------------------
-// Fond de page (nouveau : couleur ou image, désactivé par défaut).
-// --------------------------------------------------------------------------
-const backgroundStyle = computed(() => {
-  const bg = section('background', null, { type: 'none' })
-  if (!bg || bg.type === 'none') return {}
-  if (bg.type === 'color' && bg.color) {
-    return { backgroundColor: bg.color }
-  }
-  if (bg.type === 'image' && bg.image) {
-    return {
-      backgroundImage: `url('${bg.image}')`,
-      backgroundSize: bg.size || 'cover',
-      backgroundRepeat: bg.repeat || 'no-repeat',
-      backgroundPosition: 'center',
-    }
-  }
-  return {}
 })
 </script>
 

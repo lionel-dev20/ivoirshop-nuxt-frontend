@@ -91,7 +91,8 @@ $active_tab = isset( $_GET['tab'] ) ? sanitize_key( $_GET['tab'] ) : 'background
 
 	<h2 class="nav-tab-wrapper ihm-tabs">
 		<a href="#background" class="nav-tab" data-tab="background">Fond de page</a>
-		<a href="#hero" class="nav-tab" data-tab="hero">Carrousel Hero</a>
+		<a href="#topBanner" class="nav-tab" data-tab="topBanner">Bandeau d’en-tête</a>
+			<a href="#hero" class="nav-tab" data-tab="hero">Carrousel Hero</a>
 		<a href="#rightAds" class="nav-tab" data-tab="rightAds">Bloc avantages</a>
 		<a href="#partners" class="nav-tab" data-tab="partners">Partenaires</a>
 		<a href="#productCarousels" class="nav-tab" data-tab="productCarousels">Carrousels produits</a>
@@ -128,6 +129,21 @@ $active_tab = isset( $_GET['tab'] ) ? sanitize_key( $_GET['tab'] ) : 'background
 				'no-repeat' => 'Pas de répétition',
 				'repeat'    => 'Répéter (mosaïque)',
 			) );
+			?>
+		</section>
+
+		<!-- ============ TOP BANNER ============ -->
+		<section class="ihm-panel" data-panel="topBanner">
+			<h2>Bandeau d’en-tête</h2>
+			<p class="description">Le bandeau publicitaire tout en haut du site (au-dessus du menu). Cliquable, avec une couleur de fond.</p>
+			<?php
+			IHM_Admin::select( 'ihm[topBanner][enabled]', $cfg['topBanner']['enabled'], 'Affichage', array(
+				'1' => 'Affiché',
+				'0' => 'Masqué',
+			) );
+			IHM_Admin::image( 'ihm[topBanner][image]', $cfg['topBanner']['image'], 'Image du bandeau (gif/png/jpg)' );
+			IHM_Admin::text( 'ihm[topBanner][link]', $cfg['topBanner']['link'], 'Lien au clic', '/ ou https://ivoirshop.ci/...' );
+			IHM_Admin::text( 'ihm[topBanner][bgColor]', $cfg['topBanner']['bgColor'], 'Couleur de fond (hex)', '#ff5a00' );
 			?>
 		</section>
 

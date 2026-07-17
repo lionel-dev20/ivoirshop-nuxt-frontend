@@ -49,15 +49,28 @@ class IHM_Config {
 		return array(
 
 			// ------------------------------------------------------------------
-			// Fond de page (NOUVEAU — n'existe pas encore côté Nuxt).
+			// Fond de la page d'accueil (conteneur pleine page min-h-screen).
 			// type : 'none' | 'color' | 'image'
+			// Valeur par défaut = orange historique (#f56100). 'none' rétablit
+			// l'orange par défaut côté layout.
 			// ------------------------------------------------------------------
 			'background' => array(
-				'type'   => 'none',
-				'color'  => '#ffffff',
+				'type'   => 'color',
+				'color'  => '#f56100',
 				'image'  => '',
 				'repeat' => 'no-repeat', // no-repeat | repeat
 				'size'   => 'cover',     // cover | contain | auto
+			),
+
+			// ------------------------------------------------------------------
+			// Bandeau d'en-tête (components/TopBanner.vue).
+			// Affiché en haut de toutes les pages, au-dessus du header.
+			// ------------------------------------------------------------------
+			'topBanner' => array(
+				'enabled' => '1', // '1' = affiché, '0' = masqué
+				'image'   => '/images/Slider_IVS_Bonne_Annee_Sticky.gif',
+				'link'    => '/',
+				'bgColor' => '#ff5a00',
 			),
 
 			// ------------------------------------------------------------------

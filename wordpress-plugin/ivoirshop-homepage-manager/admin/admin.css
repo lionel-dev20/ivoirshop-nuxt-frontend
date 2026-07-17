@@ -1,0 +1,162 @@
+/* IvoirShop Homepage Manager — styles admin */
+
+.ihm-wrap {
+	max-width: 1100px;
+}
+.ihm-intro {
+	font-size: 14px;
+	color: #50575e;
+	max-width: 760px;
+}
+.ihm-tabs {
+	margin-top: 16px;
+	flex-wrap: wrap;
+}
+
+/* Panneaux (onglets) */
+.ihm-panel {
+	display: none;
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-top: none;
+	padding: 20px 24px 28px;
+}
+.ihm-panel h2 {
+	margin-top: 0;
+}
+.ihm-panel h3 {
+	margin: 24px 0 8px;
+	padding-top: 12px;
+	border-top: 1px dashed #dcdcde;
+}
+
+/* Champs */
+.ihm-field {
+	display: block;
+	margin: 12px 0;
+	max-width: 620px;
+}
+.ihm-field > span,
+.ihm-field__label {
+	display: block;
+	font-weight: 600;
+	margin-bottom: 4px;
+	font-size: 13px;
+}
+.ihm-field input[type="text"],
+.ihm-field select,
+.ihm-field textarea {
+	width: 100%;
+}
+.ihm-field--full {
+	max-width: 100%;
+}
+
+/* Champ image */
+.ihm-image-field {
+	margin: 12px 0;
+}
+.ihm-image-field__inner {
+	display: flex;
+	gap: 14px;
+	align-items: flex-start;
+}
+.ihm-image-field__preview {
+	width: 90px;
+	height: 90px;
+	flex: 0 0 90px;
+	border: 1px solid #dcdcde;
+	border-radius: 6px;
+	background: #f6f7f7 url( 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="%23a7aaad" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>' ) center / 28px no-repeat;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+}
+.ihm-image-field__preview img {
+	max-width: 100%;
+	max-height: 100%;
+	object-fit: contain;
+}
+.ihm-image-field__controls {
+	flex: 1;
+	min-width: 0;
+}
+.ihm-image-field__url {
+	width: 100%;
+	margin-bottom: 8px;
+}
+.ihm-image-field__clear {
+	color: #b32d2e;
+	margin-left: 10px;
+}
+
+/* Répéteurs */
+.ihm-repeater__items {
+	display: grid;
+	gap: 14px;
+}
+.ihm-repeater__item {
+	border: 1px solid #dcdcde;
+	border-radius: 8px;
+	background: #fbfbfc;
+}
+.ihm-repeater__item-head {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 8px 14px;
+	background: #f0f0f1;
+	border-bottom: 1px solid #dcdcde;
+	border-radius: 8px 8px 0 0;
+}
+.ihm-repeater__item-title {
+	font-size: 13px;
+}
+.ihm-repeater__item-body {
+	padding: 10px 16px 16px;
+	display: grid;
+	grid-template-columns: repeat( auto-fit, minmax( 260px, 1fr ) );
+	gap: 4px 20px;
+	align-items: start;
+}
+.ihm-repeater__remove {
+	color: #b32d2e;
+	cursor: pointer;
+	background: none;
+	border: none;
+	text-decoration: underline;
+}
+.ihm-repeater__add {
+	margin-top: 14px !important;
+}
+.ihm-repeater__template {
+	display: none;
+}
+
+/* Bannières doubles */
+.ihm-double-pair {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 20px;
+	padding: 10px 16px 16px;
+}
+.ihm-double-pair__side h4 {
+	margin: 4px 0 8px;
+}
+
+/* Barre d'enregistrement */
+.ihm-submit {
+	position: sticky;
+	bottom: 0;
+	background: #fff;
+	padding: 16px 0;
+	border-top: 1px solid #dcdcde;
+	margin-top: 20px;
+}
+
+@media ( max-width: 782px ) {
+	.ihm-double-pair {
+		grid-template-columns: 1fr;
+	}
+}

@@ -1,6 +1,6 @@
 <template>
   <div class="p-2.5 md:p-8 bg-white rounded-[4px] md:-mt-10">
-    <h2 class="text-xl font-bold text-gray-800 mb-4">Acheter en Ligne</h2>
+    <h2 class="text-xl font-bold text-gray-800 mb-4">{{ blockTitle }}</h2>
     <div
       class="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-8 gap-1 md:gap-2 border-t border-l border-gray-200"
     >
@@ -40,7 +40,8 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 
-const items = [
+// Valeurs par défaut = contenu historique (repli si WordPress indisponible).
+const DEFAULT_ITEMS = [
   { image: '/categorieImage/Idée-cadeaux.png', name: 'Idée cadeaux', link: 'https://ivoirshop.ci/categorie/noel' },
   { image: '/categorieImage/Micro-Onde.png', name: 'Micro-Onde', link: 'https://ivoirshop.ci/categorie/micro-ondes' },
   { image: '/categorieImage/Bazar.png', name: 'Bazar', link: 'https://ivoirshop.ci/categorie/le-bazar' },
@@ -59,6 +60,11 @@ const items = [
   { image: '/categorieImage/trotinette.png', name: 'Trotinette', link: 'https://ivoirshop.ci/categorie/scooters-et-wagons' },
 ]
 
+// Contenu piloté par WordPress (repli sur les valeurs par défaut).
+const { section } = useHomepageConfig()
+const blockTitle = computed(() => section('acheterEnLigne', 'title', 'Acheter en Ligne'))
+const items = computed(() => section('acheterEnLigne', 'items', DEFAULT_ITEMS))
+
 // État pour afficher tous les items ou seulement les premiers
 const showAll = ref(false)
 const isMobile = ref(false)
@@ -70,11 +76,11 @@ const mobileLimit = 12
 const displayedItems = computed(() => {
   // Sur desktop, afficher tous les items
   if (!isMobile.value) {
-    return items
+    return items.value
   }
-  
+
   // Sur mobile, limiter à 12 items (4 lignes) ou afficher tous si "Voir plus" cliqué
-  return showAll.value ? items : items.slice(0, mobileLimit)
+  return showAll.value ? items.value : items.value.slice(0, mobileLimit)
 })
 
 // Détection de la taille d'écran

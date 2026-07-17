@@ -18,9 +18,9 @@
            </div>
           </div>
           <div class="h-full md:mt-3 w-full rounded-md flex items-center justify-center">
-            <NuxtLink to="/" class="object-cover h-full w-full rounded-md">
+            <NuxtLink :to="promoLink" class="object-cover h-full w-full rounded-md">
             <img
-              src="/images/IVS_ET_LIVRAISON-GRATUITE.gif"
+              :src="promoImage"
               alt="Publicité 1"
               loading="lazy"
               class="object-cover h-full w-full rounded-md shadow-gray-100" />
@@ -31,7 +31,8 @@
 </template>
 
 <script setup lang="ts">
-const avantsliste = [
+// Valeurs par défaut = contenu historique (repli si WordPress indisponible).
+const DEFAULT_AVANTAGES = [
   {
     image: 'https://web.archive.org/web/20240216010846im_/https://www.ivoirshop.ci/wp-content/uploads/elementor/thumbs/package-qe9j2dlhr4ce1m402cmweq43vvum88hifemmcjbsti.png',
     title: 'Bienvenue chez vous',
@@ -48,6 +49,12 @@ const avantsliste = [
     description: 'Disponible 7j/7'
   }
 ]
+
+// Contenu piloté par WordPress (repli sur les valeurs par défaut).
+const { section } = useHomepageConfig()
+const avantsliste = computed(() => section('rightAds', 'advantages', DEFAULT_AVANTAGES))
+const promoImage = computed(() => section('rightAds', 'promoImage', '/images/IVS_ET_LIVRAISON-GRATUITE.gif'))
+const promoLink = computed(() => section('rightAds', 'promoLink', '/'))
 </script>
 
 <style scoped>

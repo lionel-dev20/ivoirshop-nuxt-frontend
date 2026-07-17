@@ -2,20 +2,16 @@
     <div class="max-w-full mx-auto -md:mt-12">
       <div class="bg-white rounded-lg shadow-md p-6">
         <h2 class="text-2xl font-bold text-gray-800 mb-4">
-            🛒 IvoirShop.ci – Le meilleur du shopping en ligne en Côte d’Ivoire 🇨🇮
+            {{ seoTitle }}
         </h2>
-        
-        <p class="text-gray-600 leading-relaxed mb-4">
-            Boutique en ligne ivoirienne • Livraison rapide partout en Côte d’Ivoire • Paiement sécurisé
+
+        <div class="text-gray-600 leading-relaxed mb-4">
+            {{ seoTagline }}
             <nav class="space-x-4 mt-2 ">
-      <NuxtLink class="text-sky-600 hover:text-sky-800" to="https://ivoirshop.ci/categorie">Électroménager</NuxtLink>
-      <NuxtLink class="text-sky-600 hover:text-sky-800" to="https://ivoirshop.ci/categorie/electronique/televisions">Télévisions</NuxtLink>
-      <NuxtLink class="text-sky-600 hover:text-sky-800" to="https://ivoirshop.ci/categorie/ordinateurs-accessoires-informatique">Ordinateurs</NuxtLink>
-      <NuxtLink class="text-sky-600 hover:text-sky-800" to="https://ivoirshop.ci/categorie/mode">Mode & Beauté</NuxtLink>
-      <NuxtLink class="text-sky-600 hover:text-sky-800" to="https://ivoirshop.ci/categorie/ventes-flash">Promotions</NuxtLink>
+      <NuxtLink v-for="(lnk, i) in seoLinks" :key="i" class="text-sky-600 hover:text-sky-800" :to="lnk.link">{{ lnk.label }}</NuxtLink>
     </nav>
-            <p class="mt-6">Bienvenue sur <strong>IvoirShop.ci</strong>, votre plateforme ivoirienne de référence pour le shopping en ligne. Retrouvez en un clic vos produits préférés à prix imbattables, avec livraison rapide partout en Côte d’Ivoire et un service client disponible 7j/7</p>
-        </p>
+            <p class="mt-6" v-html="seoIntro"></p>
+        </div>
 
   
         <Transition
@@ -28,7 +24,10 @@
         >
           <div v-if="isExpanded" class="text-gray-600 leading-relaxed space-y-4 overflow-hidden">
 
-            <div class="contentSEO">
+            <!-- Contenu HTML libre défini dans WordPress (remplace les sections par défaut). -->
+            <div v-if="seoBodyHtml" class="contentSEO" v-html="seoBodyHtml"></div>
+
+            <div v-else class="contentSEO">
       <mainSEO class="mainSEO">
 
       
@@ -93,7 +92,7 @@
         </ul>
 
         <h3>Contact</h3>
-        <p>support@ivoirshop.ci<br>+225 0701518845</p>
+        <p>{{ seoContact.email }}<br>{{ seoContact.phone }}</p>
       </aside>
     </div>
 
@@ -121,6 +120,28 @@
   
   <script setup lang="ts">
   const isExpanded = ref(false)
+
+  // Valeurs par défaut = contenu historique (repli si WordPress indisponible).
+  const DEFAULT_TITLE = '🛒 IvoirShop.ci – Le meilleur du shopping en ligne en Côte d’Ivoire 🇨🇮'
+  const DEFAULT_TAGLINE = 'Boutique en ligne ivoirienne • Livraison rapide partout en Côte d’Ivoire • Paiement sécurisé'
+  const DEFAULT_INTRO = 'Bienvenue sur <strong>IvoirShop.ci</strong>, votre plateforme ivoirienne de référence pour le shopping en ligne. Retrouvez en un clic vos produits préférés à prix imbattables, avec livraison rapide partout en Côte d’Ivoire et un service client disponible 7j/7'
+  const DEFAULT_LINKS = [
+    { label: 'Électroménager', link: 'https://ivoirshop.ci/categorie' },
+    { label: 'Télévisions', link: 'https://ivoirshop.ci/categorie/electronique/televisions' },
+    { label: 'Ordinateurs', link: 'https://ivoirshop.ci/categorie/ordinateurs-accessoires-informatique' },
+    { label: 'Mode & Beauté', link: 'https://ivoirshop.ci/categorie/mode' },
+    { label: 'Promotions', link: 'https://ivoirshop.ci/categorie/ventes-flash' },
+  ]
+  const DEFAULT_CONTACT = { email: 'support@ivoirshop.ci', phone: '+225 0701518845' }
+
+  // Contenu piloté par WordPress (repli sur les valeurs par défaut).
+  const { section } = useHomepageConfig()
+  const seoTitle = computed(() => section('seo', 'title', DEFAULT_TITLE))
+  const seoTagline = computed(() => section('seo', 'tagline', DEFAULT_TAGLINE))
+  const seoIntro = computed(() => section('seo', 'intro', DEFAULT_INTRO))
+  const seoLinks = computed(() => section('seo', 'links', DEFAULT_LINKS))
+  const seoContact = computed(() => section('seo', 'contact', DEFAULT_CONTACT))
+  const seoBodyHtml = computed(() => section('seo', 'bodyHtml', ''))
   </script>
 
   <style scoped>

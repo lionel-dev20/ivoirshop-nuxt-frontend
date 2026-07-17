@@ -1,9 +1,9 @@
 <template>
     <div class="flex justify-between items-center gap-x-3">
         <!-- Left here baner -->
-        <NuxtLink v-for="(item, index) in bannerAdsPartener" :key="index" to="https://ivoirshop.ci/recherche?q=ilux"
+        <NuxtLink :to="leftBanner.link"
             class="hidden md:block object-cover md:min-h-[380px] md:min-w-[250px]  rounded-md justify-start items-center gap-x-2 bg-white py-1.5 px-1.5 border-1 border-gray-100 shadow-md shadow-gray-100">
-            <img :src="item.image" alt="Publicité 1" loading="lazy"
+            <img :src="leftBanner.image" alt="Publicité 1" loading="lazy"
                 class="object-cover h-[380px] w-[250px] rounded-md" />
         </NuxtLink>
 
@@ -12,7 +12,7 @@
         <div class="w-full">
             <h2
                 class="block bg-white md:p-4 p-3 rounded-[4px] text-left font-extrabold text-lg md:text-xl mb-1.5 md:mb-4 border-1 border-gray-100 shadow-md shadow-gray-100">
-                Nos partenaires</h2>
+                {{ partnersTitle }}</h2>
             <div class="grid grid-cols-4 md:grid-cols-4 lg:grid-cols-5 md:gap-1.5 gap-1 h-full">
                 <NuxtLink :to="item.link" v-for="(item, index) in listParnerImg" :key="index"
                     :class="{'hidden': index >= listParnerImg.length - 3 && screenWidth < 768}"
@@ -25,10 +25,10 @@
 
 
         <!-- Right here baner -->
-        <NuxtLink v-for="(item, index) in bannerAdsPartener" :key="index" to="https://ivoirshop.ci/recherche?q=leadder"
+        <NuxtLink :to="rightBanner.link"
             class="hidden md:block object-cover md:min-h-[380px] md:min-w-[250px]  rounded-md flex justify-start items-center gap-x-3 bg-white py-1.5 px-1.5 border-1 border-gray-100 shadow-md shadow-gray-100">
             <img
-                src="/images/partenaire_leadder.png"
+                :src="rightBanner.image"
                 alt="Publicité 1" loading="lazy" class="object-cover h-[380px] w-[250px] rounded-md" />
         </NuxtLink>
     </div>
@@ -36,13 +36,10 @@
 
 <script setup lang="ts">
 
-const bannerAdsPartener = [
-    {
-        image: '/images/partenaireilux.png',
-        title: 'Bienvenue chez vous'
-    }
-]
-const listParnerImg = [
+// Valeurs par défaut = contenu historique (repli si WordPress indisponible).
+const DEFAULT_LEFT_BANNER = { image: '/images/partenaireilux.png', link: 'https://ivoirshop.ci/recherche?q=ilux' }
+const DEFAULT_RIGHT_BANNER = { image: '/images/partenaire_leadder.png', link: 'https://ivoirshop.ci/recherche?q=leadder' }
+const DEFAULT_LOGOS = [
     {
         image: '/marques/Leadder.png',
         title: 'Leadder',
@@ -119,6 +116,13 @@ const listParnerImg = [
         link: 'https://ivoirshop.ci/recherche?q=iphone'
     },
 ]
+
+// Contenu piloté par WordPress (repli sur les valeurs par défaut).
+const { section } = useHomepageConfig()
+const partnersTitle = computed(() => section('partners', 'title', 'Nos partenaires'))
+const leftBanner = computed(() => section('partners', 'leftBanner', DEFAULT_LEFT_BANNER))
+const rightBanner = computed(() => section('partners', 'rightBanner', DEFAULT_RIGHT_BANNER))
+const listParnerImg = computed(() => section('partners', 'logos', DEFAULT_LOGOS))
 
 const screenWidth = ref(0);
 

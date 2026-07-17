@@ -60,7 +60,8 @@ const showNavigation = computed(() => {
   return screenWidth.value >= 768; // Afficher la navigation à partir des tablettes
 });
 
-const slides = [
+// Valeurs par défaut = contenu historique (utilisées si WordPress est indisponible).
+const DEFAULT_SLIDES = [
   { image: '/sliders/1_Generic_Campagne.png', link: 'https://ivoirshop.ci/categorie/meilleures-ventes' },
   { image: '/sliders/2_Mixeur.jpg', link: 'https://ivoirshop.ci/categorie/electromenager' },
   { image: '/sliders/3_Gaz_Plaque.png', link: 'https://ivoirshop.ci/categorie/electromenager/appareils-de-cuisson' },
@@ -68,7 +69,11 @@ const slides = [
   { image: '/sliders/5_TV_AUDIO.jpg', link: ' https://ivoirshop.ci/categorie/electronique' },
   { image: '/sliders/6_CONG & REFRIG.jpg', link: 'https://ivoirshop.ci/categorie/refrigerateurs-congelateurs' },
   { image: '/sliders/7_TOUT ELECTRO.png', link: ' https://ivoirshop.ci/categorie/electromenager' },
-] as const
+]
+
+// Contenu piloté par WordPress (repli sur DEFAULT_SLIDES).
+const { section } = useHomepageConfig()
+const slides = computed(() => section('hero', 'slides', DEFAULT_SLIDES))
 </script>
 
 <style scoped>

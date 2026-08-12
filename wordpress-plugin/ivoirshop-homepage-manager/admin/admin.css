@@ -157,6 +157,19 @@
 	margin: 4px 0 8px;
 }
 
+/* Encadré d'aide (onglet Blog) */
+.ihm-help-list {
+	margin: 8px 0 20px;
+	padding: 12px 16px 12px 32px;
+	background: #f6f7f7;
+	border-left: 4px solid #ff9900;
+	list-style: disc;
+	color: #50575e;
+}
+.ihm-help-list li {
+	margin: 4px 0;
+}
+
 /* Barre d'enregistrement */
 .ihm-submit {
 	position: sticky;

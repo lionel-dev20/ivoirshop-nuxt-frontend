@@ -22,6 +22,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 function ihm_repeater( $base, $rows, $fields, $add_label = '+ Ajouter', $row_title = 'Élément' ) {
 	echo '<div class="ihm-repeater" data-ihm-repeater data-base="' . esc_attr( $base ) . '" data-next="' . count( $rows ) . '">';
+
+	// On déclare le chemin de la liste ("ihm[hero][slides]" -> "hero.slides").
+	// Si l'éditeur supprime TOUTES les lignes, le navigateur ne poste plus rien
+	// pour cette liste : sans cette déclaration, la sauvegarde ne pourrait pas
+	// distinguer « vidée » de « absente » et les défauts réapparaîtraient.
+	$path = trim( str_replace( array( 'ihm[', '][', ']' ), array( '', '.', '' ), $base ), '.' );
+	echo '<input type="hidden" name="ihm_lists[]" value="' . esc_attr( $path ) . '" />';
+
 	echo '<div class="ihm-repeater__items">';
 	foreach ( $rows as $i => $row ) {
 		ihm_repeater_row( $base, $i, $row, $fields, $row_title );
@@ -101,6 +109,7 @@ $active_tab = isset( $_GET['tab'] ) ? sanitize_key( $_GET['tab'] ) : 'background
 		<a href="#countdowns" class="nav-tab" data-tab="countdowns">Vente flash</a>
 		<a href="#nouveaute" class="nav-tab" data-tab="nouveaute">Nouveautés</a>
 		<a href="#seo" class="nav-tab" data-tab="seo">Texte SEO</a>
+		<a href="#blog" class="nav-tab" data-tab="blog">Blog</a>
 	</h2>
 
 	<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="ihm-form">
@@ -343,6 +352,40 @@ $active_tab = isset( $_GET['tab'] ) ? sanitize_key( $_GET['tab'] ) : 'background
 			<?php
 			IHM_Admin::text( 'ihm[seo][contact][email]', $cfg['seo']['contact']['email'], 'Email' );
 			IHM_Admin::text( 'ihm[seo][contact][phone]', $cfg['seo']['contact']['phone'], 'Téléphone' );
+			?>
+		</section>
+
+		<!-- ============ BLOG ============ -->
+		<section class="ihm-panel" data-panel="blog">
+			<h2>Blog</h2>
+			<p class="description">
+				Réglages de la page <code>/blog</code> du site. Les articles eux-mêmes sont vos
+				<strong>publications WordPress</strong> habituelles (Articles → Ajouter) :
+			</p>
+			<ul class="ihm-help-list">
+				<li><strong>« À la une »</strong> : les articles dont l’option « Mettre cet article en avant sur la page d’accueil » est cochée (panneau <em>Publier</em> de l’éditeur). Les 6 premiers sont utilisés.</li>
+				<li><strong>« Derniers articles »</strong> : vos publications les plus récentes, automatiquement.</li>
+				<li><strong>« Populaires »</strong> : les articles ayant reçu le plus de commentaires.</li>
+			</ul>
+
+			<h3>Bandeau d’accueil</h3>
+			<?php
+			IHM_Admin::checkbox( 'ihm[blog][hero][enabled]', $cfg['blog']['hero']['enabled'], 'Afficher le bandeau en haut du blog' );
+			IHM_Admin::text( 'ihm[blog][hero][title]', $cfg['blog']['hero']['title'], 'Titre' );
+			IHM_Admin::textarea( 'ihm[blog][hero][text]', $cfg['blog']['hero']['text'], 'Texte d’introduction', 3 );
+			IHM_Admin::text( 'ihm[blog][hero][primaryLabel]', $cfg['blog']['hero']['primaryLabel'], 'Bouton principal — libellé' );
+			IHM_Admin::text( 'ihm[blog][hero][primaryLink]', $cfg['blog']['hero']['primaryLink'], 'Bouton principal — lien', '#derniers-articles' );
+			IHM_Admin::text( 'ihm[blog][hero][secondaryLabel]', $cfg['blog']['hero']['secondaryLabel'], 'Bouton secondaire — libellé' );
+			IHM_Admin::text( 'ihm[blog][hero][secondaryLink]', $cfg['blog']['hero']['secondaryLink'], 'Bouton secondaire — lien', '/auth/signup' );
+			IHM_Admin::image( 'ihm[blog][hero][image]', $cfg['blog']['hero']['image'], 'Illustration (à droite du bandeau)' );
+			IHM_Admin::text( 'ihm[blog][hero][bgColor]', $cfg['blog']['hero']['bgColor'], 'Couleur de fond (hex)', '#e8f4f1' );
+			?>
+
+			<h3>Titres des sections</h3>
+			<?php
+			IHM_Admin::text( 'ihm[blog][featuredTitle]', $cfg['blog']['featuredTitle'], 'Section « À la une »' );
+			IHM_Admin::text( 'ihm[blog][latestTitle]', $cfg['blog']['latestTitle'], 'Section « Derniers articles »' );
+			IHM_Admin::text( 'ihm[blog][popularTitle]', $cfg['blog']['popularTitle'], 'Section « Articles populaires »' );
 			?>
 		</section>
 

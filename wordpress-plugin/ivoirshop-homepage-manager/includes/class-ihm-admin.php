@@ -66,6 +66,21 @@ class IHM_Admin {
 			$config['seo']['intro']    = $seo_intro;
 		}
 
+		// Répéteurs entièrement vidés : le formulaire déclare chaque liste
+		// présente à l'écran. Celles qui ne sont pas revenues dans le POST ont
+		// vu toutes leurs lignes supprimées -> on force une liste vide.
+		$declared = isset( $_POST['ihm_lists'] ) ? (array) wp_unslash( $_POST['ihm_lists'] ) : array();
+		foreach ( $declared as $path ) {
+			$path = preg_replace( '/[^A-Za-z0-9_\-.]/', '', (string) $path );
+			if ( '' === $path ) {
+				continue;
+			}
+			$segments = explode( '.', $path );
+			if ( ! self::has_path( $config, $segments ) ) {
+				self::set_path( $config, $segments, array() );
+			}
+		}
+
 		IHM_Config::save( $config );
 		update_option( 'ivoirshop_homepage_updated_at', current_time( 'mysql' ) );
 
@@ -84,6 +99,43 @@ class IHM_Admin {
 	}
 
 	/**
+	 * Vrai si le chemin (["hero","slides"]) existe dans le tableau.
+	 *
+	 * @param array $array    Tableau source.
+	 * @param array $segments Segments du chemin.
+	 * @return bool
+	 */
+	private static function has_path( $array, $segments ) {
+		foreach ( $segments as $segment ) {
+			if ( ! is_array( $array ) || ! array_key_exists( $segment, $array ) ) {
+				return false;
+			}
+			$array = $array[ $segment ];
+		}
+		return true;
+	}
+
+	/**
+	 * Écrit une valeur au chemin donné, en créant les niveaux manquants.
+	 *
+	 * @param array $array    Tableau modifié par référence.
+	 * @param array $segments Segments du chemin.
+	 * @param mixed $value    Valeur à écrire.
+	 * @return void
+	 */
+	private static function set_path( &$array, $segments, $value ) {
+		$ref = &$array;
+		foreach ( $segments as $segment ) {
+			if ( ! isset( $ref[ $segment ] ) || ! is_array( $ref[ $segment ] ) ) {
+				$ref[ $segment ] = array();
+			}
+			$ref = &$ref[ $segment ];
+		}
+		$ref = $value;
+		unset( $ref );
+	}
+
+	/**
 	 * Nettoie récursivement les données postées.
 	 * URLs/chemins et textes courts -> sanitize_text_field ; on préserve les
 	 * chemins relatifs (ex : /images/x.png) et les classes Tailwind.
@@ -99,7 +151,12 @@ class IHM_Admin {
 
 			$clean = array();
 			foreach ( $value as $k => $v ) {
-				$key           = is_string( $k ) ? sanitize_key( $k ) : $k;
+				// IMPORTANT : ne PAS utiliser sanitize_key() ici, elle met les
+				// clés en minuscules. Toutes les clés de configuration sont en
+				// camelCase (topBanner, bgColor, categoryId, bodyHtml…) ; les
+				// mettre en minuscules casse la correspondance avec les valeurs
+				// par défaut et la config enregistrée devient invisible.
+				$key           = is_string( $k ) ? preg_replace( '/[^A-Za-z0-9_\-]/', '', $k ) : $k;
 				$clean[ $key ] = self::sanitize( $v );
 			}
 

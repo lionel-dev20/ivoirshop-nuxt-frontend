@@ -11,6 +11,7 @@ export default defineSitemapEventHandler(async (): Promise<SitemapUrlInput[]> =>
     { loc: '/', lastmod: generatedAt },
     // { loc: '/home', lastmod: generatedAt },
     { loc: '/recherche', lastmod: generatedAt },
+    { loc: '/blog', lastmod: generatedAt },
     // { loc: '/diagnostic', lastmod: generatedAt },
     // { loc: '/mes-commandes', lastmod: generatedAt },
     // { loc: '/checkout', lastmod: generatedAt },
@@ -120,6 +121,44 @@ export default defineSitemapEventHandler(async (): Promise<SitemapUrlInput[]> =>
     }
   } catch {
     // En cas d'erreur réseau/WooCommerce, on garde quand même les autres URLs
+  }
+
+  // 4. Articles du blog (URL type /blog/[slug])
+  try {
+    const WORDPRESS_URL = runtimeConfig.WORDPRESS_URL || runtimeConfig.public?.WORDPRESS_URL
+
+    if (WORDPRESS_URL) {
+      const perPage = 100
+      let page = 1
+      let hasMore = true
+
+      while (hasMore) {
+        const { data: posts, headers } = await axios.get(`${WORDPRESS_URL}/wp-json/wp/v2/posts`, {
+          timeout: 10000,
+          headers: { 'User-Agent': 'IvoirShop-Nuxt/1.0' },
+          params: { status: 'publish', per_page: perPage, page, _fields: 'slug,modified_gmt' },
+        })
+
+        if (Array.isArray(posts) && posts.length > 0) {
+          for (const post of posts as Array<{ slug?: string; modified_gmt?: string }>) {
+            if (post.slug) {
+              urls.push({
+                loc: `/blog/${post.slug}`,
+                lastmod: new Date(post.modified_gmt ? `${post.modified_gmt}Z` : generatedAt).toISOString(),
+              })
+            }
+          }
+
+          const totalPages = parseInt((headers as any)['x-wp-totalpages'] || '1')
+          hasMore = Number.isFinite(totalPages) && page < totalPages
+          page += 1
+        } else {
+          hasMore = false
+        }
+      }
+    }
+  } catch {
+    // Blog indisponible : le sitemap reste valide sans les articles
   }
 
   return urls

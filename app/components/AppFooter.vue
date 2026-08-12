@@ -43,6 +43,16 @@
               </svg>
             </a>
           </div>
+
+          <!-- Devenir vendeur -->
+          <a
+            href="https://vendeur.ivoirshop.ci/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center mt-6 px-5 py-2.5 bg-[#ff9900] hover:bg-[#e68a00] text-black text-sm font-semibold rounded-md transition-colors"
+          >
+            Devenir vendeur
+          </a>
         </div>
 
         <!-- Liens rapides -->
@@ -62,6 +72,11 @@
             <li>
               <NuxtLink to="/recherche" class="text-gray-300 hover:text-white transition-colors">
                 Recherche
+              </NuxtLink>
+            </li>
+            <li>
+              <NuxtLink to="/blog" class="text-gray-300 hover:text-white transition-colors">
+                Blog
               </NuxtLink>
             </li>
             <li>

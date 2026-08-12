@@ -3,7 +3,7 @@
  * Plugin Name:       IvoirShop Homepage Manager
  * Plugin URI:        https://ivoirshop.ci
  * Description:        Gère tout le contenu éditable de la page d'accueil du frontend Nuxt (hero slider, partenaires, bannières, carrousels, textes SEO, couleur/image de fond…) et l'expose via une API REST.
- * Version:           1.0.0
+ * Version:           1.1.0
  * Author:            IvoirShop
  * Text Domain:       ivoirshop-homepage-manager
  * License:           GPL-2.0-or-later
@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 // --------------------------------------------------------------------------
 // Constantes du plugin.
 // --------------------------------------------------------------------------
-define( 'IHM_VERSION', '1.0.0' );
+define( 'IHM_VERSION', '1.1.0' );
 define( 'IHM_OPTION_KEY', 'ivoirshop_homepage_config' );
 define( 'IHM_REST_NAMESPACE', 'ivoirshop/v1' );
 define( 'IHM_PLUGIN_FILE', __FILE__ );
@@ -31,6 +31,7 @@ define( 'IHM_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 // --------------------------------------------------------------------------
 require_once IHM_PLUGIN_DIR . 'includes/class-ihm-config.php';
 require_once IHM_PLUGIN_DIR . 'includes/class-ihm-rest.php';
+require_once IHM_PLUGIN_DIR . 'includes/class-ihm-posts.php';
 require_once IHM_PLUGIN_DIR . 'includes/class-ihm-admin.php';
 
 // --------------------------------------------------------------------------
@@ -47,6 +48,7 @@ register_activation_hook( __FILE__, function () {
 // --------------------------------------------------------------------------
 add_action( 'plugins_loaded', function () {
 	IHM_REST::init();
+	IHM_Posts::init();
 	if ( is_admin() ) {
 		IHM_Admin::init();
 	}

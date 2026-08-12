@@ -25,9 +25,114 @@ class IHM_Config {
 		if ( ! is_array( $stored ) ) {
 			$stored = array();
 		}
-		// Fusion superficielle par section : garantit qu'une nouvelle section
-		// ajoutée par une mise à jour du plugin a toujours une valeur par défaut.
-		return array_replace_recursive( self::defaults(), $stored );
+
+		$defaults = self::defaults();
+
+		// Réparation des configs enregistrées par les versions <= 1.0.0, qui
+		// écrivaient les clés en minuscules (topbanner au lieu de topBanner…) :
+		// on rétablit la casse canonique pour ne pas perdre le travail déjà saisi.
+		$stored = self::restore_keys( $stored, $defaults );
+
+		// Fusion avec les défauts : garantit qu'une section ajoutée par une mise
+		// à jour du plugin a toujours une valeur.
+		return self::merge( $defaults, $stored );
+	}
+
+	/**
+	 * Vrai si le tableau est une liste (clés 0..n-1) — équivalent de
+	 * array_is_list(), disponible seulement à partir de PHP 8.1.
+	 *
+	 * @param mixed $value Valeur à tester.
+	 * @return bool
+	 */
+	private static function is_list( $value ) {
+		if ( ! is_array( $value ) ) {
+			return false;
+		}
+		if ( empty( $value ) ) {
+			return true; // range( 0, -1 ) ne renvoie pas [] : cas traité à part.
+		}
+		return array_keys( $value ) === range( 0, count( $value ) - 1 );
+	}
+
+	/**
+	 * Fusion défauts / config enregistrée.
+	 *
+	 * Contrairement à array_replace_recursive(), une LISTE enregistrée remplace
+	 * intégralement la liste par défaut au lieu d'être fusionnée index par
+	 * index. Sans cela, supprimer un slide du carrousel (7 défauts -> 3 saisis)
+	 * ferait réapparaître les slides 4 à 7 issus des défauts.
+	 *
+	 * @param mixed $defaults Valeur par défaut.
+	 * @param mixed $stored   Valeur enregistrée.
+	 * @return mixed
+	 */
+	private static function merge( $defaults, $stored ) {
+		if ( ! is_array( $defaults ) || ! is_array( $stored ) ) {
+			return $stored;
+		}
+
+		// Liste par défaut -> remplacement intégral (y compris par une liste vide).
+		if ( self::is_list( $defaults ) && ! empty( $defaults ) ) {
+			return $stored;
+		}
+
+		// La structure enregistrée est une liste alors que le défaut ne l'est
+		// pas : on fait confiance à ce qui est enregistré.
+		if ( ! empty( $stored ) && self::is_list( $stored ) ) {
+			return $stored;
+		}
+
+		$out = $defaults;
+		foreach ( $stored as $key => $value ) {
+			$out[ $key ] = array_key_exists( $key, $defaults )
+				? self::merge( $defaults[ $key ], $value )
+				: $value;
+		}
+		return $out;
+	}
+
+	/**
+	 * Rétablit la casse canonique des clés d'après le schéma des défauts.
+	 * Une clé enregistrée en minuscules (bodyhtml) est renommée d'après la clé
+	 * de référence correspondante (bodyHtml). Les clés inconnues sont laissées
+	 * telles quelles.
+	 *
+	 * @param mixed $stored   Valeur enregistrée.
+	 * @param mixed $defaults Schéma de référence.
+	 * @return mixed
+	 */
+	private static function restore_keys( $stored, $defaults ) {
+		if ( ! is_array( $stored ) || ! is_array( $defaults ) ) {
+			return $stored;
+		}
+
+		// Liste : chaque ligne est réparée d'après la 1re ligne de référence.
+		if ( self::is_list( $stored ) ) {
+			$model = ( self::is_list( $defaults ) && isset( $defaults[0] ) ) ? $defaults[0] : array();
+			foreach ( $stored as $i => $row ) {
+				$stored[ $i ] = self::restore_keys( $row, $model );
+			}
+			return $stored;
+		}
+
+		// Table de correspondance minuscule -> clé canonique.
+		$canonical = array();
+		foreach ( array_keys( $defaults ) as $key ) {
+			$canonical[ strtolower( (string) $key ) ] = $key;
+		}
+
+		$out = array();
+		foreach ( $stored as $key => $value ) {
+			$lower = strtolower( (string) $key );
+			if ( ! array_key_exists( $key, $defaults ) && isset( $canonical[ $lower ] ) ) {
+				$key = $canonical[ $lower ];
+			}
+			$out[ $key ] = array_key_exists( $key, $defaults )
+				? self::restore_keys( $value, $defaults[ $key ] )
+				: $value;
+		}
+		return $out;
 	}
 
 	/**
@@ -237,6 +342,30 @@ class IHM_Config {
 				'gridColumns'     => 5,
 				'productsPerPage' => 30,
 				'productsLimit'   => 30,
+			),
+
+			// ------------------------------------------------------------------
+			// Blog (app/pages/blog/index.vue).
+			// Le bandeau d'accueil de la page /blog et les titres de sections.
+			// Les articles eux-mêmes viennent des publications WordPress :
+			//   - « À la une »   = articles marqués « Mettre en avant » (épinglés)
+			//   - « Populaires » = articles les plus commentés
+			// ------------------------------------------------------------------
+			'blog' => array(
+				'hero' => array(
+					'enabled'        => '1',
+					'title'          => 'Le blog IvoirShop',
+					'text'           => 'Conseils d’achat, guides d’utilisation et actualités de nos produits. Tout pour acheter au bon prix en Côte d’Ivoire.',
+					'primaryLabel'   => 'Lire les articles',
+					'primaryLink'    => '#derniers-articles',
+					'secondaryLabel' => 'Créer un compte',
+					'secondaryLink'  => '/auth/signup',
+					'image'          => '',
+					'bgColor'        => '#e8f4f1',
+				),
+				'featuredTitle' => 'À la une',
+				'latestTitle'   => 'Derniers articles',
+				'popularTitle'  => 'Articles populaires',
 			),
 
 			// ------------------------------------------------------------------

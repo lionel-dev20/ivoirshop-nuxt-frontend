@@ -98,9 +98,9 @@
         <!-- Images du produit -->
         <div class="lg:w-2/3 space-y-4">
           <!-- Image principale -->
-          <div class="aspect-square bg-gray-100 rounded-lg overflow-hidden">
+          <div class="aspect-square bg-white rounded-lg overflow-hidden">
             <img v-if="selectedImage" :src="selectedImage.src" :alt="selectedImage.alt || product.name"
-              class="w-full h-full object-cover cursor-zoom-in p-8 bg-white" @click="openLightbox" />
+              class="w-full h-full object-contain cursor-zoom-in p-8 bg-white" @click="openLightbox" />
             <div v-else class="w-full h-full flex items-center justify-center text-gray-400">
               <span>Aucune image</span>
             </div>
@@ -112,7 +112,7 @@
               'flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-colors',
               selectedImageIndex === index ? 'border-blue-600' : 'border-gray-200 hover:border-gray-300'
             ]">
-              <img :src="image.src" :alt="image.alt" class="w-full h-full object-cover" />
+              <img :src="image.src" :alt="image.alt" class="w-full h-full object-contain bg-white" />
             </button>
           </div>
         </div>
@@ -392,7 +392,7 @@
                 <NuxtLink :to="`/produit/${relatedProduct.slug}`">
                   <div class="aspect-square bg-white">
                     <img v-if="relatedProduct.image" :src="relatedProduct.image.src"
-                      :alt="relatedProduct.image.alt || relatedProduct.name" class="w-full h-full object-cover" />
+                      :alt="relatedProduct.image.alt || relatedProduct.name" class="w-full h-full object-contain bg-white" />
                     <div v-else class="w-full h-full flex items-center justify-center text-gray-400">
                       <span>Aucune image</span>
                     </div>

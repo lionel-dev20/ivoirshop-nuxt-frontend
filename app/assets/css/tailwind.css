@@ -122,3 +122,17 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* --------------------------------------------------------------------------
+   Images produits : éviter le débordement / rognage
+   Certaines images de produits (catalogue WooCommerce) ont des ratios très
+   variés et débordaient de leur cadre sur les pages catégories, recherche et
+   carrousels. On force un affichage "contenu" sur fond blanc.
+   Règle hors @layer : elle l'emporte donc sur les utilitaires Tailwind.
+   -------------------------------------------------------------------------- */
+img.product-image,
+img.w-full.h-full.object-cover.transition-transform.hover\:scale-105,
+img.w-full.h-full.object-cover.transition-transform.duration-300 {
+  object-fit: contain;
+  background: #fff;
+}

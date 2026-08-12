@@ -132,6 +132,13 @@
       >
         Recherche
       </NuxtLink>
+      <NuxtLink
+        to="/blog"
+        @click="closeMenu"
+        class="block px-4 py-3 text-gray-700 hover:bg-gray-50 transition-colors border-b border-gray-100"
+      >
+        Blog
+      </NuxtLink>
     </template>
     
     <!-- État de chargement -->

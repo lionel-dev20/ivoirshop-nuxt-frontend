@@ -1,11 +1,11 @@
 <template>
-  <div class="relative w-full h-48 bg-gray-200 rounded-md overflow-hidden">
+  <div class="relative w-full h-48 bg-white rounded-md overflow-hidden">
     <!-- Image principale - affichage direct sans spinner -->
     <img
       v-if="!imageError"
       :src="finalImageUrl"
       :alt="alt"
-      class="w-full h-full object-cover transition-transform hover:scale-105"
+      class="w-full h-full object-contain bg-white transition-transform hover:scale-105"
       loading="lazy"
       @error="handleImageError"
       @load="handleImageLoad"

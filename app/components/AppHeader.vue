@@ -36,9 +36,10 @@
 
         <!-- Menu desktop -->
         <div class="hidden md:block flex-1 mx-8">
-          <NuxtLink to="/" class="text-gray-700 hover:text-[#ff9900] px-3 py-2 text-sm font-medium">Devenir vendeur</NuxtLink>
+          <a href="https://vendeur.ivoirshop.ci/" target="_blank" rel="noopener noreferrer" class="text-gray-700 hover:text-[#ff9900] px-3 py-2 text-sm font-medium">Devenir vendeur</a>
           <NuxtLink to="/categorie" class="text-gray-700 hover:text-[#ff9900] px-3 py-2 text-sm font-medium">Les meilleurs Deals</NuxtLink>
           <NuxtLink to="/recherche" class="text-gray-700 hover:text-[#ff9900] px-3 py-2 text-sm font-medium">Recherche</NuxtLink>
+          <NuxtLink to="/blog" class="text-gray-700 hover:text-[#ff9900] px-3 py-2 text-sm font-medium">Blog</NuxtLink>
         </div>
 
         <!-- Actions -->

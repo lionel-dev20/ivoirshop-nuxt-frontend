@@ -339,11 +339,11 @@ onMounted(() => {
 
 /* Image container */
 .product-image-container {
-  @apply relative aspect-square overflow-hidden bg-gray-100;
+  @apply relative aspect-square overflow-hidden bg-white;
 }
 
 .product-image {
-  @apply w-full h-full object-cover transition-transform duration-300;
+  @apply w-full h-full object-contain bg-white transition-transform duration-300;
 }
 
 .product-card:hover .product-image {

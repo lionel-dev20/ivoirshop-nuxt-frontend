@@ -51,7 +51,7 @@
       </div>
 
       <!-- Prix -->
-      <div class="mt-2 flex-col flex items-start">
+      <div class="mt-2 flex flex items-start">
         <!-- Produit variable : afficher fourchette de prix -->
         <div v-if="isVariableProduct">
           <div class="flex items-baseline gap-1">
@@ -63,14 +63,14 @@
         
         <!-- Produit simple : affichage normal -->
         <div v-else>
-          <span class="text-gray-800 text-lg font-semibold">{{ formatPrice(product.salePrice || product.sale_price) }}</span>
-          <span
+          <p class="text-gray-800 text-lg font-semibold">{{ formatPrice(product.salePrice || product.sale_price) }}</p>
+          <p
             :class="[
               (product.on_sale || product.onSale) ? 'line-through text-gray-400 text-sm' : 'text-gray-500 text-[14px] line-through font-semibold'
             ]"
           >
             {{ formatPrice(product.regularPrice || product.regular_price || 0) }}
-          </span>
+          </p>
         </div>
       </div>
     </div>

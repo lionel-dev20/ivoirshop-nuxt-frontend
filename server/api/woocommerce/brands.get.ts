@@ -1,4 +1,4 @@
-import { defineEventHandler, createError } from 'h3'
+import { defineEventHandler, createError, setResponseHeader } from 'h3'
 import axios from 'axios'
 import { useRuntimeConfig } from '#imports'
 
@@ -11,11 +11,14 @@ export default defineEventHandler(async (event) => {
 
     // Vérification de la configuration
     if (!WORDPRESS_URL || !CONSUMER_KEY || !CONSUMER_SECRET) {
-      throw createError({ 
-        statusCode: 500, 
-        statusMessage: 'Configuration WooCommerce manquante' 
+      throw createError({
+        statusCode: 500,
+        statusMessage: 'Configuration WooCommerce manquante'
       })
     }
+
+    // La liste des marques bouge rarement : on la met en cache.
+    setResponseHeader(event, 'Cache-Control', 'public, max-age=300, s-maxage=1800, stale-while-revalidate=86400')
 
     // Configuration axios
     const axiosConfig = {
@@ -48,10 +51,11 @@ export default defineEventHandler(async (event) => {
         name: brand.name,
         slug: brand.slug,
         count: brand.count,
-        image: brand.image?.src || null
+        image: brand.image?.src || null,
+        description: brand.description || ''
       }))
     } catch (err: any) {
-      
+
       // Méthode 2 : Essayer de récupérer les marques via l'attribut 'brand' ou 'marque'
       try {
         // Récupérer tous les attributs
@@ -61,17 +65,17 @@ export default defineEventHandler(async (event) => {
         )
 
         // Chercher l'attribut 'brand', 'marque' ou similaire
-        const brandAttribute = attributes.find((attr: any) => 
-          attr.slug === 'brand' || 
-          attr.slug === 'marque' || 
-          attr.slug === 'pa_brand' || 
+        const brandAttribute = attributes.find((attr: any) =>
+          attr.slug === 'brand' ||
+          attr.slug === 'marque' ||
+          attr.slug === 'pa_brand' ||
           attr.slug === 'pa_marque' ||
           attr.name.toLowerCase() === 'brand' ||
           attr.name.toLowerCase() === 'marque'
         )
 
         if (brandAttribute) {
-          
+
           // Récupérer les termes de cet attribut
           const { data: terms } = await axios.get(
             `${WORDPRESS_URL}/wp-json/wc/v3/products/attributes/${brandAttribute.id}/terms`,
@@ -86,9 +90,10 @@ export default defineEventHandler(async (event) => {
             name: term.name,
             slug: term.slug,
             count: term.count,
-            image: null
+            image: null,
+            description: term.description || ''
           }))
-          
+
         } else {
         }
       } catch (attrErr) {
@@ -99,7 +104,7 @@ export default defineEventHandler(async (event) => {
       brands,
       total: brands.length
     }
-    
+
   } catch (err: any) {
     // Retourner des marques vides en cas d'erreur
     return {

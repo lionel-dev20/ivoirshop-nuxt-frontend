@@ -75,6 +75,11 @@
               </NuxtLink>
             </li>
             <li>
+              <NuxtLink to="/marque" class="text-gray-300 hover:text-white transition-colors">
+                Marques
+              </NuxtLink>
+            </li>
+            <li>
               <NuxtLink to="/blog" class="text-gray-300 hover:text-white transition-colors">
                 Blog
               </NuxtLink>

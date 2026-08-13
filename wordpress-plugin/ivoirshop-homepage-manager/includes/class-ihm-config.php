@@ -220,27 +220,33 @@ class IHM_Config {
 
 			// ------------------------------------------------------------------
 			// Partenaires (components/partenaires/ListPartner.vue).
+			//
+			// Les liens pointent vers les pages de marque du site : /marque/<slug>,
+			// où <slug> est celui de la taxonomie « marques » de WooCommerce et non
+			// le nom affiché — « Smart » correspond à smart-technology, « SiverCrest »
+			// à silver-crest. Wildbaby et Iphone n'existent pas encore comme marques
+			// dans WooCommerce : ils restent sur la recherche pour éviter une 404.
 			// ------------------------------------------------------------------
 			'partners' => array(
 				'title'        => 'Nos partenaires',
-				'leftBanner'   => array( 'image' => '/images/partenaireilux.png', 'link' => 'https://ivoirshop.ci/recherche?q=ilux' ),
-				'rightBanner'  => array( 'image' => '/images/partenaire_leadder.png', 'link' => 'https://ivoirshop.ci/recherche?q=leadder' ),
+				'leftBanner'   => array( 'image' => '/images/partenaireilux.png', 'link' => '/marque/ilux' ),
+				'rightBanner'  => array( 'image' => '/images/partenaire_leadder.png', 'link' => '/marque/leadder' ),
 				'logos'        => array(
-					array( 'image' => '/marques/Leadder.png', 'title' => 'Leadder', 'link' => 'https://ivoirshop.ci/recherche?q=leadder' ),
-					array( 'image' => '/marques/Ilux.png', 'title' => 'Ilux', 'link' => 'https://ivoirshop.ci/recherche?q=ilux' ),
-					array( 'image' => '/marques/Roch.png', 'title' => 'Roch', 'link' => 'https://ivoirshop.ci/recherche?q=roch' ),
-					array( 'image' => '/marques/Smart_.png', 'title' => 'Smart', 'link' => 'https://ivoirshop.ci/recherche?q=smart' ),
-					array( 'image' => '/marques/Binatone.png', 'title' => 'Binatone', 'link' => 'https://ivoirshop.ci/recherche?q=binatone' ),
-					array( 'image' => '/marques/Oraimo.png', 'title' => 'Oraimo', 'link' => 'https://ivoirshop.ci/recherche?q=oraimo' ),
-					array( 'image' => '/marques/RAF.png', 'title' => 'RAF', 'link' => 'https://ivoirshop.ci/recherche?q=raf' ),
-					array( 'image' => '/marques/Wildbaby.png', 'title' => 'Wildbaby', 'link' => 'https://ivoirshop.ci/recherche?q=wildbaby' ),
-					array( 'image' => '/marques/SiverCrest.png', 'title' => 'SiverCrest', 'link' => 'https://ivoirshop.ci/recherche?q=sivercrest' ),
-					array( 'image' => '/marques/Nasco.png', 'title' => 'Nasco', 'link' => 'https://ivoirshop.ci/recherche?q=nasco' ),
-					array( 'image' => '/marques/tecno.png', 'title' => 'tecno', 'link' => 'https://ivoirshop.ci/recherche?q=tecno' ),
-					array( 'image' => '/marques/Infinix.png', 'title' => 'Infinix', 'link' => 'https://ivoirshop.ci/recherche?q=infinix' ),
-					array( 'image' => '/marques/HP.png', 'title' => 'HP', 'link' => 'https://ivoirshop.ci/recherche?q=hp' ),
-					array( 'image' => '/marques/Lenovo.png', 'title' => 'Lenovo', 'link' => 'https://ivoirshop.ci/recherche?q=lenovo' ),
-					array( 'image' => '/marques/Iphone.png', 'title' => 'Iphone', 'link' => 'https://ivoirshop.ci/recherche?q=iphone' ),
+					array( 'image' => '/marques/Leadder.png', 'title' => 'Leadder', 'link' => '/marque/leadder' ),
+					array( 'image' => '/marques/Ilux.png', 'title' => 'Ilux', 'link' => '/marque/ilux' ),
+					array( 'image' => '/marques/Roch.png', 'title' => 'Roch', 'link' => '/marque/roch' ),
+					array( 'image' => '/marques/Smart_.png', 'title' => 'Smart', 'link' => '/marque/smart-technology' ),
+					array( 'image' => '/marques/Binatone.png', 'title' => 'Binatone', 'link' => '/marque/binatone' ),
+					array( 'image' => '/marques/Oraimo.png', 'title' => 'Oraimo', 'link' => '/marque/oraimo' ),
+					array( 'image' => '/marques/RAF.png', 'title' => 'RAF', 'link' => '/marque/raf' ),
+					array( 'image' => '/marques/Wildbaby.png', 'title' => 'Wildbaby', 'link' => '/recherche?q=wildbaby' ),
+					array( 'image' => '/marques/SiverCrest.png', 'title' => 'SiverCrest', 'link' => '/marque/silver-crest' ),
+					array( 'image' => '/marques/Nasco.png', 'title' => 'Nasco', 'link' => '/marque/nasco' ),
+					array( 'image' => '/marques/tecno.png', 'title' => 'tecno', 'link' => '/marque/tecno' ),
+					array( 'image' => '/marques/Infinix.png', 'title' => 'Infinix', 'link' => '/marque/infinix' ),
+					array( 'image' => '/marques/HP.png', 'title' => 'HP', 'link' => '/marque/hp' ),
+					array( 'image' => '/marques/Lenovo.png', 'title' => 'Lenovo', 'link' => '/marque/lenovo' ),
+					array( 'image' => '/marques/Iphone.png', 'title' => 'Iphone', 'link' => '/recherche?q=iphone' ),
 				),
 			),
 

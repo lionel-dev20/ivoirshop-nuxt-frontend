@@ -37,83 +37,89 @@
 <script setup lang="ts">
 
 // Valeurs par défaut = contenu historique (repli si WordPress indisponible).
-const DEFAULT_LEFT_BANNER = { image: '/images/partenaireilux.png', link: 'https://ivoirshop.ci/recherche?q=ilux' }
-const DEFAULT_RIGHT_BANNER = { image: '/images/partenaire_leadder.png', link: 'https://ivoirshop.ci/recherche?q=leadder' }
+//
+// Les liens pointent vers les pages de marque /marque/<slug>, où <slug> est le
+// slug de la taxonomie « marques » de WooCommerce — pas le nom affiché ici :
+// « Smart » correspond à smart-technology et « SiverCrest » à silver-crest.
+// Wildbaby et Iphone n'existent pas encore comme marques dans WooCommerce :
+// ils restent sur la recherche tant qu'ils n'y sont pas créés.
+const DEFAULT_LEFT_BANNER = { image: '/images/partenaireilux.png', link: '/marque/ilux' }
+const DEFAULT_RIGHT_BANNER = { image: '/images/partenaire_leadder.png', link: '/marque/leadder' }
 const DEFAULT_LOGOS = [
     {
         image: '/marques/Leadder.png',
         title: 'Leadder',
-        link: 'https://ivoirshop.ci/recherche?q=leadder'
+        link: '/marque/leadder'
     },
     {
         image: '/marques/Ilux.png',
         title: 'Ilux',
-        link: 'https://ivoirshop.ci/recherche?q=ilux'
+        link: '/marque/ilux'
     },
     {
         image: '/marques/Roch.png',
         title: 'Roch',
-        link: 'https://ivoirshop.ci/recherche?q=roch'
+        link: '/marque/roch'
     },
     {
         image: '/marques/Smart_.png',
         title: 'Smart',
-        link: 'https://ivoirshop.ci/recherche?q=smart'
+        link: '/marque/smart-technology'
     },
     {
         image: '/marques/Binatone.png',
         title: 'Binatone',
-        link: 'https://ivoirshop.ci/recherche?q=binatone'
+        link: '/marque/binatone'
     },
     {
         image: '/marques/Oraimo.png',
         title: 'Oraimo',
-        link: 'https://ivoirshop.ci/recherche?q=oraimo'
+        link: '/marque/oraimo'
     },
     {
         image: '/marques/RAF.png',
         title: 'RAF',
-        link: 'https://ivoirshop.ci/recherche?q=raf'
+        link: '/marque/raf'
     },
     {
         image: '/marques/Wildbaby.png',
         title: 'Wildbaby',
-        link: 'https://ivoirshop.ci/recherche?q=wildbaby'
+        link: '/recherche?q=wildbaby'
     },
     {
         image: '/marques/SiverCrest.png',
         title: 'SiverCrest',
-        link: 'https://ivoirshop.ci/recherche?q=sivercrest'
+        link: '/marque/silver-crest'
     },
     {
         image: '/marques/Nasco.png',
         title: 'Nasco',
-        link: 'https://ivoirshop.ci/recherche?q=nasco'
+        link: '/marque/nasco'
     },
     {
         image: '/marques/tecno.png',
         title: 'tecno',
-        link: 'https://ivoirshop.ci/recherche?q=tecno'
+        link: '/marque/tecno'
     },
     {
         image: '/marques/Infinix.png',
         title: 'Infinix',
-        link: 'https://ivoirshop.ci/recherche?q=infinix'
+        link: '/marque/infinix'
     },
     {
         image: '/marques/HP.png',
         title: 'HP',
-        link: 'https://ivoirshop.ci/recherche?q=hp'
+        link: '/marque/hp'
     },
     {
         image: '/marques/Lenovo.png',
         title: 'Lenovo',
-        link: 'https://ivoirshop.ci/recherche?q=lenovo'
+        link: '/marque/lenovo'
     },
     {
         image: '/marques/Iphone.png',
         title: 'Iphone',
-        link: 'https://ivoirshop.ci/recherche?q=iphone'
+        link: '/recherche?q=iphone'
     },
 ]
 

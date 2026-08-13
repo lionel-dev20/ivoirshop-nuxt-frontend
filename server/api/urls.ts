@@ -12,6 +12,7 @@ export default defineSitemapEventHandler(async (): Promise<SitemapUrlInput[]> =>
     // { loc: '/home', lastmod: generatedAt },
     { loc: '/recherche', lastmod: generatedAt },
     { loc: '/blog', lastmod: generatedAt },
+    { loc: '/marque', lastmod: generatedAt },
     // { loc: '/diagnostic', lastmod: generatedAt },
     // { loc: '/mes-commandes', lastmod: generatedAt },
     // { loc: '/checkout', lastmod: generatedAt },
@@ -123,7 +124,22 @@ export default defineSitemapEventHandler(async (): Promise<SitemapUrlInput[]> =>
     // En cas d'erreur réseau/WooCommerce, on garde quand même les autres URLs
   }
 
-  // 4. Articles du blog (URL type /blog/[slug])
+  // 4. Marques (URL type /marque/[slug])
+  try {
+    const { brands }: { brands: Array<{ slug: string; count: number }> } =
+      await $fetch('/api/woocommerce/brands')
+
+    for (const brand of brands || []) {
+      // Une marque sans produit donnerait une page vide : inutile de l'indexer.
+      if (brand.slug && brand.count > 0) {
+        urls.push({ loc: `/marque/${brand.slug}`, lastmod: generatedAt })
+      }
+    }
+  } catch {
+    // Marques indisponibles : le sitemap reste valide sans elles
+  }
+
+  // 5. Articles du blog (URL type /blog/[slug])
   try {
     const WORDPRESS_URL = runtimeConfig.WORDPRESS_URL || runtimeConfig.public?.WORDPRESS_URL
 

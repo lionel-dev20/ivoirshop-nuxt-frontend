@@ -387,6 +387,30 @@
                 </div>
               </div>
 
+              <!-- Alert hors d'Abidjan pour les commandes < 150 000 FCFA -->
+              <div v-else-if="requiresShippingPrepayment" class="bg-orange-50 border border-orange-300 rounded-lg p-4 mb-4">
+                <div class="flex items-start">
+                  <svg class="w-5 h-5 text-orange-600 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                  </svg>
+                  <div class="flex-1">
+                    <h4 class="text-sm font-semibold text-orange-900 mb-1">
+                      Frais de livraison à régler d'avance
+                    </h4>
+                    <p class="text-sm text-orange-800">
+                      Pour les livraisons hors d'Abidjan, le paiement des frais de livraison par
+                      Mobile Money est obligatoire. Le reste sera payé à la livraison.
+                    </p>
+                    <p class="text-sm font-bold text-orange-900 mt-2">
+                      Montant à payer maintenant : {{ formatPrice(shippingCost) }} (frais de livraison)
+                    </p>
+                    <p class="text-sm text-orange-800">
+                      Reste à payer à la livraison : {{ formatPrice(remainingOnDelivery) }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
               <!-- Options de paiement selon le montant et la région -->
               <div class="space-y-3">
                 <!-- Paiement à la livraison (disponible si < 150 000 FCFA - toutes régions) -->
@@ -418,16 +442,18 @@
                     v-model="orderForm.paymentMethod"
                     type="radio"
                     value="mobile_money"
-                    :required="requiresPartialPayment"
+                    :required="isPartialPayment"
                     class="h-4 w-4 text-orange-600 focus:ring-orange-500 border-gray-300"
                   />
                   <div class="ml-3 flex-1">
                     <div class="font-medium text-gray-900">
                       Paiement Mobile Money
-                      <span v-if="requiresPartialPayment" class="text-orange-600 text-sm">(Obligatoire)</span>
+                      <span v-if="isPartialPayment" class="text-orange-600 text-sm">(Obligatoire)</span>
                     </div>
                     <div class="text-sm text-gray-500">
-                      {{ requiresPartialPayment ? 'Payez 50% maintenant, le reste à la livraison' : 'Orange Money, MTN, Moov, Wave' }}
+                      <template v-if="requiresPartialPayment">Payez 50% maintenant, le reste à la livraison</template>
+                      <template v-else-if="requiresShippingPrepayment">Payez les frais de livraison maintenant, le reste à la livraison</template>
+                      <template v-else>Orange Money, MTN, Moov, Wave</template>
                     </div>
                   </div>
                   <div class="flex space-x-1">
@@ -443,7 +469,10 @@
                 <MobileMoneyPayment
                   :amount="mobileMoneyAmount"
                   :total-amount="finalTotal"
-                  :is-partial-payment="requiresPartialPayment"
+                  :is-partial-payment="isPartialPayment"
+                  :partial-label="requiresPartialPayment
+                    ? `Paiement partiel (50% du total: ${formatPrice(finalTotal)})`
+                    : `Frais de livraison (total de la commande: ${formatPrice(finalTotal)})`"
                   :order-id="0"
                   :customer-name="`${effectiveFirstName} ${effectiveLastName}`"
                   :customer-email="effectiveEmail"
@@ -496,6 +525,10 @@
                 <span>Livraison - {{ orderForm.commune }}</span>
                 <span>{{ deliveryStore.formattedShippingCost }}</span>
               </div>
+
+              <p v-if="deliveryStore.hasSelectedDelivery" class="text-xs text-gray-500">
+                Livraison assurée par notre partenaire {{ deliveryPartner }}
+              </p>
               
               <div v-if="deliveryStore.hasCoupon" class="flex justify-between text-sm text-green-600">
                 <span>Réduction ({{ deliveryStore.appliedCoupon?.code }})</span>
@@ -686,25 +719,51 @@ const partialPaymentAmount = computed(() => {
   return Math.ceil(finalTotal.value / 2)
 })
 
+// Zone de livraison. Les règles de paiement diffèrent entre Abidjan et le
+// reste du pays : hors d'Abidjan, les frais de transport sont prépayés.
+const isOutsideAbidjan = computed(() => orderForm.value.city === 'Autres régions')
+
+const shippingCost = computed(() => deliveryStore.selectedDelivery?.shipping_cost || 0)
+
+// Hors d'Abidjan, sous le seuil : seuls les FRAIS DE LIVRAISON sont réglés
+// d'avance par Mobile Money, le reste de la commande est payé à la livraison.
+const requiresShippingPrepayment = computed(
+  () => isOutsideAbidjan.value && !requiresPartialPayment.value
+)
+
+// Les deux cas où une partie seulement de la commande est réglée en ligne.
+const isPartialPayment = computed(
+  () => requiresPartialPayment.value || requiresShippingPrepayment.value
+)
+
 const mobileMoneyAmount = computed(() => {
-  // Si paiement partiel requis, payer la moitié, sinon le total
-  return requiresPartialPayment.value ? partialPaymentAmount.value : finalTotal.value
+  // >= 150 000 FCFA : la moitié de la commande.
+  if (requiresPartialPayment.value) return partialPaymentAmount.value
+  // Hors d'Abidjan sous le seuil : uniquement les frais de livraison.
+  if (requiresShippingPrepayment.value) return shippingCost.value
+  // Abidjan sous le seuil, paiement en ligne choisi : la totalité.
+  return finalTotal.value
 })
+
+// Transporteur partenaire selon la zone de livraison.
+const deliveryPartner = computed(() => (isOutsideAbidjan.value ? 'Coditrans' : 'Akiba Express'))
+
+// Reste dû au livreur une fois le paiement en ligne effectué.
+const remainingOnDelivery = computed(() => Math.max(finalTotal.value - mobileMoneyAmount.value, 0))
 
 // Vérifier si le paiement à la livraison est disponible
 const canPayOnDelivery = computed(() => {
-  // Paiement à la livraison NON disponible si :
-  // 1. La commande est >= 150 000 FCFA
-  // 2. La région sélectionnée est "Autres régions"
+  // Paiement 100 % à la livraison NON disponible si :
+  // 1. La commande est >= 150 000 FCFA (50 % obligatoire en Mobile Money)
   if (requiresPartialPayment.value) {
     return false
   }
-  
-  // Désactiver COD pour "Autres régions"
-  if (orderForm.value.city === 'Autres régions') {
+
+  // 2. Hors d'Abidjan : les frais de livraison doivent être payés d'avance
+  if (isOutsideAbidjan.value) {
     return false
   }
-  
+
   return true
 })
 
@@ -747,8 +806,8 @@ const handlePaymentSuccess = async (phoneNumber: string) => {
       shipping_cost: deliveryStore.selectedDelivery.shipping_cost,
       payment_method: 'mobile_money',
       mobile_money_phone: phoneNumber,
-      is_partial_payment: requiresPartialPayment.value,
-      partial_payment_amount: requiresPartialPayment.value ? partialPaymentAmount.value : null,
+      is_partial_payment: isPartialPayment.value,
+      partial_payment_amount: isPartialPayment.value ? mobileMoneyAmount.value : null,
       billing: {
         first_name: effectiveFirstName.value,
         last_name: effectiveLastName.value,
@@ -844,9 +903,10 @@ const handlePaymentSuccess = async (phoneNumber: string) => {
         discount: deliveryStore.appliedCoupon.discount
       } : null,
       
-      // 💳 Paiement partiel (si applicable)
-      is_partial_payment: requiresPartialPayment.value,
-      partial_payment_amount: requiresPartialPayment.value ? partialPaymentAmount.value : null,
+      // 💳 Paiement partiel : 50 % au-delà du seuil, frais de livraison seuls
+      // hors d'Abidjan sous le seuil. Le solde est réglé à la livraison.
+      is_partial_payment: isPartialPayment.value,
+      partial_payment_amount: isPartialPayment.value ? mobileMoneyAmount.value : null,
       
       // 🔗 URLs de retour
       successUrl,

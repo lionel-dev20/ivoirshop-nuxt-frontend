@@ -47,6 +47,8 @@ interface Props {
   amount: number
   totalAmount: number
   isPartialPayment?: boolean
+  /** Texte affiché sous le montant quand seule une partie est réglée en ligne. */
+  partialLabel?: string
   orderId?: number
   customerName?: string
   customerEmail?: string
@@ -67,7 +69,7 @@ const isLoading = ref(false)
 const amountToPay = computed(() => props.amount)
 const paymentInfo = computed(() => {
   if (props.isPartialPayment) {
-    return `Paiement partiel (50% du total: ${formatPrice(props.totalAmount)})`
+    return props.partialLabel || `Paiement partiel (50% du total: ${formatPrice(props.totalAmount)})`
   }
   return 'Montant total à payer'
 })

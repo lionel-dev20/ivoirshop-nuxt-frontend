@@ -1,41 +1,9 @@
 import { defineNuxtPlugin } from "#app";
 
-declare global {
-  interface Window {
-    OneSignalDeferred?: Array<(OneSignal: any) => void>;
-  }
-}
-
 export default defineNuxtPlugin(() => {
   if (process.client && typeof window !== 'undefined') {
     // Attendre que l'hydratation soit terminée avant de charger les scripts
     setTimeout(() => {
-      // Script OneSignal - Charger le SDK
-      const oneSignalScript = document.createElement('script');
-      oneSignalScript.src = 'https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js';
-      oneSignalScript.async = true;
-      oneSignalScript.defer = true;
-      document.head.appendChild(oneSignalScript);
-
-      // Initialisation OneSignal
-      window.OneSignalDeferred = window.OneSignalDeferred || [];
-      oneSignalScript.onload = () => {
-        if (window.OneSignalDeferred) {
-          window.OneSignalDeferred.push(async function(OneSignal: any) {
-            // Vérifier que nous sommes sur le domaine autorisé
-            if (window.location.hostname === 'www.ivoirshop.ci' || window.location.hostname === 'ivoirshop.ci') {
-              try {
-                await OneSignal.init({
-                  appId: "c16c70ab-fa4c-429b-9cd0-84ed90343914",
-                });
-              } catch (error) {
-                // Silencieux volontairement (évite les logs côté navigateur)
-              }
-            }
-          });
-        }
-      };
-
       // Script oct8ne
       const oct8ne = document.createElement("script");
       (oct8ne as any).server = "backoffice.oct8ne.com/";

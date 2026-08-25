@@ -35,6 +35,15 @@ export default defineNuxtConfig({
       '@nuxtjs/sitemap',
       {
         sources: ['/api/urls'],
+        // Le module découvre aussi les routes automatiquement : sans cette liste,
+        // ces pages réapparaissent dans le sitemap même absentes de /api/urls.
+        // Elles portent également une balise <meta name="robots" content="noindex">.
+        exclude: [
+          '/recherche',
+          '/checkout',
+          '/auth/login',
+          '/auth/signup',
+        ],
       },
     ],
   ],

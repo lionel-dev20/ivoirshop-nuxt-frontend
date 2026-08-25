@@ -10,17 +10,15 @@ export default defineSitemapEventHandler(async (): Promise<SitemapUrlInput[]> =>
   const urls: SitemapUrlInput[] = [
     { loc: '/', lastmod: generatedAt },
     // { loc: '/home', lastmod: generatedAt },
-    { loc: '/recherche', lastmod: generatedAt },
     { loc: '/blog', lastmod: generatedAt },
     { loc: '/marque', lastmod: generatedAt },
+    // Pages exclues volontairement du sitemap (elles portent aussi un noindex) :
+    // /recherche, /checkout, /auth/login, /auth/signup — pages fonctionnelles
+    // ou de compte, sans valeur dans les résultats de recherche.
     // { loc: '/diagnostic', lastmod: generatedAt },
     // { loc: '/mes-commandes', lastmod: generatedAt },
-    // { loc: '/checkout', lastmod: generatedAt },
     // { loc: '/thank-you', lastmod: generatedAt },
     { loc: '/payment/process-success', lastmod: generatedAt },
-    // Auth
-    { loc: '/auth/login', lastmod: generatedAt },
-    { loc: '/auth/signup', lastmod: generatedAt },
     { loc: '/auth/profil', lastmod: generatedAt },
   ]
 

@@ -535,7 +535,9 @@ useSeoMeta({
   title: () => searchQuery.value ? `Recherche: "${searchQuery.value}" - IvoirShop CI` : 'Recherche - IvoirShop CI',
   description: () => `Résultats de recherche pour "${searchQuery.value}" sur IvoirShop CI`,
   ogTitle: () => searchQuery.value ? `Recherche: "${searchQuery.value}"` : 'Recherche',
-  ogDescription: () => `Découvrez nos produits correspondant à votre recherche "${searchQuery.value}"`
+  ogDescription: () => `Découvrez nos produits correspondant à votre recherche "${searchQuery.value}"`,
+  // Page fonctionnelle : résultats non indexés, mais les liens produits restent suivis.
+  robots: 'noindex, follow'
 })
 
 // Meta de la page

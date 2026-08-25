@@ -618,7 +618,9 @@ const { user: authUser, isLoggedIn, fetchUser } = useAuth()
 // SEO
 useSeoMeta({
   title: 'Checkout - Ma Boutique',
-  description: 'Finalisez votre commande en toute sécurité'
+  description: 'Finalisez votre commande en toute sécurité',
+  // Tunnel de commande : jamais indexé.
+  robots: 'noindex, nofollow'
 })
 
 

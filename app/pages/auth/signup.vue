@@ -275,6 +275,11 @@
 import { ref, reactive, computed, onUnmounted } from 'vue'
 import { useAuth } from '@/composables/useAuth'
 
+// Page de compte : utile aux visiteurs, sans intérêt dans les résultats de recherche.
+useSeoMeta({
+  robots: 'noindex, follow'
+})
+
 // ──────────────────────────────────────────────
 // AUTH
 // ──────────────────────────────────────────────

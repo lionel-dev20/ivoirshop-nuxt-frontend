@@ -1,2 +1,22 @@
 User-Agent: *
-Disallow:
+
+# Pages fonctionnelles, sans valeur dans les résultats de recherche.
+# Elles ne figurent pas dans le sitemap.
+Disallow: /checkout
+Disallow: /cart
+Disallow: /panier
+
+# ⚠️ NE PAS décommenter tout de suite.
+#
+# Ces pages étaient référencées dans le sitemap : elles sont probablement déjà
+# indexées. Elles portent désormais une balise <meta name="robots" content="noindex">,
+# mais Google doit pouvoir les VISITER pour lire cette balise. Un Disallow ici
+# l'en empêcherait et les figerait dans l'index (affichées sans description).
+#
+# Une fois qu'elles auront disparu des résultats (vérifiable dans la Search
+# Console), décommenter ces trois lignes pour économiser le budget de crawl :
+#
+# Disallow: /auth
+# Disallow: /recherche
+
+Sitemap: https://ivoirshop.ci/sitemap.xml

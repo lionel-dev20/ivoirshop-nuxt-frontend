@@ -181,6 +181,11 @@
 import { ref, reactive } from 'vue'
 import { useAuth } from '@/composables/useAuth'
 
+// Page de compte : utile aux visiteurs, sans intérêt dans les résultats de recherche.
+useSeoMeta({
+  robots: 'noindex, follow'
+})
+
 const { signin, loading, error } = useAuth()
 
 const loginMode = ref<'email' | 'phone'>('phone')

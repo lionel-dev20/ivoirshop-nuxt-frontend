@@ -1,0 +1,10 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.ivoirshop.app",
+    "sha256_cert_fingerprints": [
+      "ED:6E:DE:29:27:5F:0D:7A:5C:FC:36:AD:D0:F6:AB:B2:49:20:19:30:97:94:40:50:56:57:2E:70:F6:52:52:14"
+    ]
+  }
+}]
